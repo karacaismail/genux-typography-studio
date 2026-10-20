@@ -1,0 +1,14 @@
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  overflow: auto;
+  background: var(--gx-bg);
+}
+.close {
+  position: fixed;
+  top: var(--mantine-spacing-sm);
+  right: var(--mantine-spacing-sm);
+  z-index: 1001;
+  box-shadow: var(--gx-shadow);
+}

@@ -1,0 +1,29 @@
+.header {
+  border-bottom: 1px solid var(--gx-line);
+}
+.navbar {
+  border-inline-end: 1px solid var(--gx-line);
+  background: var(--gx-surface);
+}
+.aside {
+  border-inline-start: 1px solid var(--gx-line);
+  background: var(--gx-surface);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.footer {
+  border-top: 1px solid var(--gx-line);
+}
+.sheetBody {
+  padding: 0;
+}
+.skip {
+  position: fixed;
+  top: var(--mantine-spacing-xs);
+  left: var(--mantine-spacing-xs);
+  z-index: 1100;
+  transform: translateY(-200%);
+  &:focus {
+    transform: none;
+  }
+}

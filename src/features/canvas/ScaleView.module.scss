@@ -1,0 +1,60 @@
+.scroll {
+  overflow-x: auto;
+  max-width: 100%;
+}
+.table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 720px;
+  font-family: var(--mantine-font-family);
+  font-size: var(--mantine-font-size-sm);
+  th,
+  td {
+    padding: var(--pv-s2) var(--pv-s3);
+    border-bottom: 1px solid var(--canvas-stroke);
+    text-align: start;
+    vertical-align: middle;
+    white-space: nowrap;
+  }
+  thead th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background: var(--canvas-field);
+    font-weight: 600;
+  }
+  tbody tr {
+    cursor: pointer;
+    transition: background-color var(--gx-dur-fast) var(--gx-ease);
+    &:hover {
+      background: var(--canvas-2);
+    }
+    &[data-selected] {
+      background-image: linear-gradient(var(--pv-hl-bar), var(--pv-hl-bar)), linear-gradient(var(--pv-hl), var(--pv-hl));
+      background-size: 3px 100%, 100% 100%;
+      background-repeat: no-repeat;
+    }
+  }
+  .num {
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+  }
+}
+.cat td {
+  padding-top: var(--pv-s4);
+  font-weight: 600;
+  opacity: 0.8;
+  cursor: default;
+}
+.sample {
+  margin: 0 !important;
+  white-space: nowrap;
+}
+.name {
+  min-width: 12rem;
+}
+.rowButton {
+  all: unset;
+  cursor: pointer;
+  font-weight: 500;
+}

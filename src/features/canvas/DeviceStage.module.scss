@@ -1,0 +1,89 @@
+.stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  // Esnek öğenin en küçük genişliği içerikten gelmesin: ölçek hesabı kabın gerçek genişliğine dayanır.
+  min-width: 0;
+  overflow: auto;
+  padding: var(--mantine-spacing-lg) var(--mantine-spacing-md) var(--mantine-spacing-xl);
+  background: var(--gx-sunken);
+  scrollbar-width: thin;
+  &[data-auto-height] {
+    flex: none;
+    overflow: visible;
+  }
+}
+.center {
+  display: flex;
+}
+// Otomatik kenar boşluğu ortalar; %100 görünümde taşan çerçeve solda kesilmeden kaydırılabilir.
+.sizer {
+  position: relative;
+  flex-shrink: 0;
+  margin-inline: auto;
+}
+.frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+}
+// Cihaz çerçeveleri: düz, nötr, ağır gölge yok.
+.device {
+  background: var(--gx-frame);
+  box-shadow: inset 0 0 0 1px var(--gx-line);
+  &[data-kind='mobile'] {
+    padding: 12px;
+    border-radius: 44px;
+  }
+  &[data-kind='tablet'] {
+    padding: 18px;
+    border-radius: 30px;
+  }
+  &[data-kind='laptop'],
+  &[data-kind='desktop'] {
+    padding: 14px 14px 18px;
+    border-radius: 14px 14px 6px 6px;
+  }
+}
+.screen {
+  overflow: auto;
+  overscroll-behavior: contain;
+  background: var(--canvas);
+  scrollbar-width: thin;
+  .device[data-kind='mobile'] & {
+    border-radius: 32px;
+  }
+  .device[data-kind='tablet'] & {
+    border-radius: 14px;
+  }
+  .device[data-kind='laptop'] &,
+  .device[data-kind='desktop'] & {
+    border-radius: 4px;
+  }
+}
+.base {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--gx-frame);
+  &[data-kind='laptop'] {
+    top: 100%;
+    width: 114%;
+    height: 18px;
+    border-radius: 0 0 14px 14px;
+  }
+  &[data-kind='desktop'] {
+    top: 100%;
+    width: 22%;
+    height: 120px;
+    clip-path: polygon(30% 0, 70% 0, 82% 100%, 18% 100%);
+  }
+}
+.readout {
+  margin: 0 0 var(--mantine-spacing-sm);
+  text-align: center;
+  font-size: var(--mantine-font-size-sm);
+  color: var(--gx-text-2);
+  font-variant-numeric: tabular-nums;
+}

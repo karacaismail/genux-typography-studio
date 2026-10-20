@@ -1,0 +1,63 @@
+.wrap {
+  display: grid;
+  gap: var(--pv-s5);
+  margin-inline: auto;
+}
+.head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--pv-s2) var(--pv-s4);
+  font: 600 var(--mantine-font-size-sm) / 1.45 var(--mantine-font-family);
+}
+.legend {
+  margin: 0;
+  font: 400 var(--mantine-font-size-sm) / 1.5 var(--mantine-font-family);
+  opacity: 0.8;
+}
+.cards {
+  display: grid;
+  gap: var(--pv-s4);
+}
+.card {
+  display: grid;
+  gap: var(--pv-s2);
+  min-width: 0;
+  padding: var(--pv-s3) var(--pv-s4) var(--pv-s4);
+  background: var(--canvas-2);
+  border-radius: var(--pv-radius);
+}
+.cardHead {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--pv-s3);
+  font: 500 var(--mantine-font-size-sm) / 1.45 var(--mantine-font-family);
+  opacity: 0.8;
+  font-variant-numeric: tabular-nums;
+}
+.sampleBox {
+  min-width: 0;
+  overflow-x: auto;
+}
+.sample {
+  // Satır testi aralık (önce/sonra boşluk) değil satır kutusu ölçer; ölçü (mw) korunur.
+  margin: 0 !important;
+  &[data-guides] {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      var(--canvas-guide) 0,
+      var(--canvas-guide) var(--lhpx),
+      transparent var(--lhpx),
+      transparent calc(2 * var(--lhpx))
+    );
+  }
+}
+.oneLine {
+  white-space: nowrap !important;
+  text-wrap-mode: nowrap !important;
+}
+.roleTitle {
+  margin: 0;
+  font: 600 var(--mantine-font-size-md) / 1.4 var(--mantine-font-family);
+}

@@ -1,0 +1,44 @@
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+  background: var(--gx-surface);
+  border-bottom: 1px solid var(--gx-line);
+}
+.tabs {
+  margin-inline-end: auto;
+}
+.devices {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--mantine-spacing-xs);
+}
+.bp {
+  width: 15rem;
+  @media (max-width: 36em) {
+    width: 100%;
+  }
+}
+.groupText {
+  @media (max-width: 40em) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+}
+.bpOption {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--mantine-spacing-sm);
+  width: 100%;
+}
+.bpMark {
+  color: var(--gx-accent-text);
+  font-weight: 500;
+}

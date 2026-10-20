@@ -1,0 +1,53 @@
+{
+  "name": "genux-typography-studio",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "GenUX Typography Studio \u2014 HTML5 elementleri ve \u00fcr\u00fcn t\u00fcrleri i\u00e7in tipografi kararlar\u0131 (Mantine 9).",
+  "scripts": {
+    "dev": "vite --port 5190 --strictPort",
+    "build": "tsc -p tsconfig.app.json --noEmit && vite build",
+    "typecheck": "tsc -p tsconfig.app.json --noEmit && tsc -p tsconfig.test.json --noEmit && tsc -p tsconfig.node.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test --project=chromium",
+    "preview": "vite preview --port 5191 --strictPort"
+  },
+  "dependencies": {
+    "@mantine/code-highlight": "9.7.2",
+    "@mantine/core": "9.7.2",
+    "@mantine/dropzone": "9.7.2",
+    "@mantine/hooks": "9.7.2",
+    "@mantine/modals": "9.7.2",
+    "@mantine/notifications": "9.7.2",
+    "@mantine/spotlight": "9.7.2",
+    "@phosphor-icons/react": "2.1.10",
+    "@tanstack/react-router": "1.170.42",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "zod": "4.6.5",
+    "zustand": "5.0.15"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.64.0",
+    "@testing-library/jest-dom": "6.10.0",
+    "@testing-library/react": "16.3.0",
+    "@testing-library/user-event": "14.6.7",
+    "@types/node": "^24.12.0",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.1.1",
+    "jsdom": "30.1.2",
+    "postcss": "8.5.29",
+    "postcss-preset-mantine": "1.18.0",
+    "postcss-simple-vars": "7.0.1",
+    "sass-embedded": "1.105.1",
+    "typescript": "6.0.3",
+    "vite": "8.3.3",
+    "vitest": "5.0.3"
+  },
+  "overrides": {
+    "playwright-core": "1.64.0"
+  }
+}

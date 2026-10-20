@@ -1,0 +1,295 @@
+// Studio temel stilleri, merkezi klavye odak sistemi ve Mantine hareket adaptörü.
+// Mantine katmanlı CSS (@layer mantine) olarak yüklenir; bu dosya katmansızdır ve ondan önce gelir.
+// Tüm değerler tokenlardan (theme.ts → cssVariablesResolver) gelir.
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+body {
+  margin: 0;
+  background: var(--gx-bg);
+  color: var(--gx-text);
+  font-family: var(--mantine-font-family);
+  font-size: var(--mantine-font-size-md);
+  line-height: var(--mantine-line-height-md);
+  -webkit-font-smoothing: antialiased;
+  font-optical-sizing: auto;
+}
+::selection {
+  background: var(--gx-accent-soft);
+  color: var(--gx-text);
+}
+
+/* =====================================================================
+   Merkezi klavye odak modu (src/theme/focus-mode.ts)
+   - Çevreleyen halka yok: tarayıcı ve Mantine halkası kaldırılır, yerine tek kenar çizgisi.
+   - Gösterge yalnız html[data-focus='kbd'] ve :focus-visible iken görünür.
+   ===================================================================== */
+:focus-visible {
+  outline: none;
+}
+[data-focus='kbd'] :focus-visible {
+  box-shadow: inset 0 calc(-1 * var(--gx-focus-bar)) 0 0 var(--gx-focus-color, var(--gx-focus));
+}
+// Dolgulu (birincil) yüzeylerde çizgi zemine göre değil, dolguya göre karşıtlık kurar.
+[data-focus='kbd'] [data-variant='filled']:focus-visible {
+  --gx-focus-color: var(--gx-focus-on-accent);
+}
+// Sekmeler: seçili durum alt çizgidir; odak üst kenarda, böylece ikisi karışmaz.
+[data-focus='kbd'] .mantine-Tabs-tab:focus-visible {
+  box-shadow: inset 0 var(--gx-focus-bar) 0 0 var(--gx-focus);
+}
+// Odakta form alanının sınırı değişmez (odak nedeniyle çevresel sınır yasak). Hata sınırı korunur.
+.mantine-Input-input:focus,
+.mantine-Input-input:focus-within {
+  --input-bd: var(--mantine-color-default-border);
+}
+.mantine-Input-input[data-error]:focus,
+.mantine-Input-input[data-error]:focus-within {
+  --input-bd: var(--mantine-color-error);
+}
+// Görünmez girdili kontroller: gösterge görünen kardeşe çizilir.
+.mantine-SegmentedControl-label {
+  --segmented-control-outline: none;
+}
+[data-focus='kbd'] .mantine-SegmentedControl-input:focus-visible + .mantine-SegmentedControl-label {
+  box-shadow: inset 0 calc(-1 * var(--gx-focus-bar)) 0 0 var(--gx-focus);
+}
+.mantine-Switch-input:focus-visible + .mantine-Switch-track {
+  outline: none;
+}
+[data-focus='kbd'] .mantine-Switch-input:focus-visible + .mantine-Switch-track {
+  box-shadow: 0 calc(var(--gx-focus-bar) + 2px) 0 calc(-1 * 1px) var(--gx-focus);
+}
+// Kaydırıcı başparmağı yuvarlak: çizgi başparmağın altında.
+.mantine-Slider-thumb {
+  &:focus-visible {
+    outline: none;
+  }
+  &::after {
+    content: '';
+    position: absolute;
+    inset-inline: -2px;
+    top: calc(100% + 4px);
+    height: var(--gx-focus-bar);
+    border-radius: 2px;
+    background: transparent;
+    pointer-events: none;
+  }
+}
+// background-image: geçişsiz, çizgi beklemeden görünür.
+[data-focus='kbd'] .mantine-Slider-thumb:focus-visible {
+  box-shadow: none;
+  &::after {
+    background-image: linear-gradient(var(--gx-focus), var(--gx-focus));
+  }
+}
+// Ağaç: odaklanan öğe alt ağacını da kapsar; çizgi yalnız kendi satırına çizilir.
+.mantine-Tree-node:focus-visible > .mantine-Tree-label,
+.mantine-Tree-node[data-focus-ring]:focus > .mantine-Tree-label {
+  outline: none;
+}
+[data-focus='kbd'] .mantine-Tree-node:focus-visible {
+  box-shadow: none;
+  > .mantine-Tree-label {
+    box-shadow: inset 0 calc(-1 * var(--gx-focus-bar)) 0 0 var(--gx-focus);
+  }
+}
+.mantine-Splitter-handle:focus-visible .mantine-Splitter-thumb {
+  box-shadow: none;
+}
+[data-focus='kbd'] .mantine-Splitter-handle:focus-visible {
+  box-shadow: none;
+  .mantine-Splitter-thumb {
+    color: var(--gx-focus);
+    box-shadow: 0 var(--gx-focus-bar) 0 0 var(--gx-focus);
+  }
+}
+// Panel boyutlandırma tutamacı: tek kenar çizgisi zaten tutamacın kendisidir; yalnız klavye modunda renklenir.
+.mantine-AppShell-resizeHandle:focus-visible::after {
+  background-color: transparent;
+}
+.mantine-AppShell-resizeHandle:hover::after,
+.mantine-AppShell-resizeHandle[data-active]::after {
+  background-color: var(--gx-line-field);
+}
+// Odak çizgisi background-image ile: geçiş yalnız background-color'da olduğu için çizgi beklemeden görünür.
+[data-focus='kbd'] .mantine-AppShell-resizeHandle:focus-visible {
+  box-shadow: none;
+  &::after {
+    background-image: linear-gradient(var(--gx-focus), var(--gx-focus));
+  }
+}
+
+// Yüksek karşıtlık modu (forced-colors): tek dar istisna. Yalnız klavye modu + :focus-visible.
+@media (forced-colors: active) {
+  [data-focus='kbd'] :focus-visible,
+  [data-focus='kbd'] .mantine-SegmentedControl-input:focus-visible + .mantine-SegmentedControl-label,
+  [data-focus='kbd'] .mantine-Switch-input:focus-visible + .mantine-Switch-track {
+    outline: 2px solid CanvasText;
+  }
+  [data-focus='kbd'] .mantine-SegmentedControl-input:focus-visible,
+  [data-focus='kbd'] .mantine-Switch-input:focus-visible {
+    outline: none;
+  }
+}
+
+/* =====================================================================
+   Mantine hareket adaptörü: kütüphanenin iç yüzeyleri aynı tokenları kullanır.
+   Kapsam tests/motion-gate.test.ts ile denetlenir (yeni bileşen eklenince FAIL).
+   ===================================================================== */
+$motion-parts: (
+  'ActionIcon-icon': (transform, opacity),
+  'Button-inner': (transform, opacity),
+  'Input-input': (border-color, background-color, color),
+  'ModalBase-header': (padding-inline-end),
+  'NavLink-section': (transform),
+  'ScrollArea-scrollbar': (background-color, opacity),
+  'ScrollArea-thumb': (background-color),
+  'ScrollArea-corner': (opacity),
+  'Slider-thumb': (transform),
+  'Splitter-thumb': (color),
+  'Switch-track': (background-color, border-color),
+  'Switch-thumb': (inset-inline-start),
+  'Switch-trackLabel': (margin),
+  'Accordion-chevron': (transform),
+  'AppShell-resizeHandle': (background-color),
+  'SegmentedControl-indicator': (transform, width, height),
+  'Burger-burger': (background-color, transform),
+  'Progress-section': (width),
+);
+@each $part, $props in $motion-parts {
+  .mantine-#{$part} {
+    transition-property: $props;
+    transition-duration: var(--gx-dur);
+    transition-timing-function: var(--gx-ease);
+  }
+}
+// Sözde öğeler ayrı bağlanır (transition kalıtılmaz).
+.mantine-Button-root::before,
+.mantine-AppShell-resizeHandle::after,
+.mantine-Burger-burger::before,
+.mantine-Burger-burger::after {
+  transition-property: background-color, transform, opacity;
+  transition-duration: var(--gx-dur);
+  transition-timing-function: var(--gx-ease);
+}
+// Düğme ve simge düğmesinin zemin değişimi (hover giriş ve çıkış) yumuşak.
+// box-shadow listede yok: odak çizgisi geciktirilmeden görünür.
+.mantine-Button-root,
+.mantine-ActionIcon-root,
+.mantine-NavLink-root,
+.mantine-Menu-item,
+.mantine-Combobox-option,
+.mantine-Spotlight-action,
+.mantine-Tabs-tab,
+.mantine-Accordion-control,
+.mantine-UnstyledButton-root,
+.mantine-CloseButton-root {
+  transition-property: background-color, color, border-color;
+  transition-duration: var(--gx-dur-fast);
+  transition-timing-function: var(--gx-ease);
+}
+// Bildirimler: paket satır içi stilde sabit, taşmalı bir eğri ve linear kullanır.
+// Paket bunu yapılandırmaya açmadığı için yalnız bu kapsamda !important ile token eğrisine bağlanır.
+.mantine-Notifications-root .mantine-Notification-root,
+.mantine-Notifications-root [class*='mantine-Notifications-notification'] {
+  transition-timing-function: var(--gx-ease) !important;
+}
+// Tur: paket nokta ışığı ve ipucu kaydırmasında satır içi `all 150ms ease` ve taşmalı eğri kullanır.
+// Yalnız bu iki yüzeyde, açık özellik listesiyle token eğrisine ve süresine bağlanır.
+.mantine-Tour-spotlight,
+.mantine-Tour-tooltip {
+  transition-property: transform, opacity, top, left, width, height !important;
+  transition-duration: var(--gx-dur) !important;
+  transition-timing-function: var(--gx-ease) !important;
+}
+.mantine-Dropzone-root,
+.mantine-Dropzone-inner,
+.mantine-CodeHighlight-copy,
+.mantine-CodeHighlight-controls {
+  transition-property: border-color, background-color, opacity;
+  transition-duration: var(--gx-dur);
+  transition-timing-function: var(--gx-ease);
+}
+
+// Kullanıcı az hareket tercih ederse (tek izinli istisna dalı): süre sıfır.
+// :root:root — Mantine'in sonradan eklenen :root değişkenlerinden (cssVariablesResolver) güçlü olmalı.
+@media (prefers-reduced-motion: reduce) {
+  :root:root {
+    --gx-dur-fast: 0ms;
+    --gx-dur: 0ms;
+    --gx-dur-slow: 0ms;
+  }
+}
+
+/* =====================================================================
+   Okunabilirlik: Mantine'in 14 px altına inen yardımcı boyutları (global kural: en az 14 CSS px).
+   ===================================================================== */
+.mantine-Badge-root {
+  --badge-fz-xs: var(--mantine-font-size-sm);
+  --badge-fz-sm: var(--mantine-font-size-sm);
+  --badge-fz-md: var(--mantine-font-size-sm);
+  --badge-fz-lg: var(--mantine-font-size-sm);
+  --badge-height-lg: 1.625rem;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+}
+.mantine-Kbd-root {
+  --kbd-fz-xs: var(--mantine-font-size-sm);
+  --kbd-fz-sm: var(--mantine-font-size-sm);
+}
+.mantine-InputWrapper-description,
+.mantine-InputWrapper-error,
+.mantine-Input-section {
+  font-size: var(--mantine-font-size-sm);
+}
+
+/* =====================================================================
+   Dokunma ve kalem (kaba işaretçi): görünür kontrol değişmeden etkileşim alanı en az 44 px.
+   ===================================================================== */
+@media (pointer: coarse) {
+  :root {
+    --gx-hit: 2.75rem;
+  }
+  .mantine-Button-root {
+    --button-height-xs: 2.75rem;
+    --button-height-sm: 2.75rem;
+    --button-height-md: 2.75rem;
+  }
+  .mantine-ActionIcon-root {
+    --ai-size-sm: 2.75rem;
+    --ai-size-md: 2.75rem;
+    --ai-size-lg: 2.75rem;
+  }
+  .mantine-Input-input {
+    --input-height-xs: 2.75rem;
+    --input-height-sm: 2.75rem;
+  }
+  .mantine-Slider-root {
+    --slider-thumb-size: 1.5rem;
+  }
+}
+
+// Katmanlar (çekmece, iletişim kutusu, açılır menü) yüzey renginde; gövde zemini yalnız uygulama arka planı.
+.mantine-Drawer-content,
+.mantine-Drawer-header,
+.mantine-Modal-content,
+.mantine-Modal-header {
+  background-color: var(--gx-surface);
+}
+
+// Ekran okuyucuya özel metin
+.gx-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

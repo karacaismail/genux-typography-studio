@@ -1,0 +1,429 @@
+// Önizleme tuvali: ürün sayfaları ve HTML5 örneği. Renk değişkenleri tokens.ts CANVAS_TOKENS'tan
+// tuval köküne yazılır (tek kaynak). Tuval teması uygulama temasından bağımsızdır.
+
+.gx-canvas {
+  --pv-s1: 4px;
+  --pv-s2: 8px;
+  --pv-s3: 12px;
+  --pv-s4: 16px;
+  --pv-s5: 24px;
+  --pv-s6: 32px;
+  --pv-radius: 8px;
+  --pv-radius-sm: 4px;
+  --pv-ctrl: 44px;
+
+  &[data-canvas-theme='light'] {
+    color-scheme: light;
+  }
+  &[data-canvas-theme='dark'] {
+    color-scheme: dark;
+  }
+
+  position: relative;
+  container-type: inline-size;
+  background: var(--canvas);
+  color: var(--canvas-text);
+  padding: var(--pv-s6) clamp(16px, 4cqi, 40px) var(--pv-s6);
+  font-family: 'Outfit', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.gx-canvas {
+  pre code {
+    font: inherit;
+  }
+  :where(h1, h2, h3, h4, h5, h6, p, figure, blockquote, pre, ol, ul, dl, dd) {
+    margin: 0;
+  }
+  .pv-page {
+    display: grid;
+    gap: var(--pv-s5);
+    min-width: 0;
+  }
+  .pv-sec {
+    display: grid;
+    gap: var(--pv-s4);
+    padding-top: var(--pv-s5);
+    border-top: 1px solid var(--canvas-stroke);
+    min-width: 0;
+  }
+  .pv-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--pv-s3) var(--pv-s4);
+  }
+  .pv-grid {
+    display: grid;
+    gap: var(--pv-s4);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  }
+  .pv-card {
+    display: grid;
+    gap: var(--pv-s2);
+    align-content: start;
+    padding: var(--pv-s4);
+    background: var(--canvas-2);
+    border-radius: var(--pv-radius);
+    min-width: 0;
+  }
+  .pv-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: var(--pv-s2);
+  }
+  .pv-crumb {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--pv-s2);
+    li + li::before {
+      content: '›';
+      margin-right: var(--pv-s2);
+    }
+  }
+  .pv-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--pv-s2) var(--pv-s5);
+    border-bottom: 1px solid var(--canvas-stroke);
+    padding-bottom: var(--pv-s2);
+    .is-current {
+      box-shadow: 0 2px 0 currentColor;
+    }
+  }
+  .pv-input {
+    width: 100%;
+    max-width: 420px;
+    min-height: var(--pv-ctrl);
+    padding: 0 var(--pv-s3);
+    border: 0;
+    border-radius: var(--pv-radius);
+    background: var(--canvas-field);
+    color: inherit;
+    box-sizing: border-box;
+  }
+  .pv-btn {
+    position: relative;
+    justify-self: start;
+    min-height: var(--pv-ctrl);
+    padding: 0 var(--pv-s5);
+    border: 0;
+    border-radius: var(--pv-radius);
+    background: var(--canvas-field);
+    cursor: pointer;
+    transition: background-color var(--gx-dur-fast) var(--gx-ease);
+  }
+  .pv-btn-lg {
+    min-height: 56px;
+  }
+  .pv-badge {
+    justify-self: start;
+    display: inline-block;
+    padding: 2px var(--pv-s2);
+    background: var(--canvas-field);
+    border-radius: var(--pv-radius-sm);
+  }
+  .pv-thumb {
+    aspect-ratio: 4 / 3;
+    background: var(--canvas-field);
+    border-radius: var(--pv-radius-sm);
+  }
+  .pv-note {
+    padding: var(--pv-s3) var(--pv-s4);
+    background: var(--canvas-2);
+    border-radius: var(--pv-radius);
+    box-shadow: inset 3px 0 0 var(--canvas-stroke);
+  }
+  .pv-menu {
+    display: grid;
+    gap: 0;
+    max-width: 280px;
+    padding: var(--pv-s1);
+    background: var(--canvas-2);
+    border-radius: var(--pv-radius);
+    li {
+      padding: var(--pv-s2) var(--pv-s3);
+    }
+  }
+  .pv-tip {
+    display: inline-block;
+    padding: var(--pv-s1) var(--pv-s2);
+    background: var(--canvas-field);
+    border-radius: var(--pv-radius-sm);
+  }
+  .pv-chart {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    align-items: end;
+    gap: var(--pv-s2);
+    height: 120px;
+    i {
+      display: block;
+      background: var(--canvas-field);
+      border-radius: 2px 2px 0 0;
+    }
+  }
+  .pv-axis {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: var(--pv-s2);
+    text-align: center;
+  }
+  .table-scroll {
+    overflow-x: auto;
+    max-width: 100%;
+  }
+  .pv-table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 640px;
+    th,
+    td {
+      padding: var(--pv-s2) var(--pv-s3);
+      vertical-align: top;
+      border-bottom: 1px solid var(--canvas-stroke);
+      white-space: nowrap;
+      text-align: start;
+    }
+    th {
+      background: var(--canvas-field);
+    }
+    td.wrap {
+      white-space: normal;
+      min-width: 240px;
+    }
+  }
+  .pv-app {
+    display: grid;
+    gap: var(--pv-s5);
+  }
+  .pv-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--pv-s2) var(--pv-s4);
+  }
+  .pv-side .pv-list {
+    gap: var(--pv-s1);
+    li {
+      padding: var(--pv-s1) var(--pv-s2);
+    }
+  }
+  .pv-side .is-current {
+    background: var(--canvas-2);
+    border-radius: var(--pv-radius-sm);
+  }
+  .pv-detail {
+    display: grid;
+    gap: var(--pv-s4);
+  }
+  .pv-quote {
+    padding-left: var(--pv-s4);
+    box-shadow: inset 3px 0 0 var(--canvas-stroke);
+  }
+  .pv-footer {
+    display: grid;
+    gap: var(--pv-s3);
+    padding-top: var(--pv-s4);
+    border-top: 1px solid var(--canvas-stroke);
+  }
+  // BI: çip, lejant, değer etiketli çubuklar
+  .pv-chip {
+    display: inline-block;
+    padding: 2px var(--pv-s3);
+    background: var(--canvas-field);
+    border-radius: 999px;
+  }
+  .pv-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--pv-s2) var(--pv-s4);
+  }
+  .pv-key {
+    display: inline-block;
+    width: 0.75em;
+    height: 0.75em;
+    margin-inline-end: 0.4em;
+    border-radius: 2px;
+    background: var(--canvas-text);
+    &.is-alt {
+      opacity: 0.55;
+    }
+    &.is-alt2 {
+      opacity: 0.25;
+    }
+  }
+  .pv-bars {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    align-items: end;
+    gap: var(--pv-s2);
+    height: 160px;
+    > div {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      gap: var(--pv-s1);
+      height: 100%;
+      min-width: 0;
+    }
+    i {
+      display: block;
+      width: 100%;
+      background: var(--canvas-field);
+      border-radius: 2px 2px 0 0;
+    }
+  }
+  // AI: konuşma, araç olayları, karar kartı
+  .pv-chat {
+    display: grid;
+    gap: var(--pv-s4);
+  }
+  .pv-msg {
+    display: grid;
+    gap: var(--pv-s2);
+    max-width: min(100%, 72ch);
+    &.is-user {
+      justify-self: end;
+      padding: var(--pv-s3) var(--pv-s4);
+      background: var(--canvas-2);
+      border-radius: var(--pv-radius);
+    }
+  }
+  .pv-steps {
+    display: grid;
+    gap: var(--pv-s1);
+    margin: 0;
+    padding: var(--pv-s2) var(--pv-s3);
+    list-style: none;
+    background: var(--canvas-2);
+    border-radius: var(--pv-radius-sm);
+  }
+  .pv-decision {
+    box-shadow: inset 3px 0 0 var(--canvas-stroke);
+  }
+  .pv-specimen {
+    gap: var(--pv-s4);
+  }
+  .pv-stack-sm {
+    display: grid;
+    gap: var(--pv-s1);
+  }
+  .pv-ul {
+    padding-left: 1.4em;
+    display: grid;
+    gap: 6px;
+    margin: 0;
+  }
+  .pv-dl {
+    display: grid;
+    grid-template-columns: minmax(8em, max-content) minmax(0, 1fr);
+    gap: 6px var(--pv-s4);
+    margin: 0;
+  }
+  .pv-fieldset {
+    display: grid;
+    gap: var(--pv-s2);
+    max-width: 520px;
+    min-width: 0;
+    margin: 0;
+    padding: var(--pv-s4);
+    border: 1px solid var(--canvas-stroke);
+    border-radius: var(--pv-radius);
+  }
+  .pv-textarea {
+    min-height: 96px;
+    padding: var(--pv-s2) var(--pv-s3);
+    resize: vertical;
+  }
+  .pv-listbox {
+    width: 100%;
+    max-width: 320px;
+    padding: var(--pv-s1);
+    border: 0;
+    border-radius: var(--pv-radius);
+    background: var(--canvas-field);
+    color: inherit;
+  }
+  .pv-details summary {
+    cursor: pointer;
+  }
+  mark {
+    background: var(--canvas-field);
+    padding: 0 0.15em;
+    border-radius: 2px;
+  }
+  abbr {
+    text-decoration-style: dotted;
+  }
+  kbd,
+  :not(pre) > code {
+    padding: 0 0.3em;
+    background: var(--canvas-field);
+    border-radius: var(--pv-radius-sm);
+  }
+  table caption {
+    caption-side: top;
+    padding-bottom: var(--pv-s2);
+  }
+  pre {
+    padding: var(--pv-s3);
+    background: var(--canvas-field);
+    border-radius: var(--pv-radius-sm);
+    overflow-x: auto;
+  }
+  .is-clamped {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: var(--clamp);
+    overflow: hidden;
+  }
+  // Seçili türün bütün örnekleri: zeminin üstüne açık katman + sol şerit.
+  // background-image kullanılır; buton, rozet, girdi ve tablo başlığının kendi zemini korunur.
+  [data-role].is-editing {
+    background-image: linear-gradient(var(--pv-hl-bar), var(--pv-hl-bar)), linear-gradient(var(--pv-hl), var(--pv-hl));
+    background-size: 3px 100%, 100% 100%;
+    background-repeat: no-repeat;
+    background-position: left top, left top;
+  }
+  &[data-clean] [data-role].is-editing {
+    background-image: none;
+  }
+}
+@container (min-width: 720px) {
+  .gx-canvas .pv-app {
+    grid-template-columns: 200px minmax(0, 1fr);
+  }
+  .gx-canvas .pv-detail {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  }
+}
+
+// "H1 · düzenleniyor" etiketi: ilk örneğin hemen üstünde.
+.gx-edit-tag {
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
+  padding: 0 8px;
+  border-radius: 3px 3px 0 0;
+  background: var(--pv-hl-bar);
+  color: var(--pv-hl-on);
+  font: 600 var(--mantine-font-size-sm) / 22px var(--mantine-font-family);
+  white-space: nowrap;
+}
+@media (forced-colors: active) {
+  .gx-edit-tag {
+    forced-color-adjust: none;
+    background: Highlight;
+    color: HighlightText;
+  }
+  .gx-canvas [data-role].is-editing {
+    outline: 1px dashed Highlight;
+  }
+}

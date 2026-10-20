@@ -1,0 +1,54 @@
+<div class="pv-app">
+  <div class="pv-side">
+    <ul class="pv-list" aria-label="Örnek kenar menü">
+      <li class="r-nav is-current" data-role="nav">Asistan</li>
+      <li class="r-nav" data-role="nav">Konuşmalar</li>
+      <li class="r-nav" data-role="nav">Kaynaklar</li>
+      <li class="r-nav" data-role="nav">Otomasyonlar</li>
+    </ul>
+  </div>
+  <div class="pv-page">
+    <ol class="pv-crumb r-breadcrumb" data-role="breadcrumb"><li>Çalışma alanı</li><li>Satış ekibi</li><li>Asistan</li></ol>
+    <div class="pv-row"><h1 class="r-h1" data-role="h1">Satış asistanı</h1><span class="pv-badge r-badge" data-role="badge">Taslak modu</span></div>
+    <p class="r-lead" data-role="lead">Satış verilerinizi sorun; yanıtlar kaynaklarıyla gelir, değişiklikler onayınızdan sonra uygulanır.</p>
+    <p class="r-caption" data-role="caption">Kapsam: Satış veri ambarı · Kiracı: Lumen A.Ş. · Mod: taslak (onaysız değişiklik yapılmaz)</p>
+    <div class="pv-tabs"><span class="r-tab is-current" data-role="tab">Sohbet</span><span class="r-tab" data-role="tab">Taslaklar</span><span class="r-tab" data-role="tab">Geçmiş</span></div>
+    <div class="pv-chat" role="log" aria-label="Örnek konuşma">
+      <div class="pv-msg is-user">
+        <p class="r-chatMeta" data-role="chatMeta">Siz · 14:30</p>
+        <p class="r-chatMessage" data-role="chatMessage">Geçen ayın satışlarını bölgeye göre özetler misin?</p>
+      </div>
+      <div class="pv-msg">
+        <p class="r-chatMeta" data-role="chatMeta">Asistan · 14:31 · 2 araç çağrısı</p>
+        <ol class="pv-steps" aria-label="Araç olayları">
+          <li class="r-toolStep" data-role="toolStep">✓ satis_2026_q3 tablosu okundu · 1,2 sn</li>
+          <li class="r-toolStep" data-role="toolStep">✓ Bölgeye göre gruplandı · 0,4 sn</li>
+        </ol>
+        <p class="r-chatMessage" data-role="chatMessage">Ekimde toplam gelir 2,4 M ₺ oldu. En yüksek artış Marmara'da (%18), tek düşüş Ege'de (−%3); Ege'deki düşüş bayi stoklarındaki gecikmeyle örtüşüyor.</p>
+        <div class="pv-row" role="group" aria-label="Kaynaklar"><span class="pv-chip r-citation" data-role="citation">[1] satis_2026_q3.csv</span><span class="pv-chip r-citation" data-role="citation">[2] hedefler_2026.xlsx</span></div>
+      </div>
+      <div class="pv-card pv-decision">
+        <p class="r-decisionTitle" data-role="decisionTitle">Rapor taslağı ekiple paylaşılsın mı?</p>
+        <p class="r-body" data-role="body">Taslak sürüm 2 · 3 grafik, 1 tablo eklendi.</p>
+        <div class="pv-row"><button type="button" class="pv-btn r-button" data-role="button">Önce / sonra incele</button><button type="button" class="pv-btn r-button" data-role="button">Paylaş</button></div>
+        <p class="r-helper" data-role="helper">Paylaşım için onayınız gerekir; sürüm geçmişinden geri alınabilir.</p>
+      </div>
+    </div>
+    <div class="pv-row" role="group" aria-label="Örnek öneriler"><span class="pv-chip r-suggestion" data-role="suggestion">Gelir trendini göster</span><span class="pv-chip r-suggestion" data-role="suggestion">Hedeflerle karşılaştır</span><span class="pv-chip r-suggestion" data-role="suggestion">Ege için neden sor</span></div>
+    <label class="r-label" data-role="label" for="ai-prompt">Mesaj</label>
+    <textarea class="pv-input pv-textarea r-promptInput" data-role="promptInput" id="ai-prompt" rows="2">Bu tabloyu bölgeye göre özetle</textarea>
+    <div class="pv-row"><button type="button" class="pv-btn r-button" data-role="button">Gönder</button><a class="r-link" data-role="link" href="#">Kapsamı değiştir</a><span class="pv-tip r-tooltip" data-role="tooltip">Enter gönderir, Shift + Enter yeni satır</span></div>
+    <ul class="pv-menu pv-list" aria-label="Örnek konuşma menüsü"><li class="r-menuItem" data-role="menuItem">Konuşmayı dışa aktar</li><li class="r-menuItem" data-role="menuItem">Kaynakları göster</li><li class="r-menuItem" data-role="menuItem">Konuşmayı sil</li></ul>
+    <div class="pv-note"><p class="r-notification" data-role="notification">Bağlantı kısa süre kesildi; son yanıt eksiksiz kaydedildi.</p></div>
+    <section class="pv-sec">
+      <h2 class="r-h2" data-role="h2">Kaynaklar</h2>
+      <h3 class="r-h3" data-role="h3">Satış veri ambarı</h3>
+      <p class="r-paragraph" data-role="paragraph">Asistan yalnız bu çalışma alanına bağlı kaynakları okur. Yazma işlemleri taslak olarak hazırlanır ve onay bekler.</p>
+      <h4 class="r-h4" data-role="h4">Erişim</h4>
+      <h5 class="r-h5" data-role="h5">Saklama süresi</h5>
+      <h6 class="r-h6" data-role="h6">Kayıt politikası</h6>
+      <p class="r-body" data-role="body">Konuşmalar 90 gün saklanır; yöneticiler süreyi kısaltabilir.</p>
+    </section>
+    <div class="pv-card"><p class="r-emptyTitle" data-role="emptyTitle">Henüz kayıtlı taslak yok</p><p class="r-body" data-role="body">Asistanın hazırladığı taslaklar onayınızı beklerken burada görünür.</p></div>
+  </div>
+</div>

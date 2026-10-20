@@ -38,7 +38,7 @@ export function exportRole(dec: Decisions, ctx: ContextId, id: string) {
     label: d.label, kind: d.kind, category: d.category, source: d.src,
     changed: changedProps(dec, ctx, id), overrides: overriddenKeys(dec, ctx, id),
     fontSize: {
-      mode: r.mode, min: r.size, max: maxOf(r), fluid: r.mode === 'fluid', applied: { fluid, max: fluid ? maxOf(r) : r.size },
+      mode: r.mode, min: r.size, max: maxOf(r), fluid: r.mode === 'fluid', applied: { fluid, max: fluid || r.mode === 'endpoints' ? maxOf(r) : r.size },
       ...(r.mode === 'endpoints' ? { interpolation: 'linear-rounded', fromWidthPx: BASE_BP, toWidthPx: BREAKPOINTS[BREAKPOINTS.length - 1], byDevice: endpointSizes(r, s, id) } : {}),
       perScreen: isTiers(r) ? { ...r.sizes } : null,
       // Etkin olmayan modun değerleri de saklanır (mod değişince kaybolmasın); tüketici `mode` ile hangisinin uygulandığını bilir.

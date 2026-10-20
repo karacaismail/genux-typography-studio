@@ -11,6 +11,7 @@ it('two endpoints ignore legacy device sizes and interpolate integer px in every
   const exported = buildExport(d, 'all');
   const role = (exported.contexts.html as any).roles.h1;
   expect(role.fontSize.byDevice['768']).toBe(26);
+  expect(role.fontSize.applied.max).toBe(40);
   const restored = importData(exported, defaultDecisions(), 'html');
   expect(sizeAt(resolveAt(restored.decisions, 'admin', 'h1', 768), restored.decisions.contexts.admin.settings, 'h1', 768)).toBe(26);
   d = applyOverrideAt(d, 'html', 'h1', { max: 48 }, 1920);

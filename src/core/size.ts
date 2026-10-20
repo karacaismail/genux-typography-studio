@@ -1,4 +1,4 @@
-import { BASE_BP, HARD, TIER_IDS, TIERS, decisionAt, tierOf } from './constants';
+import { BASE_BP, BREAKPOINTS, HARD, TIER_IDS, TIERS, decisionAt, tierOf } from './constants';
 import { ROLE, isReading } from './roles';
 import type { ContextSettings, RoleProps } from './types';
 import { clampNum, fmt, remStr, round } from './util';
@@ -15,6 +15,10 @@ export const minSizeOf = (r: RoleProps, id?: string) =>
 
 /** Belirli bir ekran genişliğinde uygulanan boyut (px). */
 export function sizeAt(r: RoleProps, s: ContextSettings, id: string, w: number) {
+  if (r.mode === 'endpoints') {
+    const end = BREAKPOINTS[BREAKPOINTS.length - 1];
+    return Math.round(r.size + (maxOf(r) - r.size) * clampNum((w - BASE_BP) / (end - BASE_BP), 0, 1));
+  }
   if (isRelative(r)) return relNominal(id, r);
   if (isTiers(r)) return r.sizes[tierOf(w)];
   if (!isFluid(r, s)) return r.size;
@@ -26,6 +30,16 @@ export function cssTiers(r: RoleProps & { sizes: NonNullable<RoleProps['sizes']>
   return Object.fromEntries(TIERS.map((t) => [t.min ? `@media (min-width: ${t.min}px)` : 'base', remStr(r.sizes[t.id])]));
 }
 export function cssSize(r: RoleProps, s: ContextSettings, id: string) {
+  if (r.mode === 'endpoints') {
+    const start = Math.round(r.size);
+    const end = Math.round(maxOf(r));
+    const rules = [`font-size: ${remStr(start)};`];
+    for (let px = start + 1; px <= end; px++) {
+      const at = BASE_BP + (px - start - 0.5) * (BREAKPOINTS[BREAKPOINTS.length - 1] - BASE_BP) / (end - start);
+      rules.push(`@media (min-width: ${round(at, 6)}px) { font-size: ${remStr(px)}; }`);
+    }
+    return rules.join('\n');
+  }
   if (isRelative(r)) return `max(${remStr(minSizeFor(id))}, ${r.em}em)`;
   if (isTiers(r)) return TIERS.map((t) => `${t.min ? `≥${t.min}px ` : ''}${remStr(r.sizes[t.id])}`).join(' · ');
   if (!isFluid(r, s)) return remStr(r.size);
@@ -37,8 +51,11 @@ export function cssSize(r: RoleProps, s: ContextSettings, id: string) {
     : `${round(slope * 100, 4)}${unit} - ${remStr(-intercept)}`;
   return `clamp(${remStr(r.size)}, ${fluidPart}, ${remStr(maxOf(r))})`;
 }
+export const endpointSizes = (r: RoleProps, s: ContextSettings, id: string) => Object.fromEntries(BREAKPOINTS.map((w) => [w, sizeAt(r, s, id, w)]));
+
 /** Gezgin ve rapor için kısa boyut metni. */
 export function valueText(r: RoleProps, s: ContextSettings) {
+  if (r.mode === 'endpoints') return `${r.size}→${maxOf(r)}`;
   if (isRelative(r)) return `${fmt(r.em)}em`;
   if (isTiers(r)) return TIER_IDS.map((t) => fmt(r.sizes[t])).join('/');
   return isFluid(r, s) ? `${fmt(r.size)}→${fmt(maxOf(r))}` : fmt(r.size);

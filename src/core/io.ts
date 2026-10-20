@@ -3,9 +3,9 @@ import { computeChecks, type CheckEnv } from './checks';
 import { normalizeGray } from './color';
 import { enforceRole, enforceSettings } from './enforce';
 import { PROPS, changedProps, defaultDecisions, eqProp, inheritsFromBase, overriddenKeys, parentRole, resolveRole } from './resolve';
-import { applyOverrideAt, changeCount, isScreenKey, responsiveChanges, screenBreakpoints, screensOf } from './screens';
+import { withLayer, applyOverrideAt, changeCount, isScreenKey, responsiveChanges, screenBreakpoints, screensOf } from './screens';
 import { CTX_DEF, ROLE, ROLES, rolesOf } from './roles';
-import { cssSize, cssTiers, isFluid, isTiers, maxOf } from './size';
+import { endpointSizes, cssSize, cssTiers, isFluid, isTiers, maxOf } from './size';
 import type { ContextId, Decisions, PropKey, RoleOverrides } from './types';
 import { clampNum, fmt, has, isObj, round } from './util';
 
@@ -39,6 +39,7 @@ export function exportRole(dec: Decisions, ctx: ContextId, id: string) {
     changed: changedProps(dec, ctx, id), overrides: overriddenKeys(dec, ctx, id),
     fontSize: {
       mode: r.mode, min: r.size, max: maxOf(r), fluid: r.mode === 'fluid', applied: { fluid, max: fluid ? maxOf(r) : r.size },
+      ...(r.mode === 'endpoints' ? { interpolation: 'linear-rounded', fromWidthPx: BASE_BP, toWidthPx: BREAKPOINTS[BREAKPOINTS.length - 1], byDevice: endpointSizes(r, s, id) } : {}),
       perScreen: isTiers(r) ? { ...r.sizes } : null,
       // Etkin olmayan modun değerleri de saklanır (mod değişince kaybolmasın); tüketici `mode` ile hangisinin uygulandığını bilir.
       sizes: r.sizes ? { ...r.sizes } : null,
@@ -168,7 +169,13 @@ function importRole(dec: Decisions, ctx: ContextId, id: string, x: Record<string
         const k = back[n];
         if (k && isScreenKey(k)) (patch as Record<string, unknown>)[k] = v === null ? 0 : v;
       }
-      if (Object.keys(patch).length) dec = applyOverrideAt(dec, ctx, id, patch, bp);
+      if (Object.keys(patch).length) {
+        if (r.mode === 'endpoints') {
+          const checked = enforceRole(id, { ...r, ...patch });
+          const layer = Object.fromEntries(Object.keys(patch).map((k) => [k, checked[k as PropKey]]));
+          dec = withLayer(dec, ctx, id, bp, layer);
+        } else dec = applyOverrideAt(dec, ctx, id, patch, bp);
+      }
     }
   }
   return dec;

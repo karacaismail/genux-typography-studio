@@ -68,3 +68,7 @@ npm run build
 - Mantine çekirdek CSS'i bütün olarak yüklenir (gzip ~36 KB); bileşen başına CSS içe aktarımı ayrı bir iş olarak değerlendirilmeli.
 - forced-colors öykünmesi yalnız Chromium'da test edilir; Firefox ve WebKit'te `not_run`.
 - Gerçek Safari, iOS ve Android cihaz testleri yapılmadı (`not_run`).
+
+## İki uç boyut modu (2026-10-20)
+
+`endpoints`: 320 ve 3840 px için iki ortak tam sayı boyut; arası doğrusal hesaplanır ve Math.round ile tam sayıya yuvarlanır. Bütün ürün setlerinde çalışır; eski ara ekran size/max ezmelerini uygulamaz, diğer özellikleri korur. Uzun okuma18 sabit kalır. JSON fontSize.byDevice bütün cihazların hesaplanmış tam sayı boyutlarını ve uç genişlikleri içerir. Eski modlar ve dosyalar desteklenir.

@@ -5,7 +5,7 @@ import { minSizeFor } from './size';
 import type { ContextId, ContextSettings, RoleProps, SizeMode, TierId } from './types';
 import { clampNum, isObj, round } from './util';
 
-const MODES: SizeMode[] = ['static', 'tiers', 'fluid', 'relative'];
+const MODES: SizeMode[] = ['static', 'tiers', 'fluid', 'relative', 'endpoints'];
 const CHOICE_KEYS = ['ff', 'fst', 'tt', 'td', 'num', 'ta', 'wrap'] as const;
 const RANGE_KEYS = ['lh', 'ls', 'ws', 'mt', 'mb', 'mw'] as const;
 const num = (v: unknown, fb: number) => (v !== null && v !== '' && typeof v !== 'boolean' && Number.isFinite(Number(v)) ? Number(v) : fb);
@@ -30,10 +30,11 @@ export function enforceRole(id: string, raw: unknown): RoleProps {
   } else if (mode === 'tiers') {
     sizes = Object.fromEntries(TIER_IDS.map((t) => [t, size])) as Record<TierId, number>;
   }
+  if (mode === 'endpoints') size = Math.round(size);
   const max = long ? HARD.longReading : Math.max(clampNum(round(num(src.max, def.max), 1), HARD.minReadable, MAX_MAX), size);
   const wRaw = num(src.w, def.w);
   const w = wRaw >= RANGES.w.min && wRaw <= RANGES.w.max && wRaw % 100 === 0 ? wRaw : def.w;
-  const out = { ...def, size, mode, sizes, em, gr, max, w } as RoleProps;
+  const out = { ...def, size, mode, sizes, em, gr, max: mode === 'endpoints' ? Math.round(max) : max, w } as RoleProps;
   for (const k of RANGE_KEYS) {
     const g = RANGES[k];
     out[k] = clampNum(round(num(src[k], def[k]), k === 'mw' ? 0 : 3), g.min, g.max);

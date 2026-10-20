@@ -45,6 +45,11 @@ export function resolveAt(dec: Decisions, ctx: ContextId, id: string, w: number)
   // Her kırılımda önce katalog varsayılanı, sonra kullanıcı ayarı (aynı kırılımda kullanıcı kazanır; büyük kırılım küçüğü ezer).
   const layers = [overridesOf(dec, ctx, id), ...BREAKPOINTS.filter((b) => b > BASE_BP && b <= bp).map((b) => layerAt(dec, ctx, id, b))];
   let out = layers.some((l) => Object.keys(l).length) ? enforceRole(id, Object.assign({ ...parent, c: { ...parent.c } }, ...layers)) : parent;
+  // İki uç modu: ara ekranlardaki eski size/max ezmeleri uygulanmaz.
+  if (out.mode === 'endpoints' && bp > BASE_BP) {
+    const base = resolveAt(dec, ctx, id, BASE_BP);
+    out = enforceRole(id, { ...out, size: base.size, max: base.max });
+  }
   // "Ekrana göre" listesi bütün ekranlar için ortaktır: üst kırılımlarda temel ekrandaki (320) liste kullanılır.
   if (out.mode === 'tiers' && bp > BASE_BP) {
     const baseSizes = resolveAt(dec, ctx, id, BASE_BP).sizes;
@@ -73,6 +78,15 @@ export function resolveContextAt(dec: Decisions, ctx: ContextId, w: number): Rec
 export function applyOverrideAt(dec: Decisions, ctx: ContextId, id: string, patch: RoleOverrides, w: number): Decisions {
   const bp = breakpointAt(w);
   if (bp === BASE_BP) return applyOverride(dec, ctx, id, patch);
+  if ((patch.mode ?? resolveAt(dec, ctx, id, w).mode) === 'endpoints') {
+    const shared: RoleOverrides = {};
+    const rest = { ...patch };
+    for (const k of ['mode', 'size', 'max'] as const) if (k in rest) { (shared as Record<string, unknown>)[k] = rest[k]; delete rest[k]; }
+    if (Object.keys(shared).length) {
+      const next = applyOverride(dec, ctx, id, shared);
+      return Object.keys(rest).length ? applyOverrideAt(next, ctx, id, rest, w) : next;
+    }
+  }
   const basePatch: RoleOverrides = {};
   const screenPatch: RoleOverrides = {};
   for (const k of Object.keys(patch) as PropKey[]) (isScreenKey(k) ? screenPatch : basePatch)[k] = patch[k] as never;
@@ -97,7 +111,7 @@ export function clearScreens(dec: Decisions, ctx: ContextId, id: string): Decisi
   delete screens[id];
   return { ...dec, contexts: { ...dec.contexts, [ctx]: { ...dec.contexts[ctx], screens } } };
 }
-function withLayer(dec: Decisions, ctx: ContextId, id: string, bp: number, layer: RoleOverrides): Decisions {
+export function withLayer(dec: Decisions, ctx: ContextId, id: string, bp: number, layer: RoleOverrides): Decisions {
   const all = { ...(dec.contexts[ctx].screens ?? {}) };
   const role = { ...(all[id] ?? {}) };
   if (Object.keys(layer).length) role[String(bp)] = layer;

@@ -1,8 +1,8 @@
-import { Accordion, Button, Code, Menu, SegmentedControl, Tooltip } from '@mantine/core';
+import { Accordion, Button, Code, Menu, Select, SegmentedControl, Tooltip } from '@mantine/core';
 import { CaretDownIcon, LockIcon, WarningIcon } from '@phosphor-icons/react';
 import type { ReactNode } from 'react';
 import {
-  CATEGORIES, CHOICES, CLAMP_CHOICES, GROUP_BPS, HARD, LONG_READING_CONDITION, decisionAt, resolveAt, KIND_LABEL, RANGES, SIZE_MAX, TIERS, TIER_IDS, WEIGHT_NAME,
+  BREAKPOINTS, CATEGORIES, CHOICES, CLAMP_CHOICES, GROUP_BPS, HARD, LONG_READING_CONDITION, decisionAt, resolveAt, KIND_LABEL, RANGES, SIZE_MAX, TIERS, TIER_IDS, WEIGHT_NAME,
   BASE_BP, baseSource, changeCount, clearScreens, contextLabel, cssSize, cssTiers, deviceAtBreakpoint, isScreenKey, isTiers, layerOf, minSizeFor, noClamp,
   screenBreakpoints, screenSource, screensOf,
   relNominal, roleWarnings, tierOf, type PropKey, type RoleOverrides, type SizeMode, type TierId,
@@ -18,6 +18,7 @@ import { SliderNumber } from './SliderNumber';
 import classes from './Inspector.module.scss';
 
 const MODE_DATA: { value: SizeMode; label: string }[] = [
+  { value: 'endpoints', label: 'İki uç · otomatik tam sayı' },
   { value: 'static', label: 'Sabit' },
   { value: 'tiers', label: 'Ekrana göre' },
   { value: 'fluid', label: 'Akışkan' },
@@ -31,6 +32,7 @@ export function Inspector() {
   const store = useStudio.getState;
   const sections = useUi((s) => s.sections);
   const { resetRole, resetContext } = useStudioActions();
+  const endpoints = r.mode === 'endpoints';
   const long = def.kind === 'long';
   const minSize = minSizeFor(id);
   const warnings = roleWarnings(r, settings, id, dims.w);
@@ -43,12 +45,12 @@ export function Inspector() {
   // Düzenleme seçili cihazın kırılımına yazılır (320 = temel, bütün ekranlara kalıtılır).
   const set = (patch: RoleOverrides, key: string = Object.keys(patch).join(',')) => store().override(ctx, id, patch, `${ctx}:${id}:${bp}:${key}`, dims.w);
   const row = (k: PropKey) => ({
-    source: screenSource(decisions, ctx, id, k, dims.w),
-    bp,
-    screenKey: isScreenKey(k),
+    source: screenSource(decisions, ctx, id, k, endpoints && (k === 'size' || k === 'max') ? BASE_BP : dims.w),
+    bp: endpoints && (k === 'size' || k === 'max') ? BASE_BP : bp,
+    screenKey: isScreenKey(k) && !(endpoints && (k === 'size' || k === 'max')),
     parent: baseSource(ctx, id, k),
     // Renk, mod ve ekran sınıfı listesi kırılıma girmez: temel katmandan kaldırılır.
-    onReset: () => store().resetProps(ctx, id, [k], isScreenKey(k) ? dims.w : undefined),
+    onReset: () => store().resetProps(ctx, id, [k], isScreenKey(k) && !(endpoints && (k === 'size' || k === 'max')) ? dims.w : undefined),
   });
   const seg = (k: PropKey, data: { value: string; label: string }[], label: string, extra?: { disabled?: boolean }) => (
     <PropertyRow label={label} {...row(k)}>
@@ -58,9 +60,10 @@ export function Inspector() {
       />
     </PropertyRow>
   );
+  const setEndpoint = (patch: RoleOverrides) => store().override(ctx, id, patch, `${ctx}:${id}:endpoints:${Object.keys(patch)}`);
   const activeTier = tierOf(dims.w);
   const productive = settings.set === 'productive';
-  const css = isTiers(r) ? Object.entries(cssTiers(r)).map(([q, v]) => (q === 'base' ? `font-size: ${v};` : `${q} { font-size: ${v}; }`)).join('\n') : `font-size: ${cssSize(r, settings, id)};`;
+  const css = isTiers(r) ? Object.entries(cssTiers(r)).map(([q, v]) => (q === 'base' ? `font-size: ${v};` : `${q} { font-size: ${v}; }`)).join('\n') : endpoints ? cssSize(r, settings, id) : `font-size: ${cssSize(r, settings, id)};`;
 
   const section = (value: string, title: string, children: ReactNode) => (
     <Accordion.Item value={value}>
@@ -80,7 +83,7 @@ export function Inspector() {
         <div className={classes.screen} data-base={isBase || undefined}>
           <span className={classes.screenTitle}>{isBase ? `Temel ekran · ${BASE_BP} px` : `Ekran · ${bp} px · ${device.name}`}</span>
           <span className={classes.screenNote}>
-            {isBase
+            {endpoints ? 'İki uç bütün ekranlarda ortaktır; cihaz seçimi yalnız önizlemeyi değiştirir.' : isBase
               ? 'Buradaki ayarlar bütün ekranlara kalıtılır.'
               : `Değişiklik ${bp} px ve üstündeki ekranlara uygulanır; küçük ekranlar etkilenmez. Renk bütün ekranlarda aynıdır.`}
           </span>
@@ -122,19 +125,21 @@ export function Inspector() {
               <p className={classes.locked}><LockIcon size={16} aria-hidden="true" /> Uzun okuma {HARD.longReading} px sabit (kesin karar); boyut ve mod kilitli. Koşul: {LONG_READING_CONDITION}</p>
             )}
             <PropertyRow label="Boyut modu" {...row('mode')}>
-              <SegmentedControl
-                size="sm" fullWidth aria-label="Boyut modu" value={r.mode} disabled={long}
-                onChange={(v) => set({ mode: v as SizeMode })}
+              <Select
+                size="sm" aria-label="Boyut modu" value={r.mode} disabled={long} allowDeselect={false}
+                onChange={(v) => { if (v === 'endpoints') setEndpoint({ mode: 'endpoints', size: Math.round(r.size), max: Math.round(Math.max(r.size, r.max)) }); else if (v) set({ mode: v as SizeMode }); }}
                 data={MODE_DATA.map((m) => ({ ...m, disabled: m.value === 'fluid' && productive }))}
               />
             </PropertyRow>
             {productive && r.mode === 'fluid' && <p className={classes.note}>Productive sette akışkanlık uygulanmaz; en küçük değer sabit kullanılır.</p>}
             {!isBase && <p className={classes.note}>Boyut modu bütün ekranlar için ortaktır.</p>}
-            {(r.mode === 'static' || r.mode === 'fluid') && (
-              <PropertyRow label={r.mode === 'fluid' ? 'En küçük boyut' : 'Boyut'} {...row('size')}>
+            {!long && !endpoints && <Button variant="default" onClick={() => setEndpoint({ mode: 'endpoints', size: Math.round(r.size), max: Math.round(Math.max(r.size, r.max)) })}>Yalnız en küçük ve en büyük ekranı ayarla</Button>}
+            {endpoints && <p className={classes.note}>320 px → {BREAKPOINTS[BREAKPOINTS.length - 1]} px. Yalnız iki boyut gir; ara cihazlar doğrusal hesaplanır ve tam sayıya yuvarlanır. Eski ara ekran boyutları bu modda kullanılmaz.</p>}
+            {(r.mode === 'static' || r.mode === 'fluid' || endpoints) && (
+              <PropertyRow label={endpoints ? '320 px ekranda boyut' : r.mode === 'fluid' ? 'En küçük boyut' : 'Boyut'} {...row('size')}>
                 <SliderNumber
-                  label={r.mode === 'fluid' ? 'En küçük boyut' : 'Boyut'} value={r.size} min={minSize} max={SIZE_MAX} step={1} decimals={1} unit="px"
-                  disabled={long} onChange={(v) => set({ size: v })}
+                  label={endpoints ? '320 px ekranda boyut' : r.mode === 'fluid' ? 'En küçük boyut' : 'Boyut'} value={r.size} min={minSize} max={SIZE_MAX} step={1} decimals={endpoints ? 0 : 1} unit="px"
+                  disabled={long} onChange={(v) => endpoints ? setEndpoint({ size: v }) : set({ size: v })}
                   hint={decisionAt(id, dims.w) !== null ? `Karar (${bp} px): ${decisionAt(id, dims.w)} px · en az ${minSize} px` : `En az ${minSize} px`}
                 />
               </PropertyRow>
@@ -148,6 +153,7 @@ export function Inspector() {
                 />
               </PropertyRow>
             )}
+            {endpoints && <PropertyRow label={`${BREAKPOINTS[BREAKPOINTS.length - 1]} px ekranda boyut`} {...row('max')}><SliderNumber label="En büyük ekranda boyut" value={r.max} min={r.size} max={160} step={1} decimals={0} unit="px" onChange={(v) => setEndpoint({ max: v })} /></PropertyRow>}
             {r.mode === 'fluid' && (
               <>
                 <PropertyRow label="En büyük boyut" {...row('max')}>

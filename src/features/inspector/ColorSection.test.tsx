@@ -16,6 +16,15 @@ describe('ColorField', () => {
     fireEvent.change(field, { target: { value: '#333' } });
     expect(onChange).toHaveBeenLastCalledWith('#333333');
   });
+  it('açık tema paleti #999999 ile biter; koyu tema açık tonları korur', () => {
+    const { unmount } = renderUi(<ColorField id="h1" r={r} theme="light" onChange={vi.fn()} />);
+    expect(screen.getAllByRole('radio')).toHaveLength(7);
+    expect(screen.queryByRole('radio', { name: '#b3b3b3' })).not.toBeInTheDocument();
+    expect(screen.getByRole('radio', { name: '#999999' })).toBeInTheDocument();
+    unmount();
+    renderUi(<ColorField id="h1" r={r} theme="dark" onChange={vi.fn()} />);
+    expect(screen.getByRole('radio', { name: '#ffffff' })).toBeInTheDocument();
+  });
   it('kartela radyo grubudur ve seçim değeri bildirir', () => {
     const onChange = vi.fn();
     renderUi(<ColorField id="h1" r={r} theme="light" onChange={onChange} />);

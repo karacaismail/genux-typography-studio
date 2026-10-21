@@ -22,11 +22,12 @@ export function ColorField({ id, r, theme, onChange }: Props) {
   useEffect(() => { setText(value); setError(null); }, [value]);
   const c = contrastInfo(r, id, theme);
   const bg = BG[theme].surface;
+  const tones = theme === 'light' ? GRAYS.filter((g) => g <= 153) : GRAYS;
 
   return (
     <div className={classes.colorField}>
       <div className={classes.swatches} role="radiogroup" aria-label={`${THEME_LABEL[theme]} metin rengi`}>
-        {GRAYS.map((g) => {
+        {tones.map((g) => {
           const hex = grayHex(g);
           return (
             <span key={g} className={classes.swatchItem}>

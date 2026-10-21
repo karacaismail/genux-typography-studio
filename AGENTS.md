@@ -126,3 +126,5 @@ Kırılım kartları kompakt yoğunluk kullanır: 4 px iç dolgu, 4 px ölçü�
 Karar panelinin üstünde element seçimi, ölçü özeti ve önizleme teması bulunur. Tekrarlanan büyük specimen/açıklama alanı kullanılmaz; onay durumu kompakt, kontrast uyarısı yalnız core contrastInfo başarısızsa gösterilir. Adım rozetleri eşit en/boy, radius %100 ve 2px kırmızı kenarlık kullanır.
 
 Workflow çıktı tonları açık/koyu bölümü sürekli görünürdür; accordion veya kapatma kontrolü kullanılmaz.
+
+Çıktı renk alanları kendi light/dark semantik tokenlarını kapsar; kartela, onaltılık alanı ve kontrast açıklamasının zemini/metni uygulama temasından bağımsızdır.

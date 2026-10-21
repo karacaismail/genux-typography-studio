@@ -201,6 +201,10 @@
   background: var(--gx-sunken);
 }
 .colorField {
+  background:var(--gx-surface);
+  color:var(--gx-text);
+  padding:var(--mantine-spacing-sm);
+  border-radius:var(--mantine-radius-sm);
   display: grid;
   gap: var(--mantine-spacing-xs);
 }

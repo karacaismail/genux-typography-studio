@@ -375,3 +375,16 @@ test('inspector owns element and theme controls and step badges are circular',as
   expect(shape.width).toBe(shape.height);
   expect(shape.border).toBe('2px');
 });
+
+test('output color fields retain their own light and dark surfaces across tool themes',async({page})=>{
+  await page.goto('/');
+  const light=page.locator('[data-output-theme="light"]');
+  const dark=page.locator('[data-output-theme="dark"]');
+  for(let i=0;i<2;i++){
+    await expect(light).toHaveCSS('background-color','rgb(255, 255, 255)');
+    await expect(light.getByRole('textbox')).toHaveCSS('background-color','rgb(255, 255, 255)');
+    await expect(dark).toHaveCSS('background-color','rgb(27, 27, 26)');
+    await expect(dark.getByRole('textbox')).toHaveCSS('background-color','rgb(27, 27, 26)');
+    await page.getByRole('button',{name:'Uygulama temasını değiştir',exact:true}).click();
+  }
+});

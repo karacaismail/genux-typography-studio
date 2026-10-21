@@ -1,5 +1,6 @@
 import { TextInput } from '@mantine/core';
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useId, useState, type CSSProperties } from 'react';
+import { COLOR_TOKENS } from '../../theme/tokens';
 import { BG, GRAYS, contrastInfo, grayHex, normalizeGray, type RoleProps, type Theme } from '../../core';
 import { fmt } from '../../core/util';
 import { RecommendationMark } from '../recommendations/Recommendation';
@@ -27,7 +28,8 @@ export function ColorField({ id, r, theme, onChange, recommended }: Props) {
   const tones = theme === 'light' ? GRAYS.filter((g) => g <= 128) : GRAYS.filter((g) => g >= 128);
 
   return (
-    <div className={classes.colorField}>
+    <div className={classes.colorField} data-output-theme={theme} style={Object.fromEntries(Object.entries(COLOR_TOKENS[theme]).map(([key,value])=>[`--gx-${key}`,value])) as CSSProperties}>
+      <span>{THEME_LABEL[theme]}</span>
       <div className={classes.swatches} role="radiogroup" aria-label={`${THEME_LABEL[theme]} metin rengi`}>
         {tones.map((g) => {
           const hex = grayHex(g);
@@ -46,6 +48,7 @@ export function ColorField({ id, r, theme, onChange, recommended }: Props) {
         })}
       </div>
       <TextInput
+        styles={{input:{background:"var(--gx-surface)",color:"var(--gx-text)",borderColor:"var(--gx-line-field)"},label:{color:"var(--gx-text)"},error:{color:"var(--gx-warn)"}}}
         size="sm" label="Onaltılık değer" value={text} error={error} aria-invalid={!!error}
         onChange={(e) => {
           const v = e.currentTarget.value;

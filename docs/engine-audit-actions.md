@@ -30,7 +30,7 @@ PASS aşağıdaki belirli uygulama sözleşmesini ve adı verilen test kapsamın
 | E3 | catalog undo | Boş katalog undo yok; kabul edilmiş motor çok adımlı undo/redo. | engine, propagation |
 | E4 | functional approve | Güncel değerler ve kaynaklar modelde doğrulanır. | model, audit-regressions, engine-actions |
 | E5 | sources + effects + history | Alan kaynakları, etki tablosu, 20 adımlı geçmiş. | engine, propagation; bağımsız görsel inceleme |
-| E6 | readability | Motor/model/projection okunabilirliği ayrı biçimlendirme commit’inde. | biçimlendirme sonrası kontrol bekleniyor |
+| E6 | readability | Motor/model/projection ve ilgili motor modülleri ayrı biçimlendirme commit’inde (`64b2f93`). | Derlenen JS AST eşitliği, 213 test, typecheck/build ve bağımsız diff incelemesi PASS |
 
 ## Gerçek koşular
 
@@ -44,6 +44,16 @@ PASS aşağıdaki belirli uygulama sözleşmesini ve adı verilen test kapsamın
 - Son acil reload / çoğaltılmış sekme / desteklenmeyen kayıt üç motor regresyonu: 8 PASS / 1 Firefox test-harness FAIL (arka plandaki sekmeye giriş). Hedef sekmeyi öne alma düzeltmesi sonrası kalan Firefox regresyonu 1 PASS. Anında reload üç motorda 33 px değerini korudu. Önceki testin “33” beklentisi alanın “33 px” gösterimine düzeltildi; uygulama değeri zaten korunuyordu.
 - Yeni yüklü ekran görüntüleri `/tmp/genux-audit-loaded-320.png` ve `/tmp/genux-audit-loaded-1440.png`; seçili gerçek örnek ve fontlar yüklendikten sonra alındı. Her iki görünümde document genişliği viewport’a eşit; görünür 14 px altı metin yok. Bağımsız salt okunur görsel incelemede ek bulgu yok. Bu ekran görüntüleri klavye veya kontrast ölçümünün yerine geçmez.
 - Bağımsız salt okunur standart incelemesinin bulduğu ileriye dönük politika sızıntısı, aynı rol ağırlık azaltması, onay çakışması, sahte/eksik otomatik köken ve günlük sahipliği açıkları düzeltildi. Son kaynak incelemesinde açık uygulanabilir bulgu yok; testleri ana ajan çalıştırdı.
+
+Son biçimlendirme sonrası koşu:
+
+```sh
+npx playwright test e2e/engine-actions.spec.ts e2e/engine-audit.spec.ts e2e/workflow.spec.ts --grep 'engine-actions|engine-audit|visible keyboard focus|product dropdown' --project=chromium --project=firefox --project=webkit
+```
+
+39/39 PASS (her motorda 13). Motor yayılımı, kuyruk, oran, canvas ölçümü, 2560 editör dönüşü, URL, import, pagehide, kayıt hatası, anında reload, çoğaltılmış sekme günlükleri ve 320 px klavye/dropdown kapsamı dahildir. `npm run typecheck`, 213 birim testi ve `npm run build` biçimlendirmeden sonra tekrar PASS. Bağımsız incelemede davranış değişikliği bulunmadı; printer’ın düşürdüğü bir açıklama yorumu geri kondu.
+
+İşlevsel commit `0a45666`; yalnız okunabilirlik commit’i `64b2f93`. Yazar ve committer kişisel Git politikasıyla doğrulandı. Yayın durumu ayrıca GitHub Pages koşusundan izlenir.
 
 ## Ölçek ve kalıcılık
 

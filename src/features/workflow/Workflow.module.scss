@@ -157,3 +157,12 @@
 .progressCount { margin:0; font-weight:500; color:var(--gx-text); }
 .journeyDivider { border-top:1px solid var(--gx-line); margin-block:var(--mantine-spacing-lg); }
 .journeySecondary { flex:1; min-height:0; }
+
+.selectors { grid-template-columns:minmax(0,1fr); }
+.journeySecondary .context span:last-child { margin-inline-start:0; }
+@media(max-width:74.99em) {
+  .journey { display:block; min-width:0; padding:var(--mantine-spacing-md); background:var(--gx-surface); }
+  .journey nav { display:flex; gap:var(--mantine-spacing-xs); overflow-x:auto; }
+  .journey .context { flex:0 0 auto; }
+  .journeyDivider { margin-block:var(--mantine-spacing-md); }
+}

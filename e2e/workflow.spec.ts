@@ -164,3 +164,19 @@ test('smart sticky inspector stays in viewport and exposes a live multiline heig
   const box=await form.boundingBox();expect(box!.y).toBeGreaterThanOrEqual(0);expect(box!.y+box!.height).toBeLessThanOrEqual(901);
   expect(await form.evaluate(e=>getComputedStyle(e).overflowY)).toBe('auto');
 });
+
+
+test('workflow displays the complete device at actual size without a fixed-height crop', async({page})=>{
+  await page.setViewportSize({width:1680,height:1000});
+  await page.goto('/');
+  const first=page.getByRole('region',{name:'Ekran 1 · Seçili element',exact:true});
+  const screen=first.getByRole('region',{name:'Önizleme ekranı, 320 piksel',exact:true});
+  await expect(screen).toHaveCSS('width','320px');
+  await expect(screen).toHaveCSS('height','568px');
+  const dimensions=await screen.evaluate(el=>{const frame=el.parentElement!;const stage=frame.parentElement!.parentElement!.parentElement!.parentElement!;return {frame:frame.getBoundingClientRect().toJSON(),stage:stage.getBoundingClientRect().toJSON()};});
+  expect(dimensions.frame.height).toBe(592);
+  expect(dimensions.frame.bottom).toBeLessThanOrEqual(dimensions.stage.bottom);
+  await expect(first.getByText(/ölçek %100/)).toBeVisible();
+  await page.setViewportSize({width:320,height:850});
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(320);
+});

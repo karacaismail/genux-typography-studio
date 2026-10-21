@@ -94,3 +94,5 @@ Sayısal alanlar NumberStepper kullanır: solda eksi, sağda artı; Mantine say�
 ## Kompakt çalışma alanı ve denetçi (2026-10-21)
 
 Bağlam/başlık/ilerleme aynı satırda; element gezgini ve önizleme bilgisi ortak araç satırındadır. Dış boşluk ve44px hedefler korunur. Masaüstü denetçi sticky ve viewport yüksekliğiyle sınırlı bağımsız kayar; iç başlık sabitlenmez ve kontrolleri örtmez. Dar/kısa görünüm normal akıştır. Sayısal kontrol tek yüzeydir: sade eksi / ortalanmış değer / sade artı; dar alanda tek sütun. Satır yüksekliği seçeneklerinin hemen altında2/5 satırlık, yüksek kontrastlı ve satır kutusu kılavuzlu ölçüm testi bulunur; bu ölçüm görünümü kayıtlı çıktı rengini değiştirmez. İlgili Chromium testleri compact workspace / smart sticky / numeric spinner.
+
+Karar akışındaki iki cihaz önizlemesi varsayılan olarak 1:1 CSS piksel ölçüsünde açılır. Sahne yüksekliği çerçevenin tamamını kapsar; sabit 520/680 px yükseklik veya 900 px ekran yüksekliği kırpması uygulanmaz. Dar alanda yatay kaydırma önizleme içinde kalır; sığdırma kullanıcı seçeneğidir.

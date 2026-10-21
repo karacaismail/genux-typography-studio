@@ -267,7 +267,7 @@ test('breakpoint tabs separate pixel labels from captions and animate the active
   await page.setViewportSize({width:1680,height:1000});await page.goto('/');
   const group=page.getByRole('radiogroup',{name:'Alt kırılım',exact:true});
   const first=group.getByRole('radio',{name:'320 px',exact:true});const next=group.getByRole('radio',{name:'360 px',exact:true});
-  await expect(first).toHaveText('320 px');await expect(first).toHaveAccessibleDescription(/iPhone/);
+  await expect(first).toContainText('320 px');await expect(first).toHaveAccessibleDescription(/iPhone/);
   const indicator=group.locator('[data-ready]');
   await expect(indicator).toHaveCSS('opacity','1');const before=await indicator.evaluate(el=>getComputedStyle(el).transform);
   await next.click();await expect(next).toBeChecked();
@@ -292,4 +292,17 @@ test('sidebar separates product progress from text-group navigation',async({page
   await expect(rail.getByText('Bir karar.',{exact:false})).toHaveCount(0);
   await expect(rail.getByRole('separator')).toBeVisible();
   await expect(rail.getByRole('region',{name:'Metin kümeleri'}).getByRole('button')).toHaveCount(7);
+});
+
+
+test('breakpoint pixel and model caption share one anchor selection target',async({page})=>{
+  await page.goto('/');
+  const target=page.getByRole('radio',{name:'360 px',exact:true});
+  await expect(target).toHaveJSProperty('tagName','A');
+  await target.getByText('Android (Galaxy S, Pixel)',{exact:true}).click();
+  await expect(target).toBeChecked();
+  await page.getByRole('radio',{name:'375 px',exact:true}).getByText('375 px',{exact:true}).click();
+  await expect(page.getByRole('radio',{name:'375 px',exact:true})).toBeChecked();
+  await target.focus();await target.press('Space');await expect(target).toBeChecked();
+  await target.press('ArrowRight');await expect(page.getByRole('radio',{name:'375 px',exact:true})).toBeChecked();
 });

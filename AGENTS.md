@@ -112,3 +112,5 @@ Cihaz grubu ikonları üst header içindedir. Ürün türleri yalnız sidebar bi
 Alt kırılım seçimi `BreakpointChoice` bileşenidir: px ölçüsü radyo butonunda, cihaz adı ilişkili açıklamada buton altında. Seçim katmanı ResizeObserver ile gerçek buton konumuna göre kayar; CSS merkezi süre/eğri tokenlarını kullanır, reduced-motion genel adaptörü geçerlidir. Seçim semantiği hareketin bitmesini beklemez. Dar alanda wrapper içinde sarılır; klavye okları ve tek Tab durağı korunur.
 
 Sol sidebar birincil alanı yalnız ilerleme sayacı/çubuğu ve altı ürün türü navigasyonuyla başlar. Tanıtım/çalışma planı metinleri kaldırılmıştır. Sonrasında semantik separator ve kullanıcı isteğiyle taşınan metin kümesi navigasyonu bulunur; birinci alandaki liste satırı görünümünü kullanır. Kaydet/içe aktar/serbest editör işlemleri header'da korunur.
+
+Alt kırılımda px ve model açıklaması tek `a[role=radio]` hedefinin içindedir; ayrı iç buton/bağlantı eklenmez. Tıklama, Enter, Space ve oklarla seçim desteklenir; yalnız seçili öğe Tab durağıdır. Hareketli katman yalnız üstteki 44 px ölçü yüzeyini izler; açıklama stili ve renkleri korunur.

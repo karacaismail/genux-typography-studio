@@ -102,3 +102,5 @@ Karar akışındaki iki cihaz önizlemesi varsayılan olarak 1:1 CSS piksel öl�
 Cihaz kasaları temsilidir; karma model adları birebir donanım kopyası iddiası taşımaz. m320 ve t768 klasik fiziksel ana ekran düğmeli kasa kullanır. Kamera/hoparlör ve kasa ekranın CSS alanını örtmez; kasa geometrisi DeviceStage içindeki ölçülerden üretilir.
 
 İkili karşılaştırmada başlık satırları aynı yüksekliği kullanır. Masaüstünde cihazlar ortak üst/alt hizadadır ve merkeze yaklaştırılır; sütun aralığı lg/4, sahne yatay dolgusu xl tokenıdır. Mobilde tek sütun akışı korunur.
+
+Cihaz grubu seçimi native/dropdown değildir: Mobil, Tablet, Laptop, Bilgisayar, TV için etiketli 32 px Phosphor ikonlarıyla yatay Radio.Card grubu kullanılır. Seçili seçenek tek Tab durağıdır; ok tuşları seçimi değiştirir. Dar ekranda yalnız grup yatay kayar; sayfa taşmaz.

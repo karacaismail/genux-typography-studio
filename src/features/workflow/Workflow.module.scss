@@ -124,3 +124,11 @@
   .previewPair > section:last-child [data-device-sizer] { margin-inline-start:0; }
   .previewPair .deviceStage > div { padding-inline:var(--mantine-spacing-xl); }
 }
+
+.devicePicker { min-width:0; }
+.deviceOptions { display:flex; gap:var(--mantine-spacing-sm); overflow-x:auto; padding-block:var(--mantine-spacing-xs); }
+.deviceOption { width:auto; flex:0 0 auto; min-width:92px; min-height:76px; display:flex; flex-direction:column; justify-content:center; align-items:center; gap:var(--mantine-spacing-xs); padding:var(--mantine-spacing-sm); border:0; border-radius:var(--mantine-radius-sm); background:var(--gx-sunken); color:var(--gx-text-2); font-size:var(--mantine-font-size-sm); transition:background-color var(--gx-dur) var(--gx-ease),color var(--gx-dur) var(--gx-ease); }
+.deviceOption:hover { background:var(--gx-hover); }
+.deviceOption[data-checked] { background:var(--gx-accent-soft); color:var(--gx-accent-text); }
+@media(min-width:48em) { .selectors { grid-template-columns:1fr 2fr 1fr; } .devicePicker { grid-column:1 / -1; grid-row:2; } }
+@media(min-width:48em) { .selectors > :not(.devicePicker) { grid-row:1; } }

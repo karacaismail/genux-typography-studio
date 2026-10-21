@@ -30,13 +30,11 @@ test('has mobile navigation, all device subwidths, loaded Ant Design examples an
   await expect(page.locator('[data-example-role="h1"]')).toBeVisible();
   await expect(page.getByRole('button',{name:'JSON içe aktar',exact:true})).toBeVisible();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(320);
-  await page.getByRole('combobox',{name:'Cihaz grubu',exact:true}).click();
-  await page.getByRole('option',{name:'Tablet',exact:true}).click();
+  await page.getByRole('radio',{name:'Tablet',exact:true}).click();
   await page.getByRole('combobox',{name:'Alt kırılım',exact:true}).click();
   await expect(page.getByRole('option').filter({hasText:'834 px'})).toBeVisible();
   await page.keyboard.press('Escape');
-  await page.getByRole('combobox',{name:'Cihaz grubu',exact:true}).click();
-  await page.getByRole('option',{name:'Televizyon',exact:true}).click();
+  await page.getByRole('radio',{name:'Televizyon',exact:true}).click();
   await expect(page.getByRole('heading',{name:'Headings · başlıklar',exact:true})).toBeVisible();
   await page.getByRole('combobox',{name:'Alt kırılım',exact:true}).click();
   await expect(page.getByRole('option').filter({hasText:'3840 px'})).toBeVisible();
@@ -146,7 +144,8 @@ test('compact workspace combines context and controls without reducing hit targe
   const contextBox=await page.getByText('HTML / Mobil / 320 px',{exact:true}).boundingBox();
   expect(Math.abs(headingBox!.y-contextBox!.y)).toBeLessThan(12);
   const first=page.getByRole('region',{name:'Ekran 1 · Seçili element',exact:true});
-  expect((await first.boundingBox())!.y).toBeLessThan(320);
+  const pickerHeight=await page.getByRole('radiogroup',{name:'Cihaz grubu',exact:true}).evaluate(el=>{const wrapper=el.parentElement!;return wrapper.getBoundingClientRect().height+parseFloat(getComputedStyle(wrapper.parentElement!).rowGap);});
+  expect((await first.boundingBox())!.y-pickerHeight).toBeLessThan(320);
   const nav=page.getByRole('navigation',{name:'Bu kümedeki elementler',exact:true});
   expect((await nav.getByRole('button',{name:'H1',exact:true}).boundingBox())!.height).toBeGreaterThanOrEqual(44);
   await page.setViewportSize({width:320,height:850});
@@ -207,4 +206,17 @@ test('comparison devices share top and bottom edges with a compact gap',async({p
   expect(Math.abs(a!.y+a!.height-b!.y-b!.height)).toBeLessThan(1);
   expect(b!.x-a!.x-a!.width).toBeLessThan(120);
   expect(b!.x-a!.x-a!.width).toBeGreaterThan(0);
+});
+
+
+test('device families use large horizontal icon radios with keyboard selection',async({page})=>{
+  await page.goto('/');
+  const group=page.getByRole('radiogroup',{name:'Cihaz grubu',exact:true});
+  await expect(group.getByRole('radio')).toHaveCount(5);
+  const mobile=group.getByRole('radio',{name:'Mobil',exact:true});const tablet=group.getByRole('radio',{name:'Tablet',exact:true});
+  await expect(mobile).toBeChecked();
+  const a=await mobile.boundingBox();const b=await tablet.boundingBox();
+  expect(a!.height).toBeGreaterThanOrEqual(76);expect(a!.y).toBe(b!.y);expect(b!.x).toBeGreaterThan(a!.x);
+  await mobile.focus();await mobile.press('ArrowRight');await expect(tablet).toBeChecked();
+  await page.setViewportSize({width:320,height:850});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(320);
 });

@@ -113,10 +113,12 @@ Alt kırılım seçimi `BreakpointChoice` bileşenidir: px ölçüsü radyo buto
 
 Sol sidebar birincil alanı ilerleme sayacı/çubuğu ve cihaz alt kırılımı navigasyonuyla başlar. Tanıtım/çalışma planı metinleri kaldırılmıştır. Sonrasında semantik separator ve kullanıcı isteğiyle taşınan metin kümesi navigasyonu bulunur; birinci alandaki liste satırı görünümünü kullanır. Kaydet/içe aktar/serbest editör işlemleri header'da korunur.
 
-Alt kırılımda px ve model açıklaması tek `a[role=radio]` hedefinin içindedir; ayrı iç buton/bağlantı eklenmez. Tıklama, Enter, Space ve oklarla seçim desteklenir; yalnız seçili öğe Tab durağıdır. Hareketli katman yalnız üstteki 44 px ölçü yüzeyini izler; açıklama stili ve renkleri korunur.
+Alt kırılımda px ve model açıklaması tek `a[role=radio]` hedefinin içindedir; ayrı iç buton/bağlantı eklenmez. Tıklama, Enter, Space ve oklarla seçim desteklenir; yalnız seçili öğe Tab durağıdır. Hareketli katman yalnız üstteki 28 px ölçü yüzeyini izler; açıklama stili ve renkleri korunur.
 
 Ürün seçiminde “Çalışılıyor” metni kullanılmaz; dropdown seçimi yeterlidir. Küme adları yalnız “Headings” ve “Sub-title” olarak gösterilir; tekrar eden Türkçe açıklama eklenmez.
 
 Workflow header en fazla 120 CSS px yüksekliğindedir (`--gx-workflow-header-max`). Tek satır düzen ve dar alanda yerel yatay kaydırma kullanılır; cihaz grubu etiketi erişilebilir ad olarak korunup görsel olarak gizlenir. Eylem butonları en az 44 px kalır (`--gx-workflow-header-hit`); kontroller kesilmez veya küçük yazıya dönüştürülmez.
 
 Seçim gruplarının sol üstünde iş akışı sırası gösterilir: 1 Ürün türü, 2 Cihaz grubu, 3 Alt kırılım, 4 Metin kümesi, 5 Element, 6 Kullanım konumu. Bu sıra mevcut bağlam → cihaz → genişlik → küme → rol akışıdır; seçimi kilitlemez. Önizleme üzerindeki “Ekran 1/2” görünen başlıkları kaldırılmıştır; erişilebilir bölge adları korunur. Element sekmelerinin üst ve alt padding'i eşittir; ortak spacing-xs tokenını kullanır.
+
+Kırılım kartları kompakt yoğunluk kullanır: 4 px iç dolgu, 4 px ölçü–açıklama aralığı, wrapper için spacing-xs (8 px) boşluk/dolgu. Ölçü yüzeyi 28 px tokenıyla yönetilir; tıklama hedefi bütün bağlantıdır ve 44 px altına inmez (tek satır açıklamada yaklaşık 62 px). Metin boyutu küçültülmez; uzun açıklama doğal sarılır.

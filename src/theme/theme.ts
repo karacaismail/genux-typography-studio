@@ -86,6 +86,7 @@ export const resolver: CSSVariablesResolver = () => {
       '--gx-toolbar-h': '4rem',
       '--gx-workflow-header-max': '120px',
       '--gx-workflow-header-hit': '44px',
+      '--gx-breakpoint-label-h': '28px',
       '--gx-status-h': '2.5rem',
       '--gx-hit': '2.25rem',
     },

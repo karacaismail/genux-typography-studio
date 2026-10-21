@@ -292,6 +292,10 @@ test('sidebar separates product progress from text-group navigation',async({page
   const second=await breakpoints.getByRole('radio',{name:'360 px',exact:true}).boundingBox();
   expect(second!.y).toBeGreaterThan(first!.y+first!.height);
   expect(second!.x).toBe(first!.x);
+  expect(first!.height).toBeGreaterThanOrEqual(44);
+  expect(first!.height).toBeLessThanOrEqual(68);
+  const textSize=await breakpoints.getByRole('radio',{name:'320 px',exact:true}).locator('span').first().evaluate(el=>getComputedStyle(el).fontSize);
+  expect(parseFloat(textSize)).toBeGreaterThanOrEqual(14);
   await expect(rail.getByText('0 / 1144 onaylı küme',{exact:true})).toBeVisible();
   await expect(rail.getByRole('navigation',{name:'Ürün türleri'})).toHaveCount(0);
   await expect(rail.getByText('Çalışma planı',{exact:true})).toHaveCount(0);

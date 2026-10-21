@@ -142,9 +142,9 @@
 .recommendedOption { display:flex; align-items:center; gap:var(--mantine-spacing-sm); width:100%; justify-content:space-between; }
 
 .breakpointPicker { min-width:0; }
-.breakpointOptions { position:relative; display:flex; flex-wrap:wrap; gap:var(--mantine-spacing-sm); padding:var(--mantine-spacing-sm); background:var(--gx-sunken); border-radius:var(--mantine-radius-sm); }
-.breakpointItem { flex:1 1 92px; min-width:0; display:flex; flex-direction:column; align-items:stretch; gap:var(--mantine-spacing-xs); }
-.breakpointButton { position:relative; z-index:1; display:flex; align-items:center; justify-content:center; width:100%; min-height:44px; border:0; border-radius:var(--mantine-radius-sm); background:transparent; font-size:var(--mantine-font-size-sm); font-weight:500; color:var(--gx-text-2); transition:color var(--gx-dur) var(--gx-ease); }
+.breakpointOptions { position:relative; display:flex; flex-wrap:wrap; gap:var(--mantine-spacing-xs); padding:var(--mantine-spacing-xs); background:var(--gx-sunken); border-radius:var(--mantine-radius-sm); }
+.breakpointItem { flex:1 1 92px; min-width:0; display:flex; flex-direction:column; align-items:stretch; gap:calc(var(--mantine-spacing-xs) / 2); }
+.breakpointButton { position:relative; z-index:1; display:flex; align-items:center; justify-content:center; width:100%; min-height:var(--gx-breakpoint-label-h); border:0; border-radius:var(--mantine-radius-sm); background:transparent; font-size:var(--mantine-font-size-sm); font-weight:500; color:var(--gx-text-2); transition:color var(--gx-dur) var(--gx-ease); }
 .breakpointButton[data-checked] { color:var(--gx-accent-text); }
 .breakpointCaption { font-size:var(--mantine-font-size-sm); line-height:1.4; color:var(--gx-text-2); text-align:center; }
 .breakpointIndicator { position:absolute; top:0; left:0; pointer-events:none; border-radius:var(--mantine-radius-sm); background:var(--gx-accent-soft); opacity:0; transition:transform var(--gx-dur) var(--gx-ease),width var(--gx-dur) var(--gx-ease),height var(--gx-dur) var(--gx-ease),opacity var(--gx-dur) var(--gx-ease); }
@@ -169,7 +169,7 @@
 
 .breakpointItem { text-decoration:none; color:inherit; cursor:pointer; }
 // Tek bağlantının ölçü ve açıklama alanını birlikte saran işlevsel sınır.
-.breakpointItem { box-sizing:border-box; border:1px solid var(--gx-line-field); border-radius:var(--mantine-radius-sm); padding:var(--mantine-spacing-xs); }
+.breakpointItem { box-sizing:border-box; border:1px solid var(--gx-line-field); border-radius:var(--mantine-radius-sm); padding:calc(var(--mantine-spacing-xs) / 2); }
 
 .header { box-sizing:border-box; flex-wrap:nowrap; max-height:var(--gx-workflow-header-max); padding-block:var(--mantine-spacing-xs); overflow:auto; }
 .header > :first-child { flex:none; white-space:nowrap; }

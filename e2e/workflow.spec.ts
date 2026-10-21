@@ -151,11 +151,14 @@ test('compact workspace combines context and controls without reducing hit targe
   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(320);
 });
 
-test('smart sticky inspector stays in viewport and exposes a live multiline height test beside the controls',async({page})=>{
+test('smart sticky inspector stays in viewport while multiline tests live inside the selected device',async({page})=>{
   await page.setViewportSize({width:1680,height:900});await page.goto('/');
   const form=page.getByRole('region',{name:'H1 karar formu',exact:true});await form.waitFor();
   await page.getByRole('radio',{name:'Satır yüksekliği 2',exact:true}).click();
-  const testSample=page.getByTestId('near-line-sample');await expect(testSample).toHaveCSS('line-height','64px');
+  const first=page.getByRole('region',{name:'Ekran 1 · Seçili element',exact:true});
+  await first.getByRole('radiogroup',{name:'Seçili ekran görünümü',exact:true}).getByText('Satır testleri',{exact:true}).click();
+  const testSample=first.getByTestId('near-line-sample');await expect(testSample).toHaveCSS('line-height','64px');
+  await expect(form.getByTestId('near-line-sample')).toHaveCount(0);
   await expect(testSample.locator(':scope > div')).toHaveCount(2);
   await page.getByRole('region',{name:'Satır yüksekliği canlı testi',exact:true}).getByText('5 satır',{exact:true}).click();await expect(testSample.locator(':scope > div')).toHaveCount(5);
   await page.evaluate(()=>window.scrollTo(0,300));
@@ -170,9 +173,9 @@ test('workflow displays the complete device at actual size without a fixed-heigh
   const first=page.getByRole('region',{name:'Ekran 1 · Seçili element',exact:true});
   const screen=first.getByRole('region',{name:'Önizleme ekranı, 320 piksel',exact:true});
   await expect(screen).toHaveCSS('width','320px');
-  await expect(screen).toHaveCSS('height','568px');
+  await expect(screen).toHaveCSS('height','480px');
   const dimensions=await screen.evaluate(el=>{const frame=el.parentElement!;const stage=frame.parentElement!.parentElement!.parentElement!.parentElement!;return {frame:frame.getBoundingClientRect().toJSON(),stage:stage.getBoundingClientRect().toJSON()};});
-  expect(dimensions.frame.height).toBe(708);
+  expect(dimensions.frame.height/dimensions.frame.width).toBeCloseTo(115.2/58.6,3);
   expect(dimensions.frame.bottom).toBeLessThanOrEqual(dimensions.stage.bottom);
   await expect(first.getByText(/ölçek %100/)).toBeVisible();
   await page.setViewportSize({width:320,height:850});
@@ -181,7 +184,7 @@ test('workflow displays the complete device at actual size without a fixed-heigh
 
 test('scroll chains from the preview and inspector boundaries to the page',async({page})=>{
   await page.setViewportSize({width:1680,height:900});await page.goto('/');
-  const screen=page.getByRole('region',{name:'Ekran 1 · Seçili element',exact:true}).getByRole('region',{name:'Önizleme ekranı, 320 piksel',exact:true});
+  const screen=page.getByRole('region',{name:'Ekran 1 · Seçili element',exact:true}).getByRole('region',{name:'Kaydırılabilir ekran içeriği, 320 piksel',exact:true});
   await screen.evaluate(el=>{const filler=document.createElement('div');filler.style.height='1600px';el.append(filler);el.scrollTop=el.scrollHeight;});
   await screen.hover();
   await screen.evaluate(el=>{el.scrollTop=el.scrollHeight;});
@@ -203,8 +206,11 @@ test('comparison devices share top and bottom edges with a compact gap',async({p
   const a=await screens.nth(0).boundingBox();const b=await screens.nth(1).boundingBox();
   expect(Math.abs(a!.y-b!.y)).toBeLessThan(1);
   expect(Math.abs(a!.y+a!.height-b!.y-b!.height)).toBeLessThan(1);
-  expect(b!.x-a!.x-a!.width).toBeLessThan(120);
-  expect(b!.x-a!.x-a!.width).toBeGreaterThan(0);
+  // Compare the physical frame gap: model-specific bezels now occupy real space.
+  const frameA=await screens.nth(0).locator("..").boundingBox();
+  const frameB=await screens.nth(1).locator("..").boundingBox();
+  expect(frameB!.x-frameA!.x-frameA!.width).toBeLessThan(120);
+  expect(frameB!.x-frameA!.x-frameA!.width).toBeGreaterThan(0);
 });
 
 
@@ -285,10 +291,11 @@ test('breakpoint tabs separate pixel labels from captions and animate the active
 });
 
 
-test('sidebar separates product progress from text-group navigation',async({page})=>{
+test('sidebar contains breakpoint and text-group navigation without duplicate progress',async({page})=>{
   await page.setViewportSize({width:1680,height:1000});await page.goto('/');
   const rail=page.getByRole('complementary',{name:'Karar yolculuğu'});
-  await expect(rail.getByRole('region',{name:'Çalışma ilerlemesi'})).toBeVisible();
+  await expect(rail.getByRole('group',{name:'Çalışma ilerlemesi',exact:true})).toHaveCount(0);
+  await expect(rail.getByRole('progressbar')).toHaveCount(0);
   const breakpoints=rail.getByRole('radiogroup',{name:'Alt kırılım',exact:true});
   await expect(breakpoints.getByRole('radio')).toHaveCount(6);
   const first=await breakpoints.getByRole('radio',{name:'320 px',exact:true}).boundingBox();
@@ -299,7 +306,7 @@ test('sidebar separates product progress from text-group navigation',async({page
   expect(first!.height).toBeLessThanOrEqual(68);
   const textSize=await breakpoints.getByRole('radio',{name:'320 px',exact:true}).locator('span').first().evaluate(el=>getComputedStyle(el).fontSize);
   expect(parseFloat(textSize)).toBeGreaterThanOrEqual(14);
-  await expect(rail.getByText('0 / 1144 onaylı küme',{exact:true})).toBeVisible();
+  await expect(rail.getByText(/onaylı küme/)).toHaveCount(0);
   await expect(rail.getByRole('navigation',{name:'Ürün türleri'})).toHaveCount(0);
   await expect(rail.getByText('Çalışma planı',{exact:true})).toHaveCount(0);
   await expect(rail.getByText('Bir karar.',{exact:false})).toHaveCount(0);
@@ -312,7 +319,7 @@ test('breakpoint pixel and model caption share one anchor selection target',asyn
   await page.goto('/');
   const target=page.getByRole('radio',{name:'360 px',exact:true});
   await expect(target).toHaveJSProperty('tagName','A');
-  await target.getByText('Galaxy S',{exact:true}).click();
+  await target.getByText('Galaxy S20',{exact:true}).click();
   await expect(target).toBeChecked();
   await page.getByRole('radio',{name:'375 px',exact:true}).getByText('375 px',{exact:true}).click();
   await expect(page.getByRole('radio',{name:'375 px',exact:true})).toBeChecked();
@@ -391,26 +398,29 @@ test('output color fields retain their own light and dark surfaces across tool t
   }
 });
 
-test('near line test follows interface theme independently from preview theme',async({page})=>{
+test('in-device line tests follow preview theme independently from interface theme',async({page})=>{
   await page.goto('/');
-  const test=page.getByRole('region',{name:'Satır yüksekliği canlı testi',exact:true});
-  await expect(test).toHaveCSS('background-color','rgb(255, 255, 255)');
+  const first=page.getByRole('region',{name:'Ekran 1 · Seçili element',exact:true});
+  await first.getByRole('radiogroup',{name:'Seçili ekran görünümü',exact:true}).getByText('Satır testleri',{exact:true}).click();
+  const near=first.getByRole('region',{name:'Satır yüksekliği canlı testi',exact:true});
+  const matrix=first.getByTestId('device-line-matrix');
+  for(const surface of [near,matrix]) await expect(surface).toHaveCSS('background-color','rgb(255, 255, 255)');
   await page.getByRole('button',{name:'Uygulama temasını değiştir',exact:true}).click();
-  await expect(test).toHaveCSS('background-color','rgb(26, 26, 26)');
-  await expect(test.getByTestId('near-line-sample')).toHaveCSS('color','rgb(224, 224, 224)');
+  for(const surface of [near,matrix]) await expect(surface).toHaveCSS('background-color','rgb(255, 255, 255)');
   await page.getByRole('radiogroup',{name:'Önizleme teması',exact:true}).getByText('Koyu',{exact:true}).click();
-  await expect(test).toHaveCSS('background-color','rgb(26, 26, 26)');
+  for(const surface of [near,matrix]) await expect(surface).toHaveCSS('background-color','rgb(26, 26, 26)');
+  await expect(near.getByTestId('near-line-sample')).toHaveCSS('color','rgb(224, 224, 224)');
   await page.getByRole('button',{name:'Uygulama temasını değiştir',exact:true}).click();
-  await expect(test).toHaveCSS('background-color','rgb(255, 255, 255)');
+  for(const surface of [near,matrix]) await expect(surface).toHaveCSS('background-color','rgb(26, 26, 26)');
 });
 
-test('all device families texture only the physical shell',async({page})=>{
+test('all device families separate optical material from live content',async({page})=>{
   await page.goto('/');
   for(const name of ['Mobil','Tablet','Laptop','Bilgisayar','Televizyon']){
     await page.getByRole('radio',{name,exact:true}).click();
     const screen=page.getByRole('region',{name:/Önizleme ekranı,/}).first();
     const shell=screen.locator('..');
-    await expect(shell).toHaveCSS('background-image',/repeating-linear-gradient/);
+    await expect(shell).toHaveCSS('background-image',/linear-gradient/);
     await expect(screen).toHaveCSS('background-image','none');
     await expect(screen).toHaveCSS('background-color','rgb(255, 255, 255)');
   }
@@ -499,6 +509,8 @@ test('engine panel and large line sample retain visible keyboard focus at 320px'
   expect(await summary.evaluate(el=>getComputedStyle(el).boxShadow)).not.toBe('none');
   await summary.press('Enter');
   await expect(page.getByRole('button',{name:'Otomatik yeniden hesapla',exact:true})).toBeVisible();
+  await page.getByRole('radiogroup',{name:'Seçili ekran görünümü',exact:true}).getByText('Satır testleri',{exact:true}).click();
+  await page.keyboard.press('Tab');
   const sample=page.getByRole('region',{name:'Satır testi metni',exact:true});
   await sample.focus();await expect(sample).toBeFocused();
   expect(await sample.evaluate(el=>getComputedStyle(el).boxShadow)).not.toBe('none');
@@ -536,4 +548,129 @@ test('pending editor handoff prevents edits until its latest snapshot is committ
   await expect(page.locator('[inert][aria-busy="true"]')).toHaveCount(1);
   await page.keyboard.type('99');
   await expect(page.getByRole('textbox',{name:'Boyut değeri (px)',exact:true})).toHaveValue('40');
+});
+
+test('real phone models preserve body ratios, viewport geometry and aligned recessed screen apertures',async({page})=>{
+  await page.goto('/');
+  for(const [width,height,bodyWidth,bodyHeight,name] of [[320,480,58.6,115.2,'iPhone 4'],[360,800,69.1,151.7,'Galaxy S20'],[375,812,64.2,131.5,'iPhone 13 mini'],[390,844,71.5,146.7,'iPhone 12'],[414,896,75.7,150.9,'iPhone 11'],[430,932,76.7,159.9,'iPhone 15 Pro Max']] as const){
+    const choice=page.getByRole('radio',{name:`${width} px`,exact:true});await expect(choice.getByText(name,{exact:true})).toBeVisible();await choice.click();
+    const screen=page.getByRole('region',{name:`Önizleme ekranı, ${width} piksel`,exact:true}).first();
+    const metrics=await screen.evaluate(el=>{const body=el.parentElement!;const aperture=body.querySelector('[data-screen-depth]')!;return {body:body.getBoundingClientRect().toJSON(),screen:el.getBoundingClientRect().toJSON(),aperture:aperture.getBoundingClientRect().toJSON(),shadow:getComputedStyle(aperture).boxShadow,pointer:getComputedStyle(aperture).pointerEvents,pattern:getComputedStyle(body).backgroundImage};});
+    expect(metrics.body.height/metrics.body.width).toBeCloseTo(bodyHeight/bodyWidth,3);
+    expect(metrics.screen.width).toBe(width);expect(metrics.screen.height).toBe(height);
+    expect(metrics.aperture).toEqual(metrics.screen);expect(metrics.shadow).not.toBe('none');expect(metrics.pointer).toBe('none');
+    expect(metrics.pattern).not.toContain('repeating-linear-gradient');
+  }
+});
+
+test('one bold measurement and preview theme share the review badge row without a duplicate H1 heading',async({page})=>{
+  await page.goto('/');
+  const theme=page.getByRole('radiogroup',{name:'Önizleme teması',exact:true});
+  const row=theme.locator('..');await expect(row.getByText('Taslak',{exact:true})).toBeVisible();
+  const readout=row.locator('strong').filter({hasText:/^H1 · 32 \/ 40 px$/});
+  await expect(readout).toHaveCount(1);await expect(readout).toBeVisible();
+  expect(Number(await readout.evaluate(el=>getComputedStyle(el).fontWeight))).toBeGreaterThanOrEqual(600);
+  const form=page.getByRole('region',{name:'H1 karar formu',exact:true});
+  await expect(form.getByText('H1 · 32 / 40 px',{exact:true})).toHaveCount(1);
+  await expect(form.getByRole('heading',{name:'H1',exact:true})).toHaveCount(0);
+  await expect(form.getByText('H1',{exact:true})).toHaveCount(1); // The role tab alone; no repeated identity label.
+});
+
+test('selected screen defaults to content and contains both line test variants only in tests mode',async({page})=>{
+  await page.goto('/');
+  const first=page.getByRole('region',{name:'Ekran 1 · Seçili element',exact:true});
+  const screen=first.getByRole('region',{name:'Kaydırılabilir ekran içeriği, 320 piksel',exact:true});
+  const mode=screen.getByRole('radiogroup',{name:'Seçili ekran görünümü',exact:true});
+  await expect(mode.getByRole('radio',{name:'İçerik',exact:true})).toBeChecked();
+  await expect(screen.locator('[data-example-role=h1]')).toBeVisible();
+  await expect(page.getByTestId('near-line-sample')).toHaveCount(0);
+  await expect(page.getByTestId('device-line-matrix')).toHaveCount(0);
+  await mode.getByText('Satır testleri',{exact:true}).click();
+  await expect(screen.getByTestId('near-line-sample')).toBeAttached();
+  await expect(screen.getByTestId('device-line-matrix')).toBeAttached();
+  for(const count of [1,2,5]) await expect(screen.getByTestId(`device-line-sample-${count}`).locator(':scope > div')).toHaveCount(count);
+  await expect(screen.locator('[data-example-role]')).toHaveCount(0);
+  await expect(page.getByTestId('group-surface').locator('[data-group-role]')).toHaveCount(6);
+  await mode.getByText('İçerik',{exact:true}).click();
+  await expect(screen.locator('[data-example-role=h1]')).toBeVisible();
+  await expect(page.getByTestId('near-line-sample')).toHaveCount(0);
+  await expect(page.getByTestId('device-line-matrix')).toHaveCount(0);
+});
+
+for(const [family,width,height] of [['Mobil',320,480],['Tablet',768,1024]] as const){
+  test(`${family} orientation changes both viewports while retaining the role and original decision profile`,async({page})=>{
+    await page.setViewportSize({width:1920,height:1100});await page.goto('/');
+    await page.getByRole('radio',{name:family,exact:true}).click();
+    await page.getByRole('radio',{name:`${width} px`,exact:true}).click();
+    await page.getByRole('navigation',{name:'Bu kümedeki elementler',exact:true}).getByRole('button',{name:'H2',exact:true}).click();
+    await page.getByLabel('Yazı boyutu',{exact:true}).fill('29');
+    await page.getByLabel('Karar notu',{exact:true}).fill('Yön değişiminde aynı karar');
+    const exportSnapshot=async()=>{
+      const pending=page.waitForEvent('download');await page.getByRole('button',{name:'JSON indir',exact:true}).click();
+      const stream=await(await pending).createReadStream();let content='';for await(const chunk of stream!)content+=chunk.toString();
+      return JSON.parse(content);
+    };
+    const before=await exportSnapshot();
+    const orientation=page.getByRole('radiogroup',{name:'Önizleme yönü',exact:true});
+    await expect(orientation.getByRole('radio',{name:'Dikey',exact:true})).toBeChecked();
+    for(const [name,w,h] of [['Yatay',height,width],['Dikey',width,height]] as const){
+      await orientation.getByText(name,{exact:true}).click();
+      const screens=page.getByRole('region',{name:`Önizleme ekranı, ${w} piksel`,exact:true});
+      await expect(screens).toHaveCount(2);
+      for(const screen of await screens.all()){
+        await expect(screen).toHaveCSS('width',`${w}px`);await expect(screen).toHaveCSS('height',`${h}px`);
+      }
+      await expect(page.getByTestId('group-surface')).toHaveCSS('width',`${w}px`);
+      await expect(page.getByRole('region',{name:'H2 karar formu',exact:true})).toBeVisible();
+      await expect(page.getByLabel('Yazı boyutu',{exact:true})).toHaveValue('29 px');
+      await expect(page.getByLabel('Karar notu',{exact:true})).toHaveValue('Yön değişiminde aynı karar');
+      await expect(page.locator('[data-group-role=h2]')).toHaveCSS('font-size','29px');
+      await expect(page.getByRole('radio',{name:`${width} px`,exact:true})).toBeChecked();
+      const after=await exportSnapshot();
+      expect(after.contexts).toEqual(before.contexts);
+      for(const key of ['cursor','role','profiles','reviews','notes']) expect(after.workflow[key]).toEqual(before.workflow[key]);
+    }
+    await page.getByRole('radio',{name:'Laptop',exact:true}).click();
+    await expect(orientation).toHaveCount(0);
+  });
+}
+
+test('right stage header combines global group and current element progress and updates on approval',async({page})=>{
+  await page.setViewportSize({width:1680,height:1000});await page.goto('/');
+  const progress=page.getByRole('group',{name:'Çalışma ilerlemesi',exact:true});
+  await expect(progress).toHaveCount(1);
+  await expect(progress.getByRole('progressbar')).toHaveCount(2);
+  const global=progress.getByRole('progressbar',{name:'Tüm kümelerin onay ilerlemesi',exact:true});
+  const local=progress.getByRole('progressbar',{name:'Geçerli kümedeki elementlerin onay ilerlemesi',exact:true});
+  const globalLabel=await global.getAttribute('aria-valuetext');
+  expect(globalLabel).toMatch(/^0 \/ [1-9]\d* onaylı küme$/);
+  await expect(local).toHaveAttribute('aria-valuetext','0 / 6 element onaylandı');
+  const heading=page.getByRole('heading',{name:'Headings',exact:true});
+  const headingBox=await heading.boundingBox(),progressBox=await progress.boundingBox();
+  expect(progressBox!.x).toBeGreaterThan(headingBox!.x+headingBox!.width);
+  expect(Math.min(progressBox!.y+progressBox!.height,headingBox!.y+headingBox!.height)-Math.max(progressBox!.y,headingBox!.y)).toBeGreaterThan(0);
+  await page.getByRole('button',{name:'Kararı kaydet ve devam et',exact:true}).click();
+  await expect(local).toHaveAttribute('aria-valuetext','1 / 6 element onaylandı');
+  await expect(global).toHaveAttribute('aria-valuetext',globalLabel!);
+  for(let i=0;i<5;i++) await page.getByRole('button',{name:'Kararı kaydet ve devam et',exact:true}).click();
+  await expect(global).toHaveAttribute('aria-valuetext',globalLabel!.replace(/^0 /,'1 '));
+  await expect(page.getByRole('complementary',{name:'Karar yolculuğu'}).getByRole('progressbar')).toHaveCount(0);
+});
+
+test('classic tablet home key stays below its screen and modern safe areas remain fixed while scrolling',async({page})=>{
+  await page.goto('/');await page.getByRole('radio',{name:'Tablet',exact:true}).click();await page.getByRole('radio',{name:'768 px',exact:true}).click();
+  const tablet=page.getByRole('region',{name:'Önizleme ekranı, 768 piksel',exact:true}).first();
+  const home=tablet.locator('..').locator('[data-device-home]');
+  expect((await home.boundingBox())!.y).toBeGreaterThanOrEqual((await tablet.boundingBox())!.y+(await tablet.boundingBox())!.height);
+  await page.getByRole('radio',{name:'Mobil',exact:true}).click();
+  for(const width of [390,430]){
+    await page.getByRole('radio',{name:`${width} px`,exact:true}).click();
+    const aperture=page.getByRole('region',{name:`Önizleme ekranı, ${width} piksel`,exact:true}).first();
+    const scroll=aperture.getByRole('region',{name:`Kaydırılabilir ekran içeriği, ${width} piksel`,exact:true});
+    await scroll.evaluate(el=>{const filler=document.createElement('p');filler.textContent='Uzun içerik denemesi. '.repeat(500);el.append(filler);el.scrollTop=el.scrollHeight;});
+    const hardware=aperture.locator('..').locator('[data-device-hardware]');
+    const bounds=await scroll.boundingBox(),cutout=await hardware.boundingBox();
+    expect(bounds!.y).toBeGreaterThanOrEqual(cutout!.y+cutout!.height);
+    expect(await scroll.evaluate(el=>el.scrollTop)).toBeGreaterThan(0);
+  }
 });

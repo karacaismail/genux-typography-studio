@@ -1,3 +1,4 @@
+import { PHONE_MODELS } from './hardware';
 import type { BgKey, CategoryId, ContextId, ContextSettings, Device, ProductId, Theme, TierId } from './types';
 
 /** GenUX kuralı (kullanıcı kararları 2026-10-18 ve 2026-10-19): okuma metni varsayılanı 16 (en az 16);
@@ -104,12 +105,7 @@ export const tierOf = (w: number): TierId => [...TIERS].reverse().find((t) => w 
 
 /** Önizleme cihazları = kırılımlar (CSS px, dikey). Her grubun ilki o grubun ilk kırılımıdır. */
 export const DEVICES: Device[] = [
-  { id: 'm320', group: 'mobile', w: 320, h: 568, name: 'iPhone 4 / SE (1. nesil)' },
-  { id: 'm360', group: 'mobile', w: 360, h: 800, name: 'Android (Galaxy S, Pixel)' },
-  { id: 'm375', group: 'mobile', w: 375, h: 812, name: 'iPhone SE 2–3 / X–13 mini' },
-  { id: 'm390', group: 'mobile', w: 390, h: 844, name: 'iPhone 12–14' },
-  { id: 'm414', group: 'mobile', w: 414, h: 896, name: 'iPhone 11 / XR / Plus' },
-  { id: 'm430', group: 'mobile', w: 430, h: 932, name: 'iPhone 15 Pro Max / Plus' },
+  ...PHONE_MODELS.map(model=>({id:model.id,group:'mobile' as const,w:model.width,h:model.height,name:model.name})),
   { id: 't600', group: 'tablet', w: 600, h: 960, name: 'Küçük tablet 7" / katlanabilir' },
   { id: 't744', group: 'tablet', w: 744, h: 1133, name: 'iPad mini' },
   { id: 't768', group: 'tablet', w: 768, h: 1024, name: 'iPad 9,7"' },

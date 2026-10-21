@@ -1,10 +1,11 @@
+import { phoneModel } from '../../core/hardware';
 import { Radio, UnstyledButton } from '@mantine/core';
 import { useLayoutEffect, useRef, useState } from 'react';
 import type { Device } from '../../core';
 import { StepLabel } from './StepLabel';
 import classes from './Workflow.module.scss';
 
-const DEVICE_CAPTIONS: Record<string,string> = {m320:'iPhone 4',m360:'Galaxy S',m375:'iPhone mini',m390:'iPhone 12',m414:'iPhone 11 Plus',m430:'iPhone 15 Max'};
+
 
 export function BreakpointChoice({devices,value,onChange}:{devices:Device[];value:string;onChange:(id:string)=>void}) {
   const parent=useRef<HTMLDivElement>(null);
@@ -34,7 +35,7 @@ export function BreakpointChoice({devices,value,onChange}:{devices:Device[];valu
         if(direction){event.preventDefault();const next=devices[(index+direction+devices.length)%devices.length];links.current.get(next.id)?.focus();onChange(next.id);}
       }}>
         <span ref={el=>{if(el)targets.current.set(device.id,el);else targets.current.delete(device.id);}} data-checked={device.id===value || undefined} className={classes.breakpointButton}>{device.w} px</span>
-        <span id={`breakpoint-${device.id}`} className={classes.breakpointCaption}>{DEVICE_CAPTIONS[device.id] ?? device.name}</span>
+        <span id={`breakpoint-${device.id}`} className={classes.breakpointCaption}>{phoneModel(device.id)?.name ?? device.name}</span>
       </UnstyledButton>)}
     </div>
   </Radio.Group>;

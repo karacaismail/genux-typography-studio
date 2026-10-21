@@ -93,25 +93,25 @@ Sayısal alanlar NumberStepper kullanır: solda eksi, sağda artı; Mantine say�
 
 ## Kompakt çalışma alanı ve denetçi (2026-10-21)
 
-Bağlam/başlık/ilerleme aynı satırda; element gezgini ve önizleme bilgisi sağ karar panelindedir. Dış boşluk ve44px hedefler korunur. Masaüstü denetçi sticky ve viewport yüksekliğiyle sınırlı bağımsız kayar; iç başlık sabitlenmez ve kontrolleri örtmez. Dar/kısa görünüm normal akıştır. Sayısal kontrol tek yüzeydir: sade eksi / ortalanmış değer / sade artı; dar alanda tek sütun. Satır yüksekliği seçeneklerinin hemen altında2/5 satırlık, yüksek kontrastlı ve satır kutusu kılavuzlu ölçüm testi bulunur; bu ölçüm görünümü kayıtlı çıktı rengini değiştirmez. İlgili Chromium testleri compact workspace / smart sticky / numeric spinner.
+Bağlam/başlık/ilerleme aynı satırda; element gezgini ve önizleme bilgisi sağ karar panelindedir. Dış boşluk ve44px hedefler korunur. Masaüstü denetçi sticky ve viewport yüksekliğiyle sınırlı bağımsız kayar; iç başlık sabitlenmez ve kontrolleri örtmez. Dar/kısa görünüm normal akıştır. Sayısal kontrol tek yüzeydir: sade eksi / ortalanmış değer / sade artı; dar alanda tek sütun. Satır testleri denetçide değil, seçili cihazın ekranı içinde “İçerik / Satır testleri” görünüm seçiminin arkasındadır. 1/2/5 satır örnekleri seçili elementin değerlerini kullanır; görünüm değişimi kayıtlı çıktı değerlerini değiştirmez. İlgili Chromium testleri compact workspace / smart sticky / numeric spinner.
 
 Karar akışındaki iki cihaz önizlemesi varsayılan olarak 1:1 CSS piksel ölçüsünde açılır. Sahne yüksekliği çerçevenin tamamını kapsar; sabit 520/680 px yükseklik veya 900 px ekran yüksekliği kırpması uygulanmaz. Dar alanda yatay kaydırma önizleme içinde kalır; sığdırma kullanıcı seçeneğidir.
 
 İç önizleme ekranı ve sağ denetçi scroll zincirini kesmez: overscroll-behavior:auto. İç sınırda wheel/dokunma hareketi doğal olarak dış kapsayıcıya ve sayfaya aktarılır; özel wheel preventDefault veya odak taşıma uygulanmaz.
 
-Cihaz kasaları temsilidir; karma model adları birebir donanım kopyası iddiası taşımaz. m320 ve t768 klasik fiziksel ana ekran düğmeli kasa kullanır. Kamera/hoparlör ve kasa ekranın CSS alanını örtmez; kasa geometrisi DeviceStage içindeki ölçülerden üretilir.
+Mobil model eşleşmeleri ve fiziksel gövde oranları hardware.ts içindedir. m320 ve t768 fiziksel ana ekran düğmesi kullanır. Modeli belirtilmeyen tablet/laptop/desktop/TV aileleri temsilidir. Optik çerçeve ve güvenli alan ayrıntıları docs/device-mockups.md içinde açıklanır.
 
 İkili karşılaştırmada başlık satırları aynı yüksekliği kullanır. Masaüstünde cihazlar ortak üst/alt hizadadır ve merkeze yaklaştırılır; sütun aralığı lg/4, sahne yatay dolgusu xl tokenıdır. Mobilde tek sütun akışı korunur.
 
 Cihaz grubu seçimi native/dropdown değildir: Mobil, Tablet, Laptop, Bilgisayar, TV için etiketli 32 px Phosphor ikonlarıyla yatay Radio.Card grubu kullanılır. Seçili seçenek tek Tab durağıdır; ok tuşları seçimi değiştirir. Dar ekranda yalnız grup yatay kayar; sayfa taşmaz.
 
-Cihaz grubu ikonları üst header içindedir. Ürün türü yalnız header içinde GenUX kimliğinin yanındaki Mantine dropdown ile seçilir. Sidebar birincil alanı ilerleme + alt kırılımları, ikincil alanı metin kümelerini içerir. Masaüstünde kırılımlar alt alta, 320 px telefonda sarılarak sunulur; metin kümesi listesi yerel yatay kayar.
+Cihaz grubu ikonları üst header içindedir. Ürün türü yalnız header içinde GenUX kimliğinin yanındaki Mantine dropdown ile seçilir. Sidebar birincil alanı alt kırılımları, ikincil alanı metin kümelerini içerir; ilerleme sahne başlığının sağındadır. Masaüstünde kırılımlar alt alta, 320 px telefonda sarılarak sunulur; metin kümesi listesi yerel yatay kayar.
 
 Öneri işaretleri: `src/core/recommendations.ts` güvenli katalog başlangıcının kaynağıdır. Serbest editörde öneriler kullanıcı kararlarından bağımsızdır; workflow ECA motoru geçerli önceki onaylardan öneri/taslak üretir. Hiçbiri WCAG sertifikası değildir. Satır yüksekliği kullanıcı onaylı seçeneklerden seçilir; okuma için en az 1,5 proje önerisidir. W3C 1.4.12, bu değeri varsayılan yapmayı değil kullanıcı override durumunda içeriği korumayı gerektirir. Renk önerileri her iki temada kayıtlı zeminlerin tamamında en az 4,5:1 sağlar. Yeşil CheckCircle + erişilebilir Önerilen etiketi, seçim durumundan ayrıdır. Karar akışı ve serbest denetçi ortak öneri kaynağını kullanır. Cihaz grubu ikonları header içindedir; ürün türü header içindedir; sidebar sırası alt kırılım → metin kümesidir.
 
 Alt kırılım seçimi `BreakpointChoice` bileşenidir: px ölçüsü radyo butonunda, cihaz adı ilişkili açıklamada buton altında. Seçim katmanı ResizeObserver ile gerçek buton konumuna göre kayar; CSS merkezi süre/eğri tokenlarını kullanır, reduced-motion genel adaptörü geçerlidir. Seçim semantiği hareketin bitmesini beklemez. Dar alanda wrapper içinde sarılır; klavye okları ve tek Tab durağı korunur.
 
-Sol sidebar birincil alanı ilerleme sayacı/çubuğu ve cihaz alt kırılımı navigasyonuyla başlar. Tanıtım/çalışma planı metinleri kaldırılmıştır. Sonrasında semantik separator ve kullanıcı isteğiyle taşınan metin kümesi navigasyonu bulunur; birinci alandaki liste satırı görünümünü kullanır. Kaydet/içe aktar/serbest editör işlemleri header'da korunur.
+Sol sidebar birincil alanı cihaz alt kırılımı navigasyonuyla başlar; burada ilerleme sayacı veya çubuğu bulunmaz. Tanıtım/çalışma planı metinleri kaldırılmıştır. Sonrasında semantik separator ve kullanıcı isteğiyle taşınan metin kümesi navigasyonu bulunur; birinci alandaki liste satırı görünümünü kullanır. Kaydet/içe aktar/serbest editör işlemleri header'da korunur.
 
 Alt kırılımda px ve model açıklaması tek `a[role=radio]` hedefinin içindedir; ayrı iç buton/bağlantı eklenmez. Tıklama, Enter, Space ve oklarla seçim desteklenir; yalnız seçili öğe Tab durağıdır. Hareketli katman yalnız üstteki 28 px ölçü yüzeyini izler; açıklama stili ve renkleri korunur.
 
@@ -129,11 +129,17 @@ Workflow çıktı tonları açık/koyu bölümü sürekli görünürdür; accord
 
 Çıktı renk alanları kendi light/dark semantik tokenlarını kapsar; kartela, onaltılık alanı ve kontrast açıklamasının zemini/metni uygulama temasından bağımsızdır.
 
-Satır yüksekliği canlı testinin zemini ve okunabilir metin rengi arayüz temasını izler; telefon önizleme temasından bağımsızdır. Çıktı renk alanlarının kendi açık/koyu zeminleri korunur.
+Seçili cihazın içindeki satır testlerinin zemini ve metni bağımsız önizleme temasını izler; denetçi temasına bağlanmaz. Çıktı renk alanlarının kendi açık/koyu zeminleri korunur.
 
-Cihaz kasaları ortak DEVICE_MATERIAL tokenlarıyla sabit, ince çapraz doku ve statik parlama kullanır. Efekt kasa/stand arka planındadır; ekranın üzerine katman çizilmez, ekran geometrisi ve renkleri korunur. TV ayrı ince çerçeve ve çift ayak profili kullanır.
+Cihaz kasaları ortak DEVICE_MATERIAL tokenlarıyla cam, metal kenar ve kontrollü statik yansıma katmanları kullanır. Tekrarlayan çapraz desen kullanılmaz. Ekran ağzındaki pointer-events:none iç gölge yalnız kenar derinliği oluşturur; ekran boyutları korunur. TV ayrı ince çerçeve ve çift ayak profili kullanır.
 
-Telefon kasaları classic / android / notch / island profillerine ayrılır; yan tuşlar ve kamera/ahize yalnız kasadadır. Klasik mobil kasa daha düz köşeli, laptop menteşe tabanı çentikli, TV çift ayaklıdır. Bunlar mevcut CSS viewportlarını koruyan temsili donanım çizimleridir; kısaltılmış cihaz adları birebir üretici ölçüsü iddiası değildir.
+Mobil cihaz seçimi, adı ve geometrisi src/core/hardware.ts içindeki tek model kaynağından gelir. Gövde oranı üretici mm ölçüleri ve panel bilgileriyle hesaplanır; optik kesit ve köşe eğrileri çizim rekonstrüksiyonudur. m320 iPhone 4 ekranı 320x480 CSS px olarak düzeltilmiştir. Modern kamera/çentikler ekran bölgesindedir; içerik modelin güvenli boşluğuyla korunur. Bu görüntüler CAD veya üretici fotoğrafı diye sunulmaz. Üretici kaynakları ve kapsam: docs/device-mockups.md.
+
+Seçili rol adı ve ölçü özeti tek kalın satırda gösterilir; açık/koyu önizleme kontrolü ve onay durumu aynı sağa hizalı satırda yer alır. Ayrı, tekrarlayan rol/ölçü satırı eklenmez; 320 px görünümünde doğal sarılır.
+
+Genel küme ilerlemesi ve geçerli kümenin element ilerlemesi sahne başlığının sağında tek kompakt WorkflowProgress bileşeninde birleşir. Etiketler “0 / 1144 onaylı küme” ve “0 / 6 element onaylandı” biçimini korur; değerler gerçek toplam ve onay sayılarından gelir. İki ilerleme metriğinin erişilebilir etiketleri ayrıdır; solda genel sayaç/çubuk veya sağda ayrı tekrarlayan element sayacı tutulmaz.
+
+Telefon ve tablet önizlemelerinde “Dikey / Yatay” yalnız önizleme yönünü değiştirir. Seçili karar genişliği, cihaz profili, ECA/onay anahtarları ve kayıtlı değerler korunur; yataya geçiş başka kırılım veya cihaz ailesi seçmez. İçerik ve satır testleri aynı önizleme yönünü kullanır; kasa ve güvenli alanlar bu yöne uyarlanır.
 
 ## Mobil öncelikli ECA karar motoru
 

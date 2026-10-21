@@ -28,63 +28,61 @@
   left: 0;
   transform-origin: 0 0;
 }
-// Kasa ölçüleri DeviceStage geometrisiyle aynı kaynaktan gelir.
+
+// Geometry and optical layers share the model's screen aperture; no bitmap crosses the live content.
 .device {
-  position: relative;
-  padding: var(--device-top) var(--device-side) var(--device-bottom);
-  background-color: var(--device-shell);
-  background-image: var(--device-finish);
-  box-shadow: inset 0 0 0 2px var(--device-edge), inset 0 0 0 4px var(--device-shell);
-  &[data-kind='mobile'] { border-radius:44px; }
-  &[data-kind='tablet'] { border-radius:30px; }
-  &[data-kind='laptop'], &[data-kind='desktop'] { border-radius:14px 14px 6px 6px; }
-  &[data-profile='classic'] { border-radius:30px; }
+  --device-radius:30px; --screen-radius:4px; --device-safe-top:0px; --device-safe-bottom:0px; --device-safe-left:0px; --device-safe-right:0px;
+  position:relative; isolation:isolate;
+  padding:var(--device-top) var(--device-side) var(--device-bottom);
+  background:var(--device-finish); border-radius:var(--device-radius);
+  box-shadow:var(--device-body-shadow);
 }
-.hardware { position:absolute; top:0; left:50%; transform:translateX(-50%); width:72px; height:var(--device-top); pointer-events:none; }
-.camera { position:absolute; width:6px; height:6px; border-radius:50%; background:var(--device-edge); top:50%; left:8px; transform:translateY(-50%); }
-.speaker { position:absolute; width:38px; height:5px; border-radius:3px; background:var(--device-edge); top:50%; left:26px; transform:translateY(-50%); }
-.home { position:absolute; bottom:18px; left:50%; transform:translateX(-50%); width:40px; height:40px; border-radius:50%; border:2px solid var(--device-edge); background:var(--device-shell); pointer-events:none; }
-.device[data-profile='modern'] .hardware { top:0; height:24px; width:100px; border-radius:0 0 14px 14px; background:var(--device-shell); z-index:1; }
-.device[data-profile='modern'] .camera { left:14px; }
-.device[data-kind='laptop'] .speaker, .device[data-kind='desktop'] .speaker, .device[data-kind='tablet']:not([data-profile='classic']) .speaker { display:none; }
-.device[data-kind='laptop'] .camera, .device[data-kind='desktop'] .camera, .device[data-kind='tablet']:not([data-profile='classic']) .camera { left:calc(50% - 3px); }
-.screen {
-  overflow: auto;
-  overscroll-behavior: auto;
-  background: var(--canvas);
-  scrollbar-width: thin;
-  .device[data-kind='mobile'] & {
-    border-radius: 32px;
-  }
-  .device[data-profile='classic'] & { border-radius:3px; }
-  .device[data-kind='tablet']:not([data-profile='classic']) & {
-    border-radius: 14px;
-  }
-  .device[data-kind='laptop'] &,
-  .device[data-kind='desktop'] & {
-    border-radius: 4px;
-  }
-}
-.base {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: var(--device-shell);
-  background-image: var(--device-finish);
-  box-shadow:inset 0 1px 0 var(--device-edge);
-  &[data-kind='laptop'] {
-    top: 100%;
-    width: 114%;
-    height: 18px;
-    border-radius: 0 0 14px 14px;
-  }
-  &[data-kind='desktop'] {
-    top: 100%;
-    width: 22%;
-    height: 120px;
-    clip-path: polygon(30% 0, 70% 0, 82% 100%, 18% 100%);
-  }
-}
+.device::before { content:''; position:absolute; inset:4px; border-radius:calc(var(--device-radius) - 3px); background:var(--device-glass); pointer-events:none; z-index:0; }
+.device::after { content:''; position:absolute; inset:0; border-radius:inherit; box-shadow:var(--device-edge-light); pointer-events:none; z-index:3; }
+.screen { box-sizing:border-box; position:relative; z-index:1; overflow:hidden; background:var(--canvas); border-radius:var(--screen-radius); }
+.screenScroller { position:absolute; inset:var(--device-safe-top) var(--device-safe-right) var(--device-safe-bottom) var(--device-safe-left); overflow:auto; overscroll-behavior:auto; scrollbar-width:thin; }
+.screenInset { position:absolute; z-index:2; border-radius:var(--screen-radius); box-shadow:var(--device-screen-depth); pointer-events:none; }
+.hardware { position:absolute; z-index:4; top:0; left:50%; transform:translateX(-50%); width:88px; height:var(--device-top); pointer-events:none; }
+.camera { position:absolute; width:7px; height:7px; border-radius:50%; background:var(--device-lens-finish); box-shadow:0 0 0 1px var(--device-lens); top:50%; left:2px; transform:translateY(-50%); }
+.speaker { position:absolute; width:45px; height:6px; border-radius:var(--mantine-radius-xl); background:var(--device-speaker-finish); box-shadow:inset 0 1px 2px var(--device-lens),0 1px 0 var(--device-edge); top:50%; left:28px; transform:translateY(-50%); }
+.home { bottom:18px; position:absolute; z-index:4; left:50%; transform:translateX(-50%); width:44px; height:44px; border-radius:50%; background:var(--device-home-finish); box-shadow:var(--device-home-ring); pointer-events:none; }
+.device[data-kind='mobile'][data-profile='classic'] .home::after { content:''; position:absolute; inset:15px; border:1px solid var(--device-edge); border-radius:3px; opacity:.65; }
+.sideKeys,.powerKey { position:absolute; z-index:0; width:3px; background:var(--device-key-finish); border-radius:var(--mantine-radius-xs); pointer-events:none; }
+.sideKeys { left:-2px; top:22%; height:6%; }
+.sideKeys::before { content:''; position:absolute; top:-70%; width:100%; height:40%; background:inherit; border-radius:inherit; }
+.sideKeys::after { content:''; position:absolute; top:125%; width:100%; height:100%; background:inherit; border-radius:inherit; }
+.powerKey { right:-2px; top:28%; height:10%; }
+.device:not([data-kind='mobile']) .sideKeys,.device:not([data-kind='mobile']) .powerKey { display:none; }
+.device[data-profile='classic'] .powerKey { top:-2px; right:18%; height:3px; width:12%; }
+.device[data-profile='notch'] .hardware { top:var(--device-top); width:var(--device-cutout-width); height:30px; border-radius:0 0 20px 20px; background:var(--device-shell); }
+.device[data-profile='notch'] .camera { left:18%; }
+.device[data-profile='notch'] .speaker { left:37%; width:40%; height:4px; box-shadow:none; }
+.device[data-model='m375'] .hardware { height:29px; }
+.device[data-profile='island'] .hardware { top:calc(var(--device-top) + 11px); width:108px; height:30px; border-radius:var(--mantine-radius-xl); background:var(--device-lens); box-shadow:0 0 0 1px var(--device-shell); }
+.device[data-profile='island'] .speaker { display:none; }
+.device[data-profile='island'] .camera { left:84px; width:9px; height:9px; }
+.device[data-profile='android'] .hardware { top:calc(var(--device-top) + 9px); width:12px; height:12px; border-radius:50%; background:var(--device-lens); }
+.device[data-profile='android'] .camera { left:2px; width:8px; height:8px; }
+.device[data-profile='android'] .speaker { display:none; }
+.homeIndicator { position:absolute; z-index:4; left:50%; transform:translateX(-50%); width:28%; height:5px; border-radius:var(--mantine-radius-xl); background:var(--device-indicator); pointer-events:none; }
+.device[data-kind='laptop'],.device[data-kind='desktop'] { --device-radius:12px; --screen-radius:4px; }
+.device[data-kind='tablet'] { --screen-radius:12px; }
+.device[data-kind='tablet'][data-profile='classic'] { --screen-radius:1px; }
+.device[data-kind='laptop'] .speaker,.device[data-kind='desktop'] .speaker,.device[data-kind='tablet']:not([data-profile='classic']) .speaker { display:none; }
+.device[data-kind='laptop'] .camera,.device[data-kind='desktop'] .camera,.device[data-kind='tablet']:not([data-profile='classic']) .camera { left:calc(50% - 3px); }
+.device[data-profile='tv'] { --device-radius:5px; }
+.device[data-profile='tv'] .hardware { display:none; }
+.device[data-landscape] .hardware { top:50%; left:calc(var(--device-side) / 2); height:30px; transform:translate(-50%,-50%) rotate(-90deg); }
+.device[data-landscape][data-profile='notch'] .hardware,.device[data-landscape][data-profile='island'] .hardware { left:calc(var(--device-side) + 15px); }
+.device[data-landscape][data-profile='android'] .hardware { left:calc(var(--device-side) + 15px); height:12px; }
+.device[data-landscape] .home { left:auto; right:calc(var(--device-side) / 2 - 22px); top:50%; transform:translateY(-50%); }
+.device[data-landscape] .homeIndicator { left:auto; right:calc(var(--device-side) + 8px); top:50%; width:5px; height:28%; transform:translateY(-50%); }
+
+.base { position:absolute; left:50%; transform:translateX(-50%); background:var(--device-finish); box-shadow:var(--device-edge-light); }
+.base[data-kind='laptop'] { top:100%; width:114%; height:18px; border-radius:0 0 14px 14px; }
+.base[data-kind='laptop']::after { content:''; position:absolute; width:15%; height:5px; left:42.5%; top:0; border-radius:0 0 6px 6px; background:var(--device-shell); }
+.base[data-kind='desktop'] { top:100%; width:22%; height:120px; clip-path:polygon(30% 0,70% 0,82% 100%,18% 100%); }
+.base[data-profile='tv'] { width:76%; height:32px; clip-path:polygon(8% 0,12% 0,5% 100%,0 100%,8% 0,88% 0,92% 0,100% 100%,95% 100%,88% 0); }
 .readout {
   margin: 0 0 var(--mantine-spacing-sm);
   text-align: center;
@@ -92,27 +90,3 @@
   color: var(--gx-text-2);
   font-variant-numeric: tabular-nums;
 }
-
-// Donanım ayrıntıları ekranın dışındaki kasada kalır.
-.sideKeys { position:absolute; left:-2px; top:16%; width:3px; height:9%; border-radius:var(--mantine-radius-xs); background:var(--device-edge); pointer-events:none; }
-.device:not([data-kind='mobile']) .sideKeys { display:none; }
-.device[data-kind='mobile'][data-profile='classic'] { border-radius:18px; }
-.device[data-kind='mobile'][data-profile='classic'] .home::after { content:''; position:absolute; inset:11px; border:1px solid var(--device-edge); border-radius:var(--mantine-radius-xs); }
-.device[data-profile='android'] { border-radius:24px; }
-.device[data-profile='android'] .screen { border-radius:16px; }
-.device[data-profile='android'] .hardware { width:12px; }
-.device[data-profile='android'] .camera { left:3px; background:var(--device-lens); box-shadow:0 0 0 2px var(--device-edge); }
-.device[data-profile='android'] .speaker { display:none; }
-.device[data-profile='notch'],.device[data-profile='island'] { border-radius:38px; }
-.device[data-profile='notch'] .screen,.device[data-profile='island'] .screen { border-radius:26px; }
-.device[data-profile='notch'] .hardware { width:126px; height:24px; border-radius:0 0 15px 15px; background:var(--device-lens); }
-.device[data-profile='notch'] .camera { left:22px; }
-.device[data-profile='notch'] .speaker { left:48px; width:46px; }
-.device[data-profile='island'] .hardware { top:7px; width:90px; height:14px; border-radius:var(--mantine-radius-xl); background:var(--device-lens); }
-.device[data-profile='island'] .speaker { display:none; }
-.device[data-profile='island'] .camera { left:68px; width:5px; height:5px; }
-.device[data-kind='laptop'] { border-radius:12px 12px 0 0; }
-.base[data-kind='laptop']::after { content:''; position:absolute; width:15%; height:5px; left:42.5%; top:0; border-radius:0 0 6px 6px; background:var(--device-edge); }
-.device[data-profile='tv'] { border-radius:5px; }
-.device[data-profile='tv'] .hardware { display:none; }
-.base[data-profile='tv'] { width:76%; height:32px; clip-path:polygon(8% 0,12% 0,5% 100%,0 100%,8% 0,88% 0,92% 0,100% 100%,95% 100%,88% 0); }

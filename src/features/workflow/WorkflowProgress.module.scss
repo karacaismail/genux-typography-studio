@@ -1,0 +1,31 @@
+.root {
+  display: grid;
+  gap: var(--mantine-spacing-xs);
+  min-width: 0;
+  max-width: 100%;
+  margin-inline-start: auto;
+  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+  border-radius: var(--mantine-radius-sm);
+  background: var(--gx-sunken);
+  font-family: var(--mantine-font-family);
+  font-size: var(--mantine-font-size-sm);
+  line-height: var(--mantine-line-height-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.metric {
+  display: grid;
+  min-width: 0;
+  gap: calc(var(--mantine-spacing-xs) / 2);
+  overflow-wrap: normal;
+  word-break: normal;
+}
+
+.globalLabel {
+  color: var(--gx-text);
+  font-weight: 500;
+}
+
+.localLabel {
+  color: var(--gx-text-2);
+}

@@ -1,0 +1,75 @@
+.root {
+  grid-column: 1 / -1;
+  min-width: 0;
+  padding: var(--mantine-spacing-md);
+  background: var(--canvas);
+  color: var(--canvas-text);
+  font-family: var(--mantine-font-family);
+  font-size: max(14px, var(--mantine-font-size-sm));
+  line-height: var(--mantine-line-height);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--mantine-spacing-sm);
+  flex-wrap: wrap;
+}
+
+.heading,
+.label {
+  display: block;
+  font-size: inherit;
+}
+
+.readout {
+  margin-block: var(--mantine-spacing-sm);
+  font-size: inherit;
+}
+
+.countControl {
+  --sc-font-size: max(14px, var(--mantine-font-size-sm));
+  background: var(--canvas-2);
+  color: var(--canvas-text);
+
+  :global(.mantine-SegmentedControl-label) {
+    color: var(--canvas-text);
+    font-size: max(14px, var(--mantine-font-size-sm));
+  }
+
+  :global(.mantine-SegmentedControl-indicator) {
+    background: var(--canvas-field);
+  }
+}
+
+.matrixSample {
+  min-width: 0;
+  margin-block: var(--mantine-spacing-md);
+}
+
+.label {
+  margin-bottom: var(--mantine-spacing-sm);
+}
+
+.sample {
+  min-width: 0;
+  overflow: auto;
+  overscroll-behavior: auto;
+  padding-block: var(--mantine-spacing-sm);
+  background-origin: content-box;
+  background-clip: content-box;
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+:global(html[data-focus='kbd']) .sample:focus-visible {
+  outline: none;
+  box-shadow: inset 0 -3px 0 var(--gx-focus);
+}
+
+@media (forced-colors: active) {
+  :global(html[data-focus='kbd']) .sample:focus-visible {
+    outline: 2px solid CanvasText;
+  }
+}

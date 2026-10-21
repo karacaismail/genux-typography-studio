@@ -1,3 +1,4 @@
+import { phoneGeometry, phoneModel } from '../../core/hardware';
 import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { TIERS, tierOf, type Device } from '../../core';
 import { fmt } from '../../core/util';
@@ -28,6 +29,8 @@ interface Props {
 
 /** Cihaz çerçevesi: ekran gerçek CSS genişliğinde yerleşir (kap sorguları doğru çalışır), çerçeve sahneye ölçeklenir. */
 export function DeviceStage({ device, width, height, landscape, zoom, onScreen, children, label, theme, autoHeight }: Props) {
+  const model=phoneModel(device.id);
+  const adaptive=autoHeight && !model;
   const [contentH, setContentH] = useState(height);
   const stageRef = useRef<HTMLDivElement>(null);
   const [avail, setAvail] = useState({ w: 0, h: 0 });
@@ -53,18 +56,19 @@ export function DeviceStage({ device, width, height, landscape, zoom, onScreen, 
   // Otomatik yükseklikte ekran içeriği ölçülür (dönüşümden bağımsız offsetHeight).
   useLayoutEffect(() => {
     const first = screen?.firstElementChild as HTMLElement | null;
-    if (!autoHeight || !first) return undefined;
+    if (!adaptive || !first) return undefined;
     const ro = new ResizeObserver(() => setContentH(first.offsetHeight));
     ro.observe(first);
     return () => ro.disconnect();
-  }, [screen, autoHeight]);
+  }, [screen, adaptive]);
 
-  const legacy = device.id === 'm320' || device.id === 't768';
-  const b = device.id.startsWith('tv') ? {...BEZEL.desktop, x:10,top:10,bottom:22,base:32} : legacy ? { ...BEZEL[device.group], x: 14, top: 64, bottom: 76 } : device.group === 'mobile' ? {...BEZEL.mobile,x:8,top:28,bottom:18} : BEZEL[device.group];
-  const profile = device.id.startsWith('tv') ? 'tv' : legacy ? 'classic' : device.group === 'mobile' ? device.id === 'm360' ? 'android' : device.id === 'm430' ? 'island' : 'notch' : device.group;
-  const shellStyle = { '--device-side': `${b.x}px`, '--device-top': `${b.top}px`, '--device-bottom': `${b.bottom}px` } as CSSProperties;
+  const legacy=model?.profile==='classic' || device.id==='t768';
+  const portraitBezel = device.id.startsWith('tv') ? {...BEZEL.desktop, x:10,top:10,bottom:22,base:32} : legacy ? {...BEZEL[device.group],x:14,top:64,bottom:76} : BEZEL[device.group];
+  const b = model ? phoneGeometry(model,width,height,landscape) : landscape && (device.group==='mobile' || device.group==='tablet') ? {...portraitBezel,x:(portraitBezel.top+portraitBezel.bottom)/2,top:portraitBezel.x,bottom:portraitBezel.x} : portraitBezel;
+  const profile=model?.profile??(device.id.startsWith('tv')?'tv':legacy?'classic':device.group);
+  const shellStyle = { '--device-side': `${b.x}px`, '--device-top': `${b.top}px`, '--device-bottom': `${b.bottom}px`,...(model?{'--device-radius':`${model.corners.body}px`,'--screen-radius':`${model.corners.screen}px`,'--device-safe-top':`${landscape?0:model.safe.top}px`,'--device-safe-bottom':`${landscape?0:model.safe.bottom}px`,'--device-safe-left':`${landscape?model.safe.top:0}px`,'--device-safe-right':`${landscape?model.safe.bottom:0}px`,'--device-cutout-width':`${model.width*(model.id==='m375'?.32:.38)}px`}:{}) } as CSSProperties;
   const frameW = width + 2 * b.x;
-  const screenH = autoHeight ? Math.max(height, contentH) : height;
+  const screenH = adaptive ? Math.max(height, contentH) : height;
   const frameH = screenH + b.top + b.bottom;
   const extraX = Math.round(frameW * b.wide);
   const totalW = frameW + 2 * extraX;
@@ -79,24 +83,25 @@ export function DeviceStage({ device, width, height, landscape, zoom, onScreen, 
   return (
     <div ref={stageRef} className={classes.stage} data-auto-height={autoHeight || undefined}>
       <p className={classes.readout}>
-        {label ? `${label} · ` : ''}{device.name} · {width} × {height} px{landscape ? ' · yatay' : ''} · {tier.label} · ölçek %{fmt(Math.round(k * 100), 0)}
+        {label ? `${label} · ` : ''}{device.name} · {width} × {height} CSS px{landscape ? ' · yatay' : ''} · {model ? `${fmt(model.bodyMm.width,1)} × ${fmt(model.bodyMm.height,1)} mm` : tier.label} · ölçek %{fmt(Math.round(k * 100), 0)}
       </p>
       <div className={classes.center}>
         <div className={classes.sizer} data-device-sizer style={{ width: totalW * k, height: totalH * k }}>
           <div className={classes.frame} style={{ transform: `translateX(${extraX * k}px) scale(${k})` }}>
-            <div className={classes.device} data-kind={device.group} data-profile={profile} style={shellStyle}>
-              <span className={classes.sideKeys} aria-hidden="true"/><span className={classes.hardware} aria-hidden="true"><span className={classes.camera}/><span className={classes.speaker}/></span>
-              {legacy && <span className={classes.home} aria-hidden="true"/>}
+            <div className={classes.device} data-model={model?.id} data-landscape={landscape || undefined} data-kind={device.group} data-profile={profile} style={shellStyle}>
+              <span className={classes.sideKeys} aria-hidden="true"/><span className={classes.hardware} data-device-hardware aria-hidden="true"><span className={classes.camera}/><span className={classes.speaker}/></span>
+              {model && model.profile!=='classic' && <span className={classes.homeIndicator} aria-hidden="true" style={{bottom:b.bottom+8}}/>}
+              <span className={classes.powerKey} aria-hidden="true"/>
+              {legacy && <span className={classes.home} data-device-home aria-hidden="true" style={model?{bottom:(b.bottom-44)/2}:undefined}/>}
               <div
-                ref={setScreen}
                 className={classes.screen}
                 style={{ ...canvasVars(theme), width, height: screenH }}
-                tabIndex={0}
                 role="region"
                 aria-label={`Önizleme ekranı, ${width} piksel`}
               >
-                {children}
+                <div ref={setScreen} className={classes.screenScroller} tabIndex={0} role="region" aria-label={`Kaydırılabilir ekran içeriği, ${width} piksel`}>{children}</div>
               </div>
+              <span className={classes.screenInset} data-screen-depth aria-hidden="true" style={{left:b.x,top:b.top,width,height:screenH}}/>
             </div>
             {b.base > 0 && <div className={classes.base} data-kind={device.group} data-profile={profile} aria-hidden="true" />}
           </div>

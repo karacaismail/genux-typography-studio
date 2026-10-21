@@ -10,6 +10,7 @@ import { useStudioSearch } from '../../app/useStudioSearch';
 import { useStudio } from '../../store/studio';
 import { useUi, type CompareWith } from '../../store/ui';
 import { DeviceStage } from './DeviceStage';
+import { phoneModel } from '../../core/hardware';
 import { LinesView } from './LinesView';
 import { PageView } from './PageView';
 import { PreviewSurface } from './PreviewSurface';
@@ -39,6 +40,7 @@ function ViewPane({ decisions, ctx, prefix, label, primary, flow }: PaneProps) {
   const [screen, setScreen] = useState<HTMLDivElement | null>(null);
   const [rootEl, setRootEl] = useState<HTMLElement | null>(null);
   const dims = deviceDims(search.device, search.orient);
+  const expanded = flow && !phoneModel(dims.d.id);
   const resolved = useMemo(() => resolveContextAt(decisions, ctx, dims.w), [decisions, ctx, dims.w]);
   const settings = decisions.contexts[ctx].settings;
   const selected = hasRole(ctx, search.role) ? search.role : 'h1';
@@ -58,7 +60,7 @@ function ViewPane({ decisions, ctx, prefix, label, primary, flow }: PaneProps) {
         <PreviewSurface ctx={ctx} resolved={resolved} settings={settings} width={dims.w} theme={search.theme}>
           <PageView
             ctx={ctx} selected={selected} resolved={resolved} prefix={prefix}
-            scroller={flow ? rootEl : screen} scrollOffset={stripH + 48} onPick={onPick} onOverflow={onOverflow} tagLabel={ROLE[selected].label}
+            scroller={expanded ? rootEl : screen} scrollOffset={expanded ? stripH + 48 : 48} onPick={onPick} onOverflow={onOverflow} tagLabel={ROLE[selected].label}
           />
         </PreviewSurface>
       </DeviceStage>

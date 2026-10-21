@@ -1,0 +1,14 @@
+.root {
+  max-inline-size: 100%;
+  flex-shrink: 0;
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: var(--gx-workflow-header-hit);
+  min-inline-size: var(--gx-workflow-header-hit);
+  padding-inline: var(--mantine-spacing-sm);
+  font-size: var(--mantine-font-size-sm);
+}

@@ -388,3 +388,16 @@ test('output color fields retain their own light and dark surfaces across tool t
     await page.getByRole('button',{name:'Uygulama temasını değiştir',exact:true}).click();
   }
 });
+
+test('near line test follows interface theme independently from preview theme',async({page})=>{
+  await page.goto('/');
+  const test=page.getByRole('region',{name:'Satır yüksekliği canlı testi',exact:true});
+  await expect(test).toHaveCSS('background-color','rgb(255, 255, 255)');
+  await page.getByRole('button',{name:'Uygulama temasını değiştir',exact:true}).click();
+  await expect(test).toHaveCSS('background-color','rgb(26, 26, 26)');
+  await expect(test.getByTestId('near-line-sample')).toHaveCSS('color','rgb(224, 224, 224)');
+  await page.getByRole('radiogroup',{name:'Önizleme teması',exact:true}).getByText('Koyu',{exact:true}).click();
+  await expect(test).toHaveCSS('background-color','rgb(26, 26, 26)');
+  await page.getByRole('button',{name:'Uygulama temasını değiştir',exact:true}).click();
+  await expect(test).toHaveCSS('background-color','rgb(255, 255, 255)');
+});

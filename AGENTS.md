@@ -128,3 +128,5 @@ Karar panelinin üstünde element seçimi, ölçü özeti ve önizleme teması b
 Workflow çıktı tonları açık/koyu bölümü sürekli görünürdür; accordion veya kapatma kontrolü kullanılmaz.
 
 Çıktı renk alanları kendi light/dark semantik tokenlarını kapsar; kartela, onaltılık alanı ve kontrast açıklamasının zemini/metni uygulama temasından bağımsızdır.
+
+Satır yüksekliği canlı testinin zemini ve okunabilir metin rengi arayüz temasını izler; telefon önizleme temasından bağımsızdır. Çıktı renk alanlarının kendi açık/koyu zeminleri korunur.

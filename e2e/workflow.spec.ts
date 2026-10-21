@@ -31,14 +31,10 @@ test('has mobile navigation, all device subwidths, loaded Ant Design examples an
   await expect(page.getByRole('button',{name:'JSON içe aktar',exact:true})).toBeVisible();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(320);
   await page.getByRole('radio',{name:'Tablet',exact:true}).click();
-  await page.getByRole('combobox',{name:'Alt kırılım',exact:true}).click();
-  await expect(page.getByRole('option').filter({hasText:'834 px'})).toBeVisible();
-  await page.keyboard.press('Escape');
+  await expect(page.getByRole('radio',{name:'834 px',exact:true})).toBeVisible();
   await page.getByRole('radio',{name:'Televizyon',exact:true}).click();
   await expect(page.getByRole('heading',{name:'Headings · başlıklar',exact:true})).toBeVisible();
-  await page.getByRole('combobox',{name:'Alt kırılım',exact:true}).click();
-  await expect(page.getByRole('option').filter({hasText:'3840 px'})).toBeVisible();
-  await page.keyboard.press('Escape');
+  await expect(page.getByRole('radio',{name:'3840 px',exact:true})).toBeVisible();
   await page.getByRole('button',{name:'Kaydet',exact:true}).focus();await page.keyboard.press('Tab');
   const focus=await page.evaluate(()=>({mode:document.documentElement.dataset.focus,outline:getComputedStyle(document.activeElement!).outlineStyle,shadow:getComputedStyle(document.activeElement!).boxShadow}));
   expect(focus.mode).toBe('kbd');expect(focus.outline).toBe('none');expect(focus.shadow).not.toBe('none');
@@ -222,15 +218,77 @@ test('device families use large horizontal icon radios with keyboard selection',
 });
 
 
-test('workspace selectors follow device, product, text group, breakpoint order on one desktop row',async({page})=>{
+test('device icons live in the header and remaining selectors keep their order',async({page})=>{
   await page.setViewportSize({width:1920,height:1000});await page.goto('/');
   const device=page.getByRole('radiogroup',{name:'Cihaz grubu',exact:true});
   const product=page.getByRole('combobox',{name:'Ürün türü',exact:true});
   const group=page.getByRole('combobox',{name:'Metin kümesi',exact:true});
-  const tier=page.getByRole('combobox',{name:'Alt kırılım',exact:true});
-  const boxes=await Promise.all([device,product,group,tier].map(el=>el.boundingBox()));
-  for(let i=1;i<boxes.length;i++)expect(boxes[i]!.x).toBeGreaterThan(boxes[i-1]!.x);
-  expect(Math.abs(boxes[1]!.y-boxes[3]!.y)).toBeLessThan(1);
-  expect(boxes[1]!.y).toBeLessThan(boxes[0]!.y+boxes[0]!.height);
+  const tier=page.getByRole('radiogroup',{name:'Alt kırılım',exact:true});
+  await expect(page.getByRole('banner').getByRole('radiogroup',{name:'Cihaz grubu',exact:true})).toBeVisible();
+  const boxes=await Promise.all([product,group,tier].map(el=>el.boundingBox()));
+  expect(boxes[1]!.x).toBeGreaterThan(boxes[0]!.x);
+  expect(boxes[2]!.y).toBeGreaterThan(boxes[0]!.y);
+  expect((await device.boundingBox())!.y).toBeLessThan(boxes[0]!.y);
   await page.setViewportSize({width:320,height:850});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(320);
+});
+
+
+test('recommendations remain independent of selected values and cover both editors',async({page})=>{
+  await page.addInitScript(()=>localStorage.setItem('genux-type-lab-v2',JSON.stringify({format:'genux-typography-decisions',version:2,scope:'changed',contexts:{},ui:{tourDone:true}})));
+  await page.setViewportSize({width:1680,height:1000});await page.goto('/');
+  const weight=page.getByRole('radio',{name:'Ağırlık 600',exact:true});
+  await expect(weight.getByRole('img',{name:'Önerilen: Ağırlık 600',exact:true})).toBeVisible();
+  await page.getByRole('radio',{name:'Ağırlık 400',exact:true}).click();
+  await expect(weight.getByRole('img',{name:'Önerilen: Ağırlık 600',exact:true})).toBeVisible();
+  await expect(weight).not.toBeChecked();
+  await page.getByLabel('Yazı boyutu',{exact:true}).fill('26');
+  await expect(page.getByRole('img',{name:'Önerilen: 32 px',exact:true})).toBeVisible();
+  const lh=page.getByRole('radiogroup',{name:'Satır yüksekliği',exact:true});
+  await expect(lh.getByRole('img')).toHaveCount(1);
+  await expect(weight).toHaveAccessibleDescription(/600/);
+  await expect(lh.getByRole("radio",{name:"Satır yüksekliği 1.25",exact:true})).toHaveAccessibleDescription(/1.25/);
+  await page.getByRole('button',{name:'Çıktı tonları · açık / koyu',exact:true}).click();
+  await expect(page.getByRole('radiogroup',{name:'Açık tema metin rengi'}).getByRole('img')).toHaveCount(1);
+  await expect(page.getByRole('radiogroup',{name:'Koyu tema metin rengi'}).getByRole('img')).toHaveCount(1);
+  await page.setViewportSize({width:320,height:850});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(320);
+  await page.setViewportSize({width:1680,height:1000});
+  await page.getByRole('button',{name:'Serbest editör',exact:true}).click();
+  await expect(page.getByRole('complementary',{name:'Denetçi'}).getByText('Önerilen: 38',{exact:true})).toBeVisible();
+  await page.getByRole("combobox",{name:"Boyut modu",exact:true}).click();
+  await page.getByRole("option",{name:"İki uç · otomatik tam sayı",exact:true}).click();
+  const inspector=page.getByRole("complementary",{name:"Denetçi"});
+  await expect(inspector.getByText("Önerilen: 32",{exact:true})).toBeVisible();
+  await expect(inspector.getByText("Önerilen: 40",{exact:true})).toBeVisible();
+});
+
+
+test('breakpoint tabs separate pixel labels from captions and animate the active layer',async({page})=>{
+  await page.setViewportSize({width:1680,height:1000});await page.goto('/');
+  const group=page.getByRole('radiogroup',{name:'Alt kırılım',exact:true});
+  const first=group.getByRole('radio',{name:'320 px',exact:true});const next=group.getByRole('radio',{name:'360 px',exact:true});
+  await expect(first).toHaveText('320 px');await expect(first).toHaveAccessibleDescription(/iPhone/);
+  const indicator=group.locator('[data-ready]');
+  await expect(indicator).toHaveCSS('opacity','1');const before=await indicator.evaluate(el=>getComputedStyle(el).transform);
+  await next.click();await expect(next).toBeChecked();
+  await expect.poll(()=>indicator.evaluate(el=>getComputedStyle(el).transform)).not.toBe(before);
+  const motion=await indicator.evaluate(el=>({duration:getComputedStyle(el).transitionDuration,ease:getComputedStyle(el).transitionTimingFunction}));
+  expect(motion.duration).not.toBe('0s');expect(motion.ease).toContain('0.65');
+  await first.click();await first.focus();await first.press('ArrowRight');await expect(next).toBeChecked();
+  await page.setViewportSize({width:320,height:850});
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(320);
+  const narrowFirst=await first.boundingBox();const last=await group.getByRole('radio',{name:'430 px',exact:true}).boundingBox();expect(last!.y).toBeGreaterThan(narrowFirst!.y);
+  await page.emulateMedia({reducedMotion:'reduce'});await expect(indicator).toHaveCSS('transition-duration',/^0s(?:, 0s)*$/);
+});
+
+
+test('sidebar starts with progress and product contexts and reserves an empty secondary region',async({page})=>{
+  await page.setViewportSize({width:1680,height:1000});await page.goto('/');
+  const rail=page.getByRole('complementary',{name:'Karar yolculuğu'});
+  await expect(rail.getByRole('region',{name:'Çalışma ilerlemesi'})).toBeVisible();
+  await expect(rail.getByText('0 / 1144 küme onaylandı',{exact:true})).toBeVisible();
+  await expect(rail.getByRole('navigation',{name:'Ürün türleri'}).getByRole('button')).toHaveCount(6);
+  await expect(rail.getByText('Çalışma planı',{exact:true})).toHaveCount(0);
+  await expect(rail.getByText('Bir karar.',{exact:false})).toHaveCount(0);
+  await expect(rail.getByRole('separator')).toBeVisible();
+  await expect(rail.getByRole('region',{name:'İkincil alan'})).toBeEmpty();
 });

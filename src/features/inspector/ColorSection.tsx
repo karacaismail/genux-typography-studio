@@ -2,9 +2,11 @@ import { TextInput } from '@mantine/core';
 import { useEffect, useId, useState } from 'react';
 import { BG, GRAYS, contrastInfo, grayHex, normalizeGray, type RoleProps, type Theme } from '../../core';
 import { fmt } from '../../core/util';
+import { RecommendationMark } from '../recommendations/Recommendation';
 import classes from './Inspector.module.scss';
 
 interface Props {
+  recommended?: string;
   id: string;
   r: RoleProps;
   theme: Theme;
@@ -14,7 +16,7 @@ interface Props {
 const THEME_LABEL: Record<Theme, string> = { light: 'Açık tema', dark: 'Koyu tema' };
 
 /** Çıktı rengi: yalnız siyah, beyaz ve gri. Hazır griler radyo grubu; özel değer onaltılık alanla. */
-export function ColorField({ id, r, theme, onChange }: Props) {
+export function ColorField({ id, r, theme, onChange, recommended }: Props) {
   const name = useId();
   const value = r.c[theme];
   const [text, setText] = useState(value);
@@ -38,6 +40,7 @@ export function ColorField({ id, r, theme, onChange }: Props) {
               <label htmlFor={`${name}-${g}`} className={classes.swatch} style={{ ['--sw' as string]: hex, ['--sw-bg' as string]: bg }}>
                 <span className="gx-sr-only">{hex}</span>
               </label>
+              {hex===recommended && <span className={classes.recommendedSwatch}><RecommendationMark value={hex}/></span>}
             </span>
           );
         })}

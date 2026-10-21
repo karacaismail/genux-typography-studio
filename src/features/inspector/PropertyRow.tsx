@@ -2,6 +2,7 @@ import { ActionIcon, Tooltip } from '@mantine/core';
 import { ArrowCounterClockwiseIcon } from '@phosphor-icons/react';
 import type { ReactNode } from 'react';
 import { BASE_BP, type Inheritance, type ScreenSource } from '../../core';
+import { RecommendationMark } from '../recommendations/Recommendation';
 import classes from './Inspector.module.scss';
 
 const BASE_LABEL: Record<'context' | 'inherited' | 'default', string> = {
@@ -29,6 +30,7 @@ export function sourceLabel(src: ScreenSource, bp: number, screenKey: boolean): 
 
 interface Props {
   label: string;
+  recommended?: string;
   value?: ReactNode;
   source: ScreenSource;
   /** Düzenlenen kırılım ve özelliğin kırılım zincirine girip girmediği. */
@@ -42,7 +44,7 @@ interface Props {
 }
 
 /** Özellik satırı: etiket, değer, kaynağı ve yalnız bu katmanda değiştirildiyse "kalıtılana dön". */
-export function PropertyRow({ label, value, source, bp, screenKey, parent, onReset, children, htmlFor }: Props) {
+export function PropertyRow({ label, value, source, bp, screenKey, parent, onReset, children, htmlFor, recommended }: Props) {
   const here = source.kind === 'here';
   const reset = bp !== BASE_BP && screenKey ? 'Kalıtılana dön' : RESET_LABEL[parent];
   return (
@@ -51,6 +53,7 @@ export function PropertyRow({ label, value, source, bp, screenKey, parent, onRes
         <label className={classes.rowLabel} htmlFor={htmlFor}>{label}</label>
         {value !== undefined && <span className={classes.rowValue}>{value}</span>}
         <span className={classes.source} data-source={here ? 'overridden' : source.kind}>{sourceLabel(source, bp, screenKey)}</span>
+        {recommended && <span className={classes.recommendationValue}>Önerilen: {recommended}<RecommendationMark value={recommended}/></span>}
         {here && (
           <Tooltip label={reset}>
             <ActionIcon size="md" variant="subtle" color="gray" onClick={onReset} aria-label={`${label}: ${reset}`}>

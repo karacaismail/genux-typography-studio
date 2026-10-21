@@ -296,3 +296,7 @@
   overflow-y: auto;
   overscroll-behavior: contain;
 }
+
+.recommendedSwatch { position:absolute; top:-4px; inset-inline-end:-4px; z-index:1; pointer-events:none; }
+.recommendationValue { display:flex; align-items:center; gap:var(--mantine-spacing-xs); color:var(--gx-text-2); font-size:var(--mantine-font-size-sm); }
+.recommendedChoice { display:inline-flex; align-items:center; gap:var(--mantine-spacing-xs); }

@@ -9,3 +9,5 @@ export * from './resolve';
 export * from './screens';
 export * from './checks';
 export * from './io';
+
+export * from './recommendations';

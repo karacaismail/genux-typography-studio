@@ -98,3 +98,11 @@ Ana ekran HTML temelinden başlayan karar formudur. Her cihaz ailesinin alt kır
 Tarayıcı ilerlemeyi IndexedDB’ye, mevcut karar modelini v2 çalışma alanına kaydeder. JSON indir, değerler kadar kaldığınız adımı, notları, onayları ve TV/monitör profil ezmelerini de taşır. Başka tarayıcı veya localhost → Pages geçişinde bu dosyayı içe aktarın. Kaynak HTML değişirse devralan onaylar yeniden inceleme bekler. Browser verilerini silmeden önce JSON yedeği alın.
 
 Tablet600/744/768/820/834; laptop960/1024/1280/1366/1440/1536/1680; bilgisayar1920/2048/2560; TV1280/1920/2560/3440/3840 mantıksal CSS px. TV profilleri gerçek cihaz uyumluluğu kanıtı değildir. Eski araç `?workspace=free` veya Serbest editör eylemiyle kullanılabilir.
+
+### Önerilen tipografi değerleri
+
+Yeşil onay simgesi seçili değeri değil, ilgili rol/ürün/ekran için proje başlangıç önerisini gösterir. Değeri değiştirmek öneriyi değiştirmez. Karar akışı ve serbest denetçi aynı `recommendedRole` kaynağını kullanır. Önerilen renkler açık/koyu temaların kayıtlı zeminlerinde en az 4,5:1 kontrast sağlar. Bunlar WCAG sertifikası değildir: [kontrast eşiği](https://www.w3.org/WAI/WCAG22/Understanding/contrast-minimum.html), büyütme, yeniden akış ve [kullanıcı metin aralığı değişikliklerine dayanıklılık](https://www.w3.org/WAI/WCAG22/Understanding/text-spacing.html) ayrıca değerlendirilir. WCAG 1.4.12, yazarın bütün metinlere 1,5 satır yüksekliği vermesini zorunlu tutmaz.
+
+Cihaz grubu ikonları header içindedir. Alt kırılımlar piksel ölçüsü buton içinde, model adı altında olan radyo sekmeleridir. Seçim vurgusu merkezi simetrik Cubic hareket tokenıyla kayar; reduced-motion durumunda hareket kapanır. Dar alanda sekmeler sarılır.
+
+Sol menüde birincil alan ilerleme ve ürün türleri içindir. Ayırıcıdan sonraki ikincil alan bilerek boştur; kullanıcı yeni içeriği belirlemeden doldurulmaz.

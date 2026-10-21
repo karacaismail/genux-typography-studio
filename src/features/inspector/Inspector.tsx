@@ -2,7 +2,7 @@ import { Accordion, Button, Code, Menu, Select, SegmentedControl, Tooltip } from
 import { CaretDownIcon, LockIcon, WarningIcon } from '@phosphor-icons/react';
 import type { ReactNode } from 'react';
 import {
-  BREAKPOINTS, CATEGORIES, CHOICES, CLAMP_CHOICES, GROUP_BPS, HARD, LONG_READING_CONDITION, decisionAt, resolveAt, KIND_LABEL, RANGES, SIZE_MAX, TIERS, TIER_IDS, WEIGHT_NAME,
+  recommendedRole, BREAKPOINTS, CATEGORIES, CHOICES, CLAMP_CHOICES, GROUP_BPS, HARD, LONG_READING_CONDITION, decisionAt, resolveAt, KIND_LABEL, RANGES, SIZE_MAX, TIERS, TIER_IDS, WEIGHT_NAME,
   BASE_BP, baseSource, changeCount, clearScreens, contextLabel, cssSize, cssTiers, deviceAtBreakpoint, isScreenKey, isTiers, layerOf, minSizeFor, noClamp,
   screenBreakpoints, screenSource, screensOf,
   relNominal, roleWarnings, tierOf, type PropKey, type RoleOverrides, type SizeMode, type TierId,
@@ -15,6 +15,7 @@ import { useUi } from '../../store/ui';
 import { ColorField } from './ColorSection';
 import { PropertyRow } from './PropertyRow';
 import { SliderNumber } from './SliderNumber';
+import { RecommendationMark, RecommendationNote } from '../recommendations/Recommendation';
 import classes from './Inspector.module.scss';
 
 const MODE_DATA: { value: SizeMode; label: string }[] = [
@@ -29,6 +30,8 @@ const choice = <K extends keyof typeof CHOICES>(k: K) => CHOICES[k].map(([value,
 
 export function Inspector() {
   const { ctx, id, def, r, decisions, settings, dims, search, bp } = useCurrent();
+  const recommended=recommendedRole(ctx,id,dims.w);
+  const recommendedText=(k:PropKey)=>{const target=(r.mode==="endpoints" && (k==="size" || k==="max"))?recommendedRole(ctx,id,k==="size"?BASE_BP:BREAKPOINTS[BREAKPOINTS.length-1]):recommended;const value=(r.mode==="endpoints" && k==="max")?target.size:target[k];if(k==='c')return `${recommended.c.light} / ${recommended.c.dark}`;if(value && typeof value==='object')return JSON.stringify(value);return String(value);};
   const store = useStudio.getState;
   const sections = useUi((s) => s.sections);
   const { resetRole, resetContext } = useStudioActions();
@@ -45,6 +48,7 @@ export function Inspector() {
   // Düzenleme seçili cihazın kırılımına yazılır (320 = temel, bütün ekranlara kalıtılır).
   const set = (patch: RoleOverrides, key: string = Object.keys(patch).join(',')) => store().override(ctx, id, patch, `${ctx}:${id}:${bp}:${key}`, dims.w);
   const row = (k: PropKey) => ({
+    recommended: recommendedText(k),
     source: screenSource(decisions, ctx, id, k, endpoints && (k === 'size' || k === 'max') ? BASE_BP : dims.w),
     bp: endpoints && (k === 'size' || k === 'max') ? BASE_BP : bp,
     screenKey: isScreenKey(k) && !(endpoints && (k === 'size' || k === 'max')),
@@ -55,7 +59,7 @@ export function Inspector() {
   const seg = (k: PropKey, data: { value: string; label: string }[], label: string, extra?: { disabled?: boolean }) => (
     <PropertyRow label={label} {...row(k)}>
       <SegmentedControl
-        size="sm" fullWidth aria-label={label} data={data} disabled={extra?.disabled}
+        size="sm" fullWidth aria-label={label} data={data.map(option=>({...option,label:<span className={classes.recommendedChoice}>{option.label}{option.value===String(recommended[k]) && <RecommendationMark value={option.label}/>}</span>}))} disabled={extra?.disabled}
         value={String(r[k])} onChange={(v) => set({ [k]: k === 'clamp' ? Number(v) : v } as RoleOverrides)}
       />
     </PropertyRow>
@@ -118,6 +122,7 @@ export function Inspector() {
         )}
       </header>
 
+      <RecommendationNote/>
       <Accordion multiple value={sections} onChange={(v) => useUi.getState().set({ sections: v })} className={classes.accordion} chevronPosition="right">
         {section('size', 'Boyut', (
           <>
@@ -254,7 +259,7 @@ export function Inspector() {
             <p className={classes.note}>Çıktı rengi yalnız siyah, beyaz ve gri. Renk kırılıma girmez: bütün ekranlarda aynıdır; açık ve koyu ayrı ayarlanır. Tuval şu an {search.theme === 'dark' ? 'koyu' : 'açık'} temada.</p>
             {(['light', 'dark'] as const).map((t) => (
               <PropertyRow key={t} label={t === 'light' ? 'Açık tema' : 'Koyu tema'} value={r.c[t]} {...row('c')}>
-                <ColorField id={id} r={r} theme={t} onChange={(hex) => set({ c: { ...r.c, [t]: hex } }, `c:${t}`)} />
+                <ColorField recommended={recommended.c[t]} id={id} r={r} theme={t} onChange={(hex) => set({ c: { ...r.c, [t]: hex } }, `c:${t}`)} />
               </PropertyRow>
             ))}
           </>

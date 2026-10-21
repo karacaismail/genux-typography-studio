@@ -93,3 +93,45 @@ test('puts specimen text on its own preview theme background even with a dark to
   await expect(sample).toHaveCSS('background-color','rgb(26, 26, 26)');
   await expect(sample).toHaveCSS('color','rgb(242, 242, 242)');
 });
+
+test('numeric spinner has decrement left and increment right, preserving keyboard steps and bounds',async({page})=>{
+  await page.goto('/');
+  const field=page.getByLabel('Yazı boyutu',{exact:true});
+  await field.fill('26');
+  const minus=page.getByRole('button',{name:'Yazı boyutu: azalt',exact:true});
+  const plus=page.getByRole('button',{name:'Yazı boyutu: artır',exact:true});
+  await plus.click();await expect(field).toHaveValue('27 px');
+  await minus.click();await expect(field).toHaveValue('26 px');
+  await field.focus();await field.press('ArrowUp');await expect(field).toHaveValue('27 px');
+  const m=await minus.boundingBox(),p=await plus.boundingBox();expect(m!.x).toBeLessThan(p!.x);
+  await field.fill('12');await field.blur();await expect(minus).toBeDisabled();
+  await page.setViewportSize({width:320,height:850});
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(320);
+});
+
+test('weight is a horizontal radio choice and immediately updates both previews',async({page})=>{
+  await page.goto('/');
+  const choice=page.getByRole('radio',{name:'Ağırlık 700',exact:true});
+  await choice.click();await expect(choice).toBeChecked();
+  const a=await page.getByRole('radio',{name:'Ağırlık 300',exact:true}).boundingBox();
+  const b=await page.getByRole('radio',{name:'Ağırlık 400',exact:true}).boundingBox();
+  expect(a!.y).toBe(b!.y);expect(b!.x).toBeGreaterThan(a!.x);
+  await expect(page.getByRole('radio',{name:'Ağırlık 600',exact:true})).not.toBeChecked();
+  await expect(page.locator('[data-group-role=h1]')).toHaveCSS('font-weight','700');
+  await expect(page.getByTestId('form-sample')).toHaveCSS('font-weight','700');
+  await expect(choice).toHaveAttribute('tabindex','0');
+  await expect(page.getByRole('radio',{name:'Ağırlık 600',exact:true})).toHaveAttribute('tabindex','-1');
+  await choice.focus();await choice.press('ArrowRight');await expect(page.getByRole('radio',{name:'Ağırlık 800',exact:true})).toBeChecked();
+  await page.setViewportSize({width:320,height:850});
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(320);
+});
+
+test('line height is a horizontal radio choice with precise custom entry',async({page})=>{
+  await page.goto('/');
+  const choice=page.getByRole('radio',{name:'Satır yüksekliği 1.5',exact:true});await choice.click();await expect(choice).toBeChecked();
+  await expect(page.getByTestId('form-sample')).toHaveCSS('line-height','48px');
+  await expect(page.locator('[data-group-role=h1]')).toHaveCSS('line-height','48px');
+  await page.getByRole('radio',{name:'Özel satır yüksekliği',exact:true}).click();
+  await page.getByLabel('Özel satır yüksekliği değeri',{exact:true}).fill('1.35');
+  await expect(page.locator('[data-group-role=h1]')).toHaveCSS('line-height','43.2px');
+});

@@ -158,6 +158,8 @@ $motion-parts: (
   'SegmentedControl-indicator': (transform, width, height),
   'Burger-burger': (background-color, transform),
   'Progress-section': (width),
+  'Radio-icon': (opacity, transform),
+  'Radio-radio': (background-color, border-color),
 );
 @each $part, $props in $motion-parts {
   .mantine-#{$part} {

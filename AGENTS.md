@@ -86,3 +86,7 @@ npm run build
 ## Eşzamanlı küme karşılaştırması ve örnek zeminleri (2026-10-21)
 
 Akışın Ekran1'i seçili elementi, Ekran2'si geçerli kümenin bütün rollerini gösterir; rol seçimi ikinci ekranı kapatmaz. İki DeviceStage aynı genişlik/cihaz/zoom değerlerini kullanır. Form örneği, satır testleri ve karşılaştırma zemini `canvasVars(scheme)` üzerinden bağımsız önizleme temasını izler; panel temasının zeminini kullanmaz. Seçilen çıktı renkleri sessizce değiştirilmez; gerçek örnek zemini üzerinden kontrast oranı gösterilir. Regresyonlar `e2e/workflow.spec.ts` live full-group / specimen text senaryolarıdır.
+
+## Akış form kontrol tercihleri (2026-10-21)
+
+Sayısal alanlar NumberStepper kullanır: solda eksi, sağda artı; Mantine sayısal ayrıştırması, min/max ve klavye okları korunur. Kontrol ve butonlar en az44 px yüksekliktedir. Ağırlık300–900 ve satır yüksekliği0,8/1/1,25/1,5/1,75/2 yatay sekme görünümlü Radio.Card seçenekleridir; dar alanda sarılır. Özel satır yüksekliği0,6–2,5 aralığında hassas giriş sunar. Her radio grubunda yalnız seçili kart Tab durağıdır; oklar seçenek değiştirir. Radio geçiş parçaları merkezi hareket adaptöründe tokenlara bağlıdır.

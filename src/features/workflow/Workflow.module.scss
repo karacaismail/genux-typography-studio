@@ -71,3 +71,14 @@
 .groupPreview .deviceStage { height:680px; }
 .groupRows { padding:var(--mantine-spacing-sm); gap:var(--mantine-spacing-xs); }
 .groupRow { padding:var(--mantine-spacing-xs); gap:var(--mantine-spacing-xs); }
+
+@media(max-width:30em) { .fields { grid-template-columns:minmax(0,1fr); } }
+
+.weightPicker { grid-column:1 / -1; }
+.weightOptions { display:flex; flex-wrap:wrap; gap:var(--mantine-spacing-xs); padding-top:var(--mantine-spacing-xs); }
+.weightOption { display:flex; align-items:center; justify-content:center; min-width:44px; min-height:44px; padding:var(--mantine-spacing-sm); border:0; border-radius:var(--mantine-radius-sm); background:var(--gx-sunken); color:var(--gx-text-2); font-size:var(--mantine-font-size-sm); transition:background-color var(--gx-dur) var(--gx-ease), color var(--gx-dur) var(--gx-ease); }
+.weightOption[data-checked] { color:var(--gx-accent-text); background:var(--gx-accent-soft); font-weight:600; }
+.weightOption:hover { background:var(--gx-hover); }
+@media(prefers-reduced-motion:reduce) { .weightOption { transition-duration:0s; } }
+
+.weightOption { width:auto; flex:0 0 auto; }

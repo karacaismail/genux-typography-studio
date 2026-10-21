@@ -60,8 +60,8 @@ export function DeviceStage({ device, width, height, landscape, zoom, onScreen, 
   }, [screen, autoHeight]);
 
   const legacy = device.id === 'm320' || device.id === 't768';
-  const b = legacy ? { ...BEZEL[device.group], x: 14, top: 64, bottom: 76 } : BEZEL[device.group];
-  const profile = legacy ? 'classic' : device.group === 'mobile' ? 'modern' : device.group;
+  const b = device.id.startsWith('tv') ? {...BEZEL.desktop, x:10,top:10,bottom:22,base:32} : legacy ? { ...BEZEL[device.group], x: 14, top: 64, bottom: 76 } : device.group === 'mobile' ? {...BEZEL.mobile,x:8,top:28,bottom:18} : BEZEL[device.group];
+  const profile = device.id.startsWith('tv') ? 'tv' : legacy ? 'classic' : device.group === 'mobile' ? device.id === 'm360' ? 'android' : device.id === 'm430' ? 'island' : 'notch' : device.group;
   const shellStyle = { '--device-side': `${b.x}px`, '--device-top': `${b.top}px`, '--device-bottom': `${b.bottom}px` } as CSSProperties;
   const frameW = width + 2 * b.x;
   const screenH = autoHeight ? Math.max(height, contentH) : height;
@@ -85,7 +85,7 @@ export function DeviceStage({ device, width, height, landscape, zoom, onScreen, 
         <div className={classes.sizer} data-device-sizer style={{ width: totalW * k, height: totalH * k }}>
           <div className={classes.frame} style={{ transform: `translateX(${extraX * k}px) scale(${k})` }}>
             <div className={classes.device} data-kind={device.group} data-profile={profile} style={shellStyle}>
-              <span className={classes.hardware} aria-hidden="true"><span className={classes.camera}/><span className={classes.speaker}/></span>
+              <span className={classes.sideKeys} aria-hidden="true"/><span className={classes.hardware} aria-hidden="true"><span className={classes.camera}/><span className={classes.speaker}/></span>
               {legacy && <span className={classes.home} aria-hidden="true"/>}
               <div
                 ref={setScreen}
@@ -98,7 +98,7 @@ export function DeviceStage({ device, width, height, landscape, zoom, onScreen, 
                 {children}
               </div>
             </div>
-            {b.base > 0 && <div className={classes.base} data-kind={device.group} aria-hidden="true" />}
+            {b.base > 0 && <div className={classes.base} data-kind={device.group} data-profile={profile} aria-hidden="true" />}
           </div>
         </div>
       </div>

@@ -131,4 +131,6 @@ Workflow çıktı tonları açık/koyu bölümü sürekli görünürdür; accord
 
 Satır yüksekliği canlı testinin zemini ve okunabilir metin rengi arayüz temasını izler; telefon önizleme temasından bağımsızdır. Çıktı renk alanlarının kendi açık/koyu zeminleri korunur.
 
-Cihaz kasaları ortak DEVICE_MATERIAL tokenlarıyla sabit, ince çapraz doku ve statik parlama kullanır. Efekt kasa/stand arka planındadır; ekranın üzerine katman çizilmez, ekran geometrisi ve renkleri korunur. TV ortak desktop kasa profilini kullanır.
+Cihaz kasaları ortak DEVICE_MATERIAL tokenlarıyla sabit, ince çapraz doku ve statik parlama kullanır. Efekt kasa/stand arka planındadır; ekranın üzerine katman çizilmez, ekran geometrisi ve renkleri korunur. TV ayrı ince çerçeve ve çift ayak profili kullanır.
+
+Telefon kasaları classic / android / notch / island profillerine ayrılır; yan tuşlar ve kamera/ahize yalnız kasadadır. Klasik mobil kasa daha düz köşeli, laptop menteşe tabanı çentikli, TV çift ayaklıdır. Bunlar mevcut CSS viewportlarını koruyan temsili donanım çizimleridir; kısaltılmış cihaz adları birebir üretici ölçüsü iddiası değildir.

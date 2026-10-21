@@ -92,3 +92,27 @@
   color: var(--gx-text-2);
   font-variant-numeric: tabular-nums;
 }
+
+// Donanım ayrıntıları ekranın dışındaki kasada kalır.
+.sideKeys { position:absolute; left:-2px; top:16%; width:3px; height:9%; border-radius:var(--mantine-radius-xs); background:var(--device-edge); pointer-events:none; }
+.device:not([data-kind='mobile']) .sideKeys { display:none; }
+.device[data-kind='mobile'][data-profile='classic'] { border-radius:18px; }
+.device[data-kind='mobile'][data-profile='classic'] .home::after { content:''; position:absolute; inset:11px; border:1px solid var(--device-edge); border-radius:var(--mantine-radius-xs); }
+.device[data-profile='android'] { border-radius:24px; }
+.device[data-profile='android'] .screen { border-radius:16px; }
+.device[data-profile='android'] .hardware { width:12px; }
+.device[data-profile='android'] .camera { left:3px; background:var(--device-lens); box-shadow:0 0 0 2px var(--device-edge); }
+.device[data-profile='android'] .speaker { display:none; }
+.device[data-profile='notch'],.device[data-profile='island'] { border-radius:38px; }
+.device[data-profile='notch'] .screen,.device[data-profile='island'] .screen { border-radius:26px; }
+.device[data-profile='notch'] .hardware { width:126px; height:24px; border-radius:0 0 15px 15px; background:var(--device-lens); }
+.device[data-profile='notch'] .camera { left:22px; }
+.device[data-profile='notch'] .speaker { left:48px; width:46px; }
+.device[data-profile='island'] .hardware { top:7px; width:90px; height:14px; border-radius:var(--mantine-radius-xl); background:var(--device-lens); }
+.device[data-profile='island'] .speaker { display:none; }
+.device[data-profile='island'] .camera { left:68px; width:5px; height:5px; }
+.device[data-kind='laptop'] { border-radius:12px 12px 0 0; }
+.base[data-kind='laptop']::after { content:''; position:absolute; width:15%; height:5px; left:42.5%; top:0; border-radius:0 0 6px 6px; background:var(--device-edge); }
+.device[data-profile='tv'] { border-radius:5px; }
+.device[data-profile='tv'] .hardware { display:none; }
+.base[data-profile='tv'] { width:76%; height:32px; clip-path:polygon(8% 0,12% 0,5% 100%,0 100%,8% 0,88% 0,92% 0,100% 100%,95% 100%,88% 0); }

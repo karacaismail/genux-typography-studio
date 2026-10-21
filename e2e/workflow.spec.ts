@@ -413,3 +413,13 @@ test('all device families texture only the physical shell',async({page})=>{
     await expect(screen).toHaveCSS('background-color','rgb(255, 255, 255)');
   }
 });
+
+test('phone frames distinguish classic android notch and island hardware',async({page})=>{
+  await page.goto('/');
+  for(const [width,profile] of [[320,'classic'],[360,'android'],[375,'notch'],[390,'notch'],[414,'notch'],[430,'island']] as const){
+    await page.getByRole('radio',{name:`${width} px`,exact:true}).click();
+    const screen=page.getByRole('region',{name:`Önizleme ekranı, ${width} piksel`,exact:true}).first();
+    await expect(screen.locator('..')).toHaveAttribute('data-profile',profile);
+    expect(await screen.evaluate(el=>el.clientWidth)).toBe(width);
+  }
+});

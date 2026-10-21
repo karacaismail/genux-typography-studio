@@ -20,8 +20,8 @@ export function makeSteps(): FlowStep[] {
   return CONTEXTS.flatMap(({ id: ctx }) => WORKFLOW_DEVICES.flatMap(({device, family}) => {
     const roles = rolesOf(ctx);
     const groups = [
-      { id: 'headings', label: 'Headings · başlıklar', items: roles.filter((r) => r.category === 'headings' && !subtitle.has(r.id)) },
-      { id: 'subtitle', label: 'Sub-title · alt başlıklar', items: roles.filter((r) => subtitle.has(r.id)) },
+      { id: 'headings', label: 'Headings', items: roles.filter((r) => r.category === 'headings' && !subtitle.has(r.id)) },
+      { id: 'subtitle', label: 'Sub-title', items: roles.filter((r) => subtitle.has(r.id)) },
       ...CATEGORIES.filter((c) => c.id !== 'headings').map((c) => ({ id: c.id, label: c.label, items: roles.filter((r) => r.category === c.id && !subtitle.has(r.id)) })),
     ];
     return groups.filter((g) => g.items.length).map((g) => ({ key: `${ctx}:${family}:${device.w}:${g.id}`, ctx, family, device, group: g.id, label: g.label, roles: g.items.map((r) => r.id) }));

@@ -33,7 +33,7 @@ test('has mobile navigation, all device subwidths, loaded Ant Design examples an
   await page.getByRole('radio',{name:'Tablet',exact:true}).click();
   await expect(page.getByRole('radio',{name:'834 px',exact:true})).toBeVisible();
   await page.getByRole('radio',{name:'Televizyon',exact:true}).click();
-  await expect(page.getByRole('heading',{name:'Headings · başlıklar',exact:true})).toBeVisible();
+  await expect(page.getByRole('heading',{name:'Headings',exact:true})).toBeVisible();
   await expect(page.getByRole('radio',{name:'3840 px',exact:true})).toBeVisible();
   await page.getByRole('button',{name:'Kaydet',exact:true}).focus();await page.keyboard.press('Tab');
   const focus=await page.evaluate(()=>({mode:document.documentElement.dataset.focus,outline:getComputedStyle(document.activeElement!).outlineStyle,shadow:getComputedStyle(document.activeElement!).boxShadow}));
@@ -135,7 +135,7 @@ test('line height offers only the approved horizontal radio choices',async({page
 
 test('compact workspace combines context and controls without reducing hit targets',async({page})=>{
   await page.setViewportSize({width:1680,height:1000});await page.goto('/');
-  const title=page.getByRole('heading',{name:'Headings · başlıklar',exact:true});await title.waitFor();
+  const title=page.getByRole('heading',{name:'Headings',exact:true});await title.waitFor();
   const headingBox=await title.boundingBox();
   const contextBox=await page.getByText('HTML / Mobil / 320 px',{exact:true}).boundingBox();
   expect(Math.abs(headingBox!.y-contextBox!.y)).toBeLessThan(12);

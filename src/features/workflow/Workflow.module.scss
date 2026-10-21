@@ -62,7 +62,7 @@
 .groupHeader { padding:var(--mantine-spacing-lg); border-bottom:1px solid var(--canvas-stroke); }
 .groupHeader p { font-size:var(--mantine-font-size-sm); margin-bottom:0; }
 .groupRows { display:grid; padding:var(--mantine-spacing-md); gap:var(--mantine-spacing-sm); }
-.groupRow { display:grid; gap:var(--mantine-spacing-sm); width:100%; min-width:0; padding:var(--mantine-spacing-md); text-align:start; font:inherit; color:inherit; background:transparent; border:0; border-inline-start:3px solid transparent; cursor:pointer; border-radius:var(--mantine-radius-sm); }
+.groupRow { display:grid; gap:var(--mantine-spacing-sm); width:100%; min-width:0; padding:var(--mantine-spacing-md); text-align:start; font:inherit; color:inherit; background:transparent; border:0; border-inline-start:3px solid transparent; cursor:pointer; border-radius:0; }
 .groupRow[aria-pressed='true'] { border-inline-start-color:var(--gx-accent); }
 .groupRow > span:last-child { display:block; overflow:auto; }
 .groupMeta { font-size:var(--mantine-font-size-sm); color:var(--canvas-text); }

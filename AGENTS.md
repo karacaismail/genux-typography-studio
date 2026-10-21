@@ -104,3 +104,5 @@ Cihaz kasaları temsilidir; karma model adları birebir donanım kopyası iddias
 İkili karşılaştırmada başlık satırları aynı yüksekliği kullanır. Masaüstünde cihazlar ortak üst/alt hizadadır ve merkeze yaklaştırılır; sütun aralığı lg/4, sahne yatay dolgusu xl tokenıdır. Mobilde tek sütun akışı korunur.
 
 Cihaz grubu seçimi native/dropdown değildir: Mobil, Tablet, Laptop, Bilgisayar, TV için etiketli 32 px Phosphor ikonlarıyla yatay Radio.Card grubu kullanılır. Seçili seçenek tek Tab durağıdır; ok tuşları seçimi değiştirir. Dar ekranda yalnız grup yatay kayar; sayfa taşmaz.
+
+Üst filtrelerin DOM ve görsel sırası: cihaz grubu ikonları → ürün türü → metin kümesi → alt kırılım. Masaüstünde aynı satır, tablette cihaz grubu üst satır, 320 px telefonda aynı sırayla tek sütun.

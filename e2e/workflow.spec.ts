@@ -220,3 +220,17 @@ test('device families use large horizontal icon radios with keyboard selection',
   await mobile.focus();await mobile.press('ArrowRight');await expect(tablet).toBeChecked();
   await page.setViewportSize({width:320,height:850});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(320);
 });
+
+
+test('workspace selectors follow device, product, text group, breakpoint order on one desktop row',async({page})=>{
+  await page.setViewportSize({width:1920,height:1000});await page.goto('/');
+  const device=page.getByRole('radiogroup',{name:'Cihaz grubu',exact:true});
+  const product=page.getByRole('combobox',{name:'Ürün türü',exact:true});
+  const group=page.getByRole('combobox',{name:'Metin kümesi',exact:true});
+  const tier=page.getByRole('combobox',{name:'Alt kırılım',exact:true});
+  const boxes=await Promise.all([device,product,group,tier].map(el=>el.boundingBox()));
+  for(let i=1;i<boxes.length;i++)expect(boxes[i]!.x).toBeGreaterThan(boxes[i-1]!.x);
+  expect(Math.abs(boxes[1]!.y-boxes[3]!.y)).toBeLessThan(1);
+  expect(boxes[1]!.y).toBeLessThan(boxes[0]!.y+boxes[0]!.height);
+  await page.setViewportSize({width:320,height:850});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(320);
+});

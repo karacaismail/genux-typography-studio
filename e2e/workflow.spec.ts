@@ -196,3 +196,15 @@ test('scroll chains from the preview and inspector boundaries to the page',async
   await page.mouse.wheel(0,400);
   await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBeGreaterThan(after);
 });
+
+
+test('comparison devices share top and bottom edges with a compact gap',async({page})=>{
+  await page.setViewportSize({width:1920,height:1100});await page.goto('/');
+  const screens=page.getByRole('region',{name:'Önizleme ekranı, 320 piksel',exact:true});
+  await expect(screens).toHaveCount(2);
+  const a=await screens.nth(0).boundingBox();const b=await screens.nth(1).boundingBox();
+  expect(Math.abs(a!.y-b!.y)).toBeLessThan(1);
+  expect(Math.abs(a!.y+a!.height-b!.y-b!.height)).toBeLessThan(1);
+  expect(b!.x-a!.x-a!.width).toBeLessThan(120);
+  expect(b!.x-a!.x-a!.width).toBeGreaterThan(0);
+});

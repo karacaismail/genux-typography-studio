@@ -100,3 +100,5 @@ Karar akışındaki iki cihaz önizlemesi varsayılan olarak 1:1 CSS piksel öl�
 İç önizleme ekranı ve sağ denetçi scroll zincirini kesmez: overscroll-behavior:auto. İç sınırda wheel/dokunma hareketi doğal olarak dış kapsayıcıya ve sayfaya aktarılır; özel wheel preventDefault veya odak taşıma uygulanmaz.
 
 Cihaz kasaları temsilidir; karma model adları birebir donanım kopyası iddiası taşımaz. m320 ve t768 klasik fiziksel ana ekran düğmeli kasa kullanır. Kamera/hoparlör ve kasa ekranın CSS alanını örtmez; kasa geometrisi DeviceStage içindeki ölçülerden üretilir.
+
+İkili karşılaştırmada başlık satırları aynı yüksekliği kullanır. Masaüstünde cihazlar ortak üst/alt hizadadır ve merkeze yaklaştırılır; sütun aralığı lg/4, sahne yatay dolgusu xl tokenıdır. Mobilde tek sütun akışı korunur.

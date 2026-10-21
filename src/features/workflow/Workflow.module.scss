@@ -115,3 +115,12 @@
 .nearLineBody { overflow:auto; padding-block:var(--mantine-spacing-sm); }
 .previewBar { padding-block:0; }
 .nearLineBody { background-origin:content-box; background-clip:content-box; }
+
+// İki ekran ortak başlık ve sahne ritmiyle, birbirine yakın karşılaştırılır.
+.previewPair { column-gap:calc(var(--mantine-spacing-lg) / 4); }
+.previewPair .groupPreview { background:transparent; color:var(--gx-text); border-radius:0; overflow:visible; }
+@media(min-width:75em) {
+  .previewPair > section:first-child [data-device-sizer] { margin-inline-end:0; }
+  .previewPair > section:last-child [data-device-sizer] { margin-inline-start:0; }
+  .previewPair .deviceStage > div { padding-inline:var(--mantine-spacing-xl); }
+}

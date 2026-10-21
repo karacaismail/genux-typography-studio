@@ -82,7 +82,7 @@ export function DeviceStage({ device, width, height, landscape, zoom, onScreen, 
         {label ? `${label} · ` : ''}{device.name} · {width} × {height} px{landscape ? ' · yatay' : ''} · {tier.label} · ölçek %{fmt(Math.round(k * 100), 0)}
       </p>
       <div className={classes.center}>
-        <div className={classes.sizer} style={{ width: totalW * k, height: totalH * k }}>
+        <div className={classes.sizer} data-device-sizer style={{ width: totalW * k, height: totalH * k }}>
           <div className={classes.frame} style={{ transform: `translateX(${extraX * k}px) scale(${k})` }}>
             <div className={classes.device} data-kind={device.group} data-profile={profile} style={shellStyle}>
               <span className={classes.hardware} aria-hidden="true"><span className={classes.camera}/><span className={classes.speaker}/></span>

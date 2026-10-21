@@ -7,7 +7,7 @@ test('collects a decision, resumes immediately after editor switch, and round-tr
   await page.getByRole('button',{name:'Kararı kaydet ve devam et'}).click();
   await page.getByRole('button',{name:'Serbest editör',exact:true}).click();
   await page.getByRole('button',{name:'Karar akışına dön'}).click();
-  await expect(page.getByRole('heading',{name:'H2',exact:true})).toBeVisible();
+  await expect(page.getByRole('region',{name:'H2 karar formu',exact:true})).toBeVisible();
   await page.getByRole('button',{name:'H1',exact:true}).click();
   await expect(page.getByLabel('Karar notu',{exact:true})).toHaveValue('320 px mobil başlık kararı');
   await expect(page.getByLabel('Yazı boyutu',{exact:true})).toHaveValue('34 px');
@@ -69,22 +69,23 @@ test('keeps a live full-group comparison while switching the edited element',asy
   await page.getByLabel('Yazı boyutu',{exact:true}).fill('40');
   await expect(group.locator('[data-group-role=h1]')).toHaveCSS('font-size','40px');
   await group.getByRole('button',{name:'H2 düzenle',exact:true}).click();
-  await expect(page.getByRole('region',{name:'Ekran 1 · Seçili element'})).toContainText('Ekran 1 · H2');
+  await expect(page.getByRole('region',{name:'H2 karar formu',exact:true})).toBeVisible();
   await page.getByLabel('Yazı boyutu',{exact:true}).fill('30');
   await expect(group.locator('[data-group-role=h1]')).toHaveCSS('font-size','40px');
   await expect(group.locator('[data-group-role=h2]')).toHaveCSS('font-size','30px');
-  await page.getByRole('combobox',{name:'Metin kümesi',exact:true}).click();await page.getByRole('option',{name:'Body',exact:true}).click();
+  await page.getByRole('navigation',{name:'Metin kümeleri',exact:true}).getByRole('button',{name:/Body/}).click();
   expect(await group.locator('[data-group-role]').count()).toBeGreaterThan(2);
 });
 
 test('puts specimen text on its own preview theme background even with a dark tool panel',async({page})=>{
-  await page.goto('/');await page.getByTestId('form-sample').waitFor();
+  await page.goto('/');await page.getByTestId('group-surface').waitFor();
   if(await page.locator('html').getAttribute('data-mantine-color-scheme')!=='dark') await page.getByRole('button',{name:'Uygulama temasını değiştir'}).click();
-  const sample=page.getByTestId('form-sample');
-  await expect(sample).toHaveCSS('background-color','rgb(255, 255, 255)');
+  const surface=page.getByTestId('group-surface');
+  const sample=surface.locator('[data-group-role=h1]');
+  await expect(surface).toHaveCSS('background-color','rgb(255, 255, 255)');
   await expect(sample).toHaveCSS('color','rgb(20, 20, 20)');
   await page.getByText('Koyu',{exact:true}).click();
-  await expect(sample).toHaveCSS('background-color','rgb(26, 26, 26)');
+  await expect(surface).toHaveCSS('background-color','rgb(26, 26, 26)');
   await expect(sample).toHaveCSS('color','rgb(242, 242, 242)');
 });
 
@@ -112,7 +113,7 @@ test('weight is a horizontal radio choice and immediately updates both previews'
   expect(a!.y).toBe(b!.y);expect(b!.x).toBeGreaterThan(a!.x);
   await expect(page.getByRole('radio',{name:'Ağırlık 600',exact:true})).not.toBeChecked();
   await expect(page.locator('[data-group-role=h1]')).toHaveCSS('font-weight','700');
-  await expect(page.getByTestId('form-sample')).toHaveCSS('font-weight','700');
+  await expect(page.locator('[data-example-role=h1]').first()).toHaveCSS('font-weight','700');
   await expect(choice).toHaveAttribute('tabindex','0');
   await expect(page.getByRole('radio',{name:'Ağırlık 600',exact:true})).toHaveAttribute('tabindex','-1');
   await choice.focus();await choice.press('ArrowRight');await expect(page.getByRole('radio',{name:'Ağırlık 800',exact:true})).toBeChecked();
@@ -123,7 +124,7 @@ test('weight is a horizontal radio choice and immediately updates both previews'
 test('line height offers only the approved horizontal radio choices',async({page})=>{
   await page.goto('/');
   const choice=page.getByRole('radio',{name:'Satır yüksekliği 1.5',exact:true});await choice.click();await expect(choice).toBeChecked();
-  await expect(page.getByTestId('form-sample')).toHaveCSS('line-height','48px');
+  await expect(page.locator('[data-example-role=h1]').first()).toHaveCSS('line-height','48px');
   await expect(page.locator('[data-group-role=h1]')).toHaveCSS('line-height','48px');
   const group=page.getByRole('radiogroup',{name:'Satır yüksekliği',exact:true});
   await expect(group.getByRole('radio')).toHaveCount(10);
@@ -340,4 +341,36 @@ test('selection groups show six ordered labels and element tabs have symmetric s
   const nav=page.getByRole('navigation',{name:'Bu kümedeki elementler',exact:true});
   const spacing=await nav.evaluate(el=>({top:getComputedStyle(el).paddingTop,bottom:getComputedStyle(el).paddingBottom}));expect(spacing.top).toBe(spacing.bottom);expect(parseFloat(spacing.top)).toBeGreaterThan(0);
   expect((await page.getByRole('banner').boundingBox())!.height).toBeLessThanOrEqual(120);
+});
+
+
+test('inspector removes repeated specimen content but keeps review state and conditional contrast warnings',async({page})=>{
+  await page.goto('/');
+  const form=page.getByRole('region',{name:'H1 karar formu',exact:true});
+  await expect(form.getByTestId('form-sample')).toHaveCount(0);
+  await expect(form.getByText('Yeşil işaret: proje önerisi.',{exact:false})).toHaveCount(0);
+  await expect(form.getByText('Taslak',{exact:true})).toBeVisible();
+  await expect(form.getByRole('alert')).toHaveCount(0);
+  await page.getByRole('button',{name:'Kararı kaydet ve devam et',exact:true}).click();
+  await page.getByRole('navigation',{name:'Bu kümedeki elementler',exact:true}).getByRole('button',{name:'H1',exact:true}).click();
+  await expect(form.getByText('Onaylandı',{exact:true})).toBeVisible();
+  await page.getByLabel('Yazı boyutu',{exact:true}).fill('26');
+  await expect(form.getByText('Yeniden incele',{exact:true})).toBeVisible();
+  await form.getByRole('button',{name:'Çıktı tonları · açık / koyu',exact:true}).click();
+  await form.getByRole('radiogroup',{name:'Açık tema metin rengi',exact:true}).locator('label').filter({hasText:'#808080'}).click();
+  await expect(form.getByRole('alert')).toHaveCount(0);
+  await page.getByLabel('Yazı boyutu',{exact:true}).fill('16');
+  await expect(form.getByRole('alert')).toBeVisible();
+});
+
+test('inspector owns element and theme controls and step badges are circular',async({page})=>{
+  await page.goto('/');
+  const form=page.getByRole('region',{name:'H1 karar formu',exact:true});
+  await expect(form.getByRole('navigation',{name:'Bu kümedeki elementler'})).toBeVisible();
+  await expect(form.getByRole('radiogroup',{name:'Önizleme teması'})).toBeVisible();
+  const badge=page.locator('[data-workflow-step="5"] > span').first();
+  const shape=await badge.evaluate(el=>{const s=getComputedStyle(el);return {radius:s.borderRadius,width:s.width,height:s.height,border:s.borderTopWidth};});
+  expect(shape.radius).toBe('100%');
+  expect(shape.width).toBe(shape.height);
+  expect(shape.border).toBe('2px');
 });

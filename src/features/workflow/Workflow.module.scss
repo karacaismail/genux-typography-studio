@@ -21,7 +21,6 @@
 .previewBar { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:var(--mantine-spacing-md); padding:var(--mantine-spacing-md) 0; }
 .deviceStage { height:auto; overflow:auto; background:var(--gx-sunken); border-radius:var(--mantine-radius-md); margin-block:var(--mantine-spacing-md); }
 .form { background:var(--gx-surface); padding:var(--mantine-spacing-lg); border-radius:var(--mantine-radius-md); align-self:start; }
-.formHeader h2 { font-weight:500; margin:var(--mantine-spacing-md) 0; }
 .fields { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:var(--mantine-spacing-md); margin-block:var(--mantine-spacing-lg); }
 .color { padding-block:var(--mantine-spacing-md); }
 .navigation { display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:var(--mantine-spacing-md); border-top:1px solid var(--gx-line); margin-top:var(--mantine-spacing-xl); padding-block:var(--mantine-spacing-lg); }
@@ -49,12 +48,9 @@
 @media(min-width:75em) { .shell { grid-template-columns:240px minmax(0,1fr); } .journey { display:flex; flex-direction:column; gap:var(--mantine-spacing-md); background:var(--gx-surface); padding:var(--mantine-spacing-xl); border-inline-end:1px solid var(--gx-line); } .journey h2 { font-size:var(--mantine-font-size-xl); font-weight:500; margin:0; } .context { width:100%; text-align:start; }  .context span:first-child { font-variant-numeric:tabular-nums; } .workbench { grid-template-columns:minmax(0,1fr) 340px; } }
 @media(prefers-reduced-motion:reduce) { .roles button,.context { transition-duration:0s; } }
 
-.formSample { max-height:5em; overflow:auto; padding-block:var(--mantine-spacing-md); }
-.formHeader { position:sticky; top:0; z-index:2; background:var(--gx-surface); padding-block:var(--mantine-spacing-md); }
 .examplePage :global([class*='gx-ant-']) { transition-timing-function:var(--gx-ease); transition-duration:var(--gx-dur); animation-timing-function:var(--gx-ease); }
 @media(prefers-reduced-motion:reduce) { .examplePage :global([class*='gx-ant-']) { transition-duration:0s; animation-duration:0s; } }
 
-.formSample { background:var(--canvas); padding:var(--mantine-spacing-md); border-radius:var(--mantine-radius-sm); }
 .previewPair { display:grid; grid-template-columns:minmax(0,1fr); gap:var(--mantine-spacing-lg); margin-block:var(--mantine-spacing-md); }
 .previewPair > * { min-width:0; }
 .screenLabel { color:var(--gx-text-2); font-size:var(--mantine-font-size-sm); font-weight:500; margin:0; padding-block:var(--mantine-spacing-md); }
@@ -101,7 +97,6 @@
 .stepValue { min-width:0; }
 .stepButton { border-radius:var(--mantine-radius-xs); }
 .stepButton[data-disabled],.stepper[data-disabled] .stepButton { background:transparent; color:var(--gx-text-3); opacity:.45; }
-.formHeader { position:static; }
 @media(min-width:75em) and (min-height:600px) {
   .form { position:sticky; top:var(--mantine-spacing-lg); max-height:calc(100dvh - 2 * var(--mantine-spacing-lg)); overflow-y:auto; overscroll-behavior:auto; scroll-padding-block:var(--mantine-spacing-lg); }
 }
@@ -180,7 +175,7 @@
 .headerActions button { min-height:var(--gx-workflow-header-hit); }
 
 .stepLabel { display:flex; align-items:center; gap:var(--mantine-spacing-xs); margin:0 0 calc(var(--mantine-spacing-xs) / 2); min-height:20px; font-size:var(--mantine-font-size-sm); line-height:20px; font-weight:500; color:var(--gx-text-2); }
-.stepNumber { box-sizing:border-box; border:2px solid var(--gx-step-border); display:inline-flex; align-items:center; justify-content:center; min-width:20px; height:20px; border-radius:var(--mantine-radius-xs); background:var(--gx-sunken); color:var(--gx-text); font-variant-numeric:tabular-nums; }
+.stepNumber { box-sizing:border-box; border:2px solid var(--gx-step-border); display:inline-flex; align-items:center; justify-content:center; width:20px; flex-shrink:0; height:20px; border-radius:100%; background:var(--gx-sunken); color:var(--gx-text); font-variant-numeric:tabular-nums; }
 .roleStep { min-width:0; flex:1 1 auto; }
 .roles { padding-block:var(--mantine-spacing-xs); }
 .previewBar { padding-block:0; }
@@ -196,3 +191,11 @@
 }
 // Görsel olarak gizli erişilebilir etiketler header kaydırma sınırında kalır.
 .header { position:relative; }
+
+.formIdentity { display:flex; align-items:center; justify-content:space-between; gap:var(--mantine-spacing-sm); margin-bottom:var(--mantine-spacing-md); }
+.contrastNotice { margin-bottom:var(--mantine-spacing-md); }
+
+.form .previewBar { justify-content:flex-start; gap:var(--mantine-spacing-sm); padding-top:0; }
+.form .roleStep { width:100%; min-width:0; }
+.form .roles { flex-wrap:wrap; overflow:visible; gap:var(--mantine-spacing-xs); }
+.form .roles button { padding-inline:var(--mantine-spacing-sm); }

@@ -122,3 +122,5 @@ Workflow header en fazla 120 CSS px yüksekliğindedir (`--gx-workflow-header-ma
 Seçim gruplarının sol üstünde iş akışı sırası gösterilir: 1 Ürün türü, 2 Cihaz grubu, 3 Alt kırılım, 4 Metin kümesi, 5 Element, 6 Kullanım konumu. Bu sıra mevcut bağlam → cihaz → genişlik → küme → rol akışıdır; seçimi kilitlemez. Önizleme üzerindeki “Ekran 1/2” görünen başlıkları kaldırılmıştır; erişilebilir bölge adları korunur. Element sekmelerinin üst ve alt padding'i eşittir; ortak spacing-xs tokenını kullanır.
 
 Kırılım kartları kompakt yoğunluk kullanır: 4 px iç dolgu, 4 px ölçü–açıklama aralığı, wrapper için spacing-xs (8 px) boşluk/dolgu. Ölçü yüzeyi 28 px tokenıyla yönetilir; tıklama hedefi bütün bağlantıdır ve 44 px altına inmez (tek satır açıklamada yaklaşık 62 px). Metin boyutu küçültülmez; uzun açıklama doğal sarılır.
+
+Karar panelinin üstünde element seçimi, ölçü özeti ve önizleme teması bulunur. Tekrarlanan büyük specimen/açıklama alanı kullanılmaz; onay durumu kompakt, kontrast uyarısı yalnız core contrastInfo başarısızsa gösterilir. Adım rozetleri eşit en/boy, radius %100 ve 2px kırmızı kenarlık kullanır.

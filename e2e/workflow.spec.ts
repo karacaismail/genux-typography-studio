@@ -306,3 +306,16 @@ test('breakpoint pixel and model caption share one anchor selection target',asyn
   await target.focus();await target.press('Space');await expect(target).toBeChecked();
   await target.press('ArrowRight');await expect(page.getByRole('radio',{name:'375 px',exact:true})).toBeChecked();
 });
+
+test('workflow header stays within 120px while retaining all controls at narrow widths',async({page})=>{
+  await page.setViewportSize({width:1680,height:1000});await page.goto('/');
+  const header=page.getByRole('banner');await expect(header.getByRole('radio',{name:'Mobil',exact:true})).toBeVisible();
+  expect((await header.boundingBox())!.height).toBeLessThanOrEqual(120);
+  await page.setViewportSize({width:320,height:850});
+  expect((await header.boundingBox())!.height).toBeLessThanOrEqual(120);
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(320);
+  await header.getByRole('radio',{name:'Tablet',exact:true}).click();
+  await expect(header.getByRole('radio',{name:'Tablet',exact:true})).toBeChecked();
+  await header.getByRole('button',{name:'Kaydet',exact:true}).click();
+  expect((await header.getByRole('button',{name:'Kaydet',exact:true}).boundingBox())!.height).toBeGreaterThanOrEqual(44);
+});

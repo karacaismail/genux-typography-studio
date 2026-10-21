@@ -170,3 +170,11 @@
 .breakpointItem { text-decoration:none; color:inherit; cursor:pointer; }
 // Tek bağlantının ölçü ve açıklama alanını birlikte saran işlevsel sınır.
 .breakpointItem { box-sizing:border-box; border:1px solid var(--gx-line-field); border-radius:var(--mantine-radius-sm); padding:var(--mantine-spacing-xs); }
+
+.header { box-sizing:border-box; flex-wrap:nowrap; max-height:var(--gx-workflow-header-max); padding-block:var(--mantine-spacing-xs); overflow:auto; }
+.header > :first-child { flex:none; white-space:nowrap; }
+.header .devicePicker { flex:0 0 510px; max-width:none; }
+.header .deviceOptions { padding-block:0; }
+.headerActions { flex:none; flex-wrap:nowrap; }
+
+.headerActions button { min-height:var(--gx-workflow-header-hit); }

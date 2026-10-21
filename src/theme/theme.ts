@@ -84,6 +84,8 @@ export const resolver: CSSVariablesResolver = () => {
       '--gx-dur-slow': `${MOTION.slow}ms`,
       '--gx-focus-bar': FOCUS_BAR,
       '--gx-toolbar-h': '4rem',
+      '--gx-workflow-header-max': '120px',
+      '--gx-workflow-header-hit': '44px',
       '--gx-status-h': '2.5rem',
       '--gx-hit': '2.25rem',
     },

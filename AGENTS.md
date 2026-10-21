@@ -116,3 +116,5 @@ Sol sidebar birincil alanı yalnız ilerleme sayacı/çubuğu ve altı ürün t�
 Alt kırılımda px ve model açıklaması tek `a[role=radio]` hedefinin içindedir; ayrı iç buton/bağlantı eklenmez. Tıklama, Enter, Space ve oklarla seçim desteklenir; yalnız seçili öğe Tab durağıdır. Hareketli katman yalnız üstteki 44 px ölçü yüzeyini izler; açıklama stili ve renkleri korunur.
 
 Sidebar seçili ürün satırında “Çalışılıyor” metni kullanılmaz; seçili renk ve aria-current yeterlidir. Küme adları yalnız “Headings” ve “Sub-title” olarak gösterilir; tekrar eden Türkçe açıklama eklenmez.
+
+Workflow header en fazla 120 CSS px yüksekliğindedir (`--gx-workflow-header-max`). Tek satır düzen ve dar alanda yerel yatay kaydırma kullanılır; cihaz grubu etiketi erişilebilir ad olarak korunup görsel olarak gizlenir. Eylem butonları en az 44 px kalır (`--gx-workflow-header-hit`); kontroller kesilmez veya küçük yazıya dönüştürülmez.

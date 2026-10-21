@@ -305,7 +305,7 @@ test('breakpoint pixel and model caption share one anchor selection target',asyn
   await page.goto('/');
   const target=page.getByRole('radio',{name:'360 px',exact:true});
   await expect(target).toHaveJSProperty('tagName','A');
-  await target.getByText('Android (Galaxy S, Pixel)',{exact:true}).click();
+  await target.getByText('Galaxy S',{exact:true}).click();
   await expect(target).toBeChecked();
   await page.getByRole('radio',{name:'375 px',exact:true}).getByText('375 px',{exact:true}).click();
   await expect(page.getByRole('radio',{name:'375 px',exact:true})).toBeChecked();

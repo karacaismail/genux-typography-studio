@@ -32,7 +32,7 @@ export function BreakpointChoice({devices,value,onChange}:{devices:Device[];valu
         if(direction){event.preventDefault();const next=devices[(index+direction+devices.length)%devices.length];links.current.get(next.id)?.focus();onChange(next.id);}
       }}>
         <span ref={el=>{if(el)targets.current.set(device.id,el);else targets.current.delete(device.id);}} data-checked={device.id===value || undefined} className={classes.breakpointButton}>{device.w} px</span>
-        <span id={`breakpoint-${device.id}`} className={classes.breakpointCaption}>{device.name}</span>
+        <span id={`breakpoint-${device.id}`} className={classes.breakpointCaption}>{device.id==='m320'?'iPhone 4':device.id==='m360'?'Galaxy S':device.id==='m375'?'iPhone mini':device.name}</span>
       </UnstyledButton>)}
     </div>
   </Radio.Group>;

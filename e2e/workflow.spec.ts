@@ -66,3 +66,30 @@ test('preserves an unsupported IndexedDB record until explicit recovery',async({
   const version=await page.evaluate(()=>new Promise((resolve,reject)=>{const req=indexedDB.open('genux-typography-workflow',1);req.onsuccess=()=>{const read=req.result.transaction('workspace','readonly').objectStore('workspace').get('current');read.onsuccess=()=>resolve(read.result.version);read.onerror=()=>reject(read.error);};}));
   expect(version).toBe(999);
 });
+
+test('keeps a live full-group comparison while switching the edited element',async({page})=>{
+  await page.setViewportSize({width:1680,height:1000});await page.goto('/');
+  const group=page.getByRole('region',{name:'Ekran 2 · Kümenin tamamı',exact:true});
+  await expect(group.locator('[data-group-role]')).toHaveCount(6);
+  await expect(page.getByTestId('group-surface')).toHaveCSS('width','320px');
+  await page.getByLabel('Yazı boyutu',{exact:true}).fill('40');
+  await expect(group.locator('[data-group-role=h1]')).toHaveCSS('font-size','40px');
+  await group.getByRole('button',{name:'H2 düzenle',exact:true}).click();
+  await expect(page.getByRole('region',{name:'Ekran 1 · Seçili element'})).toContainText('Ekran 1 · H2');
+  await page.getByLabel('Yazı boyutu',{exact:true}).fill('30');
+  await expect(group.locator('[data-group-role=h1]')).toHaveCSS('font-size','40px');
+  await expect(group.locator('[data-group-role=h2]')).toHaveCSS('font-size','30px');
+  await page.getByRole('combobox',{name:'Metin kümesi',exact:true}).click();await page.getByRole('option',{name:'Body',exact:true}).click();
+  expect(await group.locator('[data-group-role]').count()).toBeGreaterThan(2);
+});
+
+test('puts specimen text on its own preview theme background even with a dark tool panel',async({page})=>{
+  await page.goto('/');await page.getByTestId('form-sample').waitFor();
+  if(await page.locator('html').getAttribute('data-mantine-color-scheme')!=='dark') await page.getByRole('button',{name:'Uygulama temasını değiştir'}).click();
+  const sample=page.getByTestId('form-sample');
+  await expect(sample).toHaveCSS('background-color','rgb(255, 255, 255)');
+  await expect(sample).toHaveCSS('color','rgb(20, 20, 20)');
+  await page.getByText('Koyu',{exact:true}).click();
+  await expect(sample).toHaveCSS('background-color','rgb(26, 26, 26)');
+  await expect(sample).toHaveCSS('color','rgb(242, 242, 242)');
+});

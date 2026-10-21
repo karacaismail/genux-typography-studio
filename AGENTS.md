@@ -82,3 +82,7 @@ npm run build
 - JSON `workflow` uzantısı profil ezmeleri, cihaz listesi, onaylar ve devam konumunu taşır. Kaynak değer değiştiğinde bağımlı onay yeniden inceleme durumuna döner. İçe aktarma biçimleri hata durumunda mevcut çalışmayı değiştirmez.
 - Kullanıcı isteğiyle gerçek Ant Design 6.6.7 yalnız lazy yüklenen örnek sayfalar için eklendi; araç kontrolleri Mantine9 kalır. Ortak rol stil eşlemesi `features/workflow/roleStyle.ts`; sayfa/kart/detay satırı ve 1/2/5 satır örnekleri aynı değerleri kullanır.
 - Hedefli browser kontrolü: `npx playwright test e2e/workflow.spec.ts --project=chromium`. Kalıcılık, anında editör geçişi, JSON round-trip, alt kırılımlar,320 px ve klavye odağını kapsar. Gerçek TV ve diğer motorlar bu teslimde not_run.
+
+## Eşzamanlı küme karşılaştırması ve örnek zeminleri (2026-10-21)
+
+Akışın Ekran1'i seçili elementi, Ekran2'si geçerli kümenin bütün rollerini gösterir; rol seçimi ikinci ekranı kapatmaz. İki DeviceStage aynı genişlik/cihaz/zoom değerlerini kullanır. Form örneği, satır testleri ve karşılaştırma zemini `canvasVars(scheme)` üzerinden bağımsız önizleme temasını izler; panel temasının zeminini kullanmaz. Seçilen çıktı renkleri sessizce değiştirilmez; gerçek örnek zemini üzerinden kontrast oranı gösterilir. Regresyonlar `e2e/workflow.spec.ts` live full-group / specimen text senaryolarıdır.

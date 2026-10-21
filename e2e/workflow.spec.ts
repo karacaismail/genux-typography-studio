@@ -218,18 +218,18 @@ test('device families use large horizontal icon radios with keyboard selection',
 });
 
 
-test('device icons remain in header while product and text navigation live only in sidebar',async({page})=>{
+test('product dropdown lives beside the brand and text groups remain in sidebar',async({page})=>{
   await page.setViewportSize({width:1680,height:1000});await page.goto('/');
   await expect(page.getByRole('banner').getByRole('radiogroup',{name:'Cihaz grubu',exact:true})).toBeVisible();
-  await expect(page.getByRole('combobox',{name:'Ürün türü',exact:true})).toHaveCount(0);
+  await expect(page.getByRole('banner').getByRole('combobox',{name:'Ürün türü',exact:true})).toHaveCount(1);
   await expect(page.getByRole('combobox',{name:'Metin kümesi',exact:true})).toHaveCount(0);
   const rail=page.getByRole('complementary',{name:'Karar yolculuğu'});
   const groups=rail.getByRole('navigation',{name:'Metin kümeleri'});
   const body=groups.getByRole('button',{name:/Body/});await body.click();await expect(body).toHaveAttribute('aria-current','step');
   await expect(page.getByRole('heading',{name:'Body',exact:true})).toBeVisible();
   await page.setViewportSize({width:320,height:850});
-  const marketing=rail.getByRole('navigation',{name:'Ürün türleri'}).getByRole('button',{name:/Marketing/});
-  await marketing.click();await expect(marketing).toHaveAttribute('aria-current','step');
+  const product=page.getByRole('banner').getByRole('combobox',{name:'Ürün türü',exact:true});
+  await product.click();await page.getByRole('option',{name:'Marketing',exact:true}).click();await expect(product).toHaveValue('Marketing');
   await groups.getByRole('button',{name:/Body/}).click();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(320);
 });
@@ -286,8 +286,14 @@ test('sidebar separates product progress from text-group navigation',async({page
   await page.setViewportSize({width:1680,height:1000});await page.goto('/');
   const rail=page.getByRole('complementary',{name:'Karar yolculuğu'});
   await expect(rail.getByRole('region',{name:'Çalışma ilerlemesi'})).toBeVisible();
+  const breakpoints=rail.getByRole('radiogroup',{name:'Alt kırılım',exact:true});
+  await expect(breakpoints.getByRole('radio')).toHaveCount(6);
+  const first=await breakpoints.getByRole('radio',{name:'320 px',exact:true}).boundingBox();
+  const second=await breakpoints.getByRole('radio',{name:'360 px',exact:true}).boundingBox();
+  expect(second!.y).toBeGreaterThan(first!.y+first!.height);
+  expect(second!.x).toBe(first!.x);
   await expect(rail.getByText('0 / 1144 onaylı küme',{exact:true})).toBeVisible();
-  await expect(rail.getByRole('navigation',{name:'Ürün türleri'}).getByRole('button')).toHaveCount(6);
+  await expect(rail.getByRole('navigation',{name:'Ürün türleri'})).toHaveCount(0);
   await expect(rail.getByText('Çalışma planı',{exact:true})).toHaveCount(0);
   await expect(rail.getByText('Bir karar.',{exact:false})).toHaveCount(0);
   await expect(rail.getByRole('separator')).toBeVisible();

@@ -186,3 +186,13 @@
 .previewBar { padding-block:0; }
 .header .deviceOption { padding-block:var(--mantine-spacing-xs); gap:calc(var(--mantine-spacing-xs) / 2); }
 @media(max-width:47.99em) { .previewBar .roleStep { flex-basis:100%; } }
+
+.headerProduct { flex:0 0 200px; min-width:0; }
+.headerProduct :global(.mantine-Input-input) { min-height:var(--gx-workflow-header-hit); }
+
+@media(min-width:75em) {
+  .sidebarBreakpoints .breakpointOptions { flex-direction:column; }
+  .sidebarBreakpoints .breakpointItem { flex:none; width:100%; }
+}
+// Görsel olarak gizli erişilebilir etiketler header kaydırma sınırında kalır.
+.header { position:relative; }

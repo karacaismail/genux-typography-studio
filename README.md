@@ -105,4 +105,4 @@ Yeşil onay simgesi seçili değeri değil, ilgili rol/ürün/ekran için proje 
 
 Cihaz grubu ikonları header içindedir. Alt kırılımlar piksel ölçüsü buton içinde, model adı altında olan radyo sekmeleridir. Seçim vurgusu merkezi simetrik Cubic hareket tokenıyla kayar; reduced-motion durumunda hareket kapanır. Dar alanda sekmeler sarılır.
 
-Sol menüde birincil alan ilerleme ve ürün türleri içindir. Ayırıcıdan sonraki ikincil alan metin kümelerinin liste navigasyonudur. İçerik alanındaki ürün türü ve metin kümesi dropdownları kaldırılmıştır. Dar ekranda aynı listeler yatay kaydırılabilir; ürün/küme seçimi kaybolmaz.
+Ürün türü header içinde GenUX kimliği yanındaki Mantine dropdown ile seçilir. Sol menüde birincil alan ilerleme ve alt kırılımlar içindir; kırılımlar masaüstünde alt alta dizilir. Ayırıcıdan sonraki ikincil alan metin kümelerinin liste navigasyonudur. Ürün dropdownu header içindedir; metin kümesi dropdownu yerine sidebar listesi kullanılır. Dar ekranda kontroller erişilebilir kalır.

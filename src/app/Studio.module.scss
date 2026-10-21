@@ -27,3 +27,5 @@
     transform: none;
   }
 }
+
+.returnFlow { position:fixed; bottom:var(--mantine-spacing-xl); inset-inline-start:var(--mantine-spacing-xl); z-index:1000; }

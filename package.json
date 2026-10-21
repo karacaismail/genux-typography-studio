@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "GenUX Typography Studio \u2014 HTML5 elementleri ve \u00fcr\u00fcn t\u00fcrleri i\u00e7in tipografi kararlar\u0131 (Mantine 9).",
+  "description": "GenUX Typography Studio — HTML5 elementleri ve ürün türleri için tipografi kararları (Mantine 9).",
   "scripts": {
     "dev": "vite --port 5190 --strictPort",
     "build": "tsc -p tsconfig.app.json --noEmit && vite build",
@@ -23,6 +23,7 @@
     "@mantine/spotlight": "9.7.2",
     "@phosphor-icons/react": "2.1.10",
     "@tanstack/react-router": "1.170.42",
+    "antd": "6.6.7",
     "react": "19.3.0",
     "react-dom": "19.3.0",
     "zod": "4.6.5",

@@ -5,6 +5,7 @@ export const VIEWS = ['page', 'lines', 'scale'] as const;
 export type View = (typeof VIEWS)[number];
 
 const raw = z.object({
+  workspace: z.catch(z.enum(['workflow', 'free']), 'workflow'),
   ctx: z.catch(z.enum(CONTEXT_IDS as [ContextId, ...ContextId[]]), 'admin'),
   role: z.catch(z.string().check(z.maxLength(40)), 'h1'),
   device: z.catch(z.string().check(z.maxLength(12)), 'l1280'),

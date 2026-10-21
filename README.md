@@ -90,3 +90,11 @@ e2e           Playwright testleri
 ## Durum
 
 Yerel depo; uzak depo ve açık kaynak lisansı henüz seçilmedi.
+
+## Aşamalı karar akışı
+
+Ana ekran HTML temelinden başlayan karar formudur. Her cihaz ailesinin alt kırılımlarında Headings, Sub-title, Body ve diğer kümeleri sırayla inceleyin. Elementin boyut, ağırlık, satır yüksekliği, ton ve diğer özelliklerini gerçek Ant Design sayfa/kart/detay örnekleriyle karşılaştırın. “Kararı kaydet ve devam et” tarihli değer kaydeder ve sonraki elemente geçer.
+
+Tarayıcı ilerlemeyi IndexedDB’ye, mevcut karar modelini v2 çalışma alanına kaydeder. JSON indir, değerler kadar kaldığınız adımı, notları, onayları ve TV/monitör profil ezmelerini de taşır. Başka tarayıcı veya localhost → Pages geçişinde bu dosyayı içe aktarın. Kaynak HTML değişirse devralan onaylar yeniden inceleme bekler. Browser verilerini silmeden önce JSON yedeği alın.
+
+Tablet600/744/768/820/834; laptop960/1024/1280/1366/1440/1536/1680; bilgisayar1920/2048/2560; TV1280/1920/2560/3440/3840 mantıksal CSS px. TV profilleri gerçek cihaz uyumluluğu kanıtı değildir. Eski araç `?workspace=free` veya Serbest editör eylemiyle kullanılabilir.

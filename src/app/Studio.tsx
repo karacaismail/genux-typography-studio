@@ -17,6 +17,7 @@ import { boot } from './bootstrap';
 import { useFontStatus, usePersistence } from './usePersistence';
 import { useStudioSearch } from './useStudioSearch';
 import classes from './Studio.module.scss';
+import { Workflow } from '../features/workflow/Workflow';
 
 
 // İlk ekranda gerekmeyen özellikler ilk açılışta yüklenir (kod vurgulama, bırakma alanı, tur, tam ekran).
@@ -26,6 +27,11 @@ const StudioTour = lazy(() => import('../features/onboarding/StudioTour').then((
 const FullscreenPreview = lazy(() => import('../features/preview/FullscreenPreview').then((m) => ({ default: m.FullscreenPreview })));
 
 export function Studio() {
+  const [search, setSearch] = useStudioSearch();
+  return search.workspace === 'free' ? <><LegacyStudio /><Button className={classes.returnFlow} onClick={() => setSearch({workspace:'workflow'})}>Karar akışına dön</Button></> : <Workflow onOpenEditor={() => { void setSearch({workspace:'free'}); }} />;
+}
+
+function LegacyStudio() {
   const [search] = useStudioSearch();
   const navOpen = useUi((s) => s.navOpen);
   const exportOpen = useUi((s) => s.exportOpen);

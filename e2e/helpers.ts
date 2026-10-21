@@ -16,7 +16,7 @@ export async function fresh(page: Page, query = '') {
     localStorage.clear();
     localStorage.setItem('genux-type-lab-v2', JSON.stringify({ format: 'genux-typography-decisions', version: 2, scope: 'changed', contexts: {}, ui: { tourDone: true } }));
   });
-  await page.goto(`/${query}`);
+  await page.goto(`/${query}${query ? '&' : '?'}workspace=free`);
   await page.locator('[data-canvas-root]').waitFor();
   await page.locator('.gx-canvas .pv-page [data-role]').first().waitFor();
 }

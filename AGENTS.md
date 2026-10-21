@@ -72,3 +72,13 @@ npm run build
 ## İki uç boyut modu (2026-10-20)
 
 `endpoints`: 320 ve 3840 px için iki ortak tam sayı boyut; arası doğrusal hesaplanır ve Math.round ile tam sayıya yuvarlanır. Bütün ürün setlerinde çalışır; eski ara ekran size/max ezmelerini uygulamaz, diğer özellikleri korur. Uzun okuma18 sabit kalır. JSON fontSize.byDevice bütün cihazların hesaplanmış tam sayı boyutlarını ve uç genişlikleri içerir. Eski modlar ve dosyalar desteklenir.
+
+## Karar akışı (2026-10-21)
+
+- Varsayılan çalışma alanı, aşamalı formdur. `workspace=free` mevcut serbest editörü korur; eski e2e testleri bu açık modu kullanır.
+- Sıra: HTML → SaaS → Marketing → E-ticaret → BI → AI; her üründe cihaz ailesi → alt genişlik → Headings/Sub-title/diğer kümeler → element. Alt profiller `features/workflow/model.ts` WORKFLOW_DEVICES kaynağındadır.
+- TV mantıksal CSS viewport profilidir; gerçek TV/tarayıcı veya kumanda desteğinin doğrulandığı anlamına gelmez. Aynı genişlikte TV ve monitör bağımsızdır. HTML profil katmanı ürün profilinden önce uygulanır.
+- Onaylı değerler, kaynak parmak izi, tarih, seçili adım ve notlar IndexedDB `genux-typography-workflow` içinde atomik kayıtla tutulur; eski localStorage akış kaydı yalnız migration girdisi olarak okunur, silinmez. Kararlar mevcut v2 formatını korur.
+- JSON `workflow` uzantısı profil ezmeleri, cihaz listesi, onaylar ve devam konumunu taşır. Kaynak değer değiştiğinde bağımlı onay yeniden inceleme durumuna döner. İçe aktarma biçimleri hata durumunda mevcut çalışmayı değiştirmez.
+- Kullanıcı isteğiyle gerçek Ant Design 6.6.7 yalnız lazy yüklenen örnek sayfalar için eklendi; araç kontrolleri Mantine9 kalır. Ortak rol stil eşlemesi `features/workflow/roleStyle.ts`; sayfa/kart/detay satırı ve 1/2/5 satır örnekleri aynı değerleri kullanır.
+- Hedefli browser kontrolü: `npx playwright test e2e/workflow.spec.ts --project=chromium`. Kalıcılık, anında editör geçişi, JSON round-trip, alt kırılımlar,320 px ve klavye odağını kapsar. Gerçek TV ve diğer motorlar bu teslimde not_run.

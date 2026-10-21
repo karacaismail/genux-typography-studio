@@ -98,3 +98,5 @@ Bağlam/başlık/ilerleme aynı satırda; element gezgini ve önizleme bilgisi o
 Karar akışındaki iki cihaz önizlemesi varsayılan olarak 1:1 CSS piksel ölçüsünde açılır. Sahne yüksekliği çerçevenin tamamını kapsar; sabit 520/680 px yükseklik veya 900 px ekran yüksekliği kırpması uygulanmaz. Dar alanda yatay kaydırma önizleme içinde kalır; sığdırma kullanıcı seçeneğidir.
 
 İç önizleme ekranı ve sağ denetçi scroll zincirini kesmez: overscroll-behavior:auto. İç sınırda wheel/dokunma hareketi doğal olarak dış kapsayıcıya ve sayfaya aktarılır; özel wheel preventDefault veya odak taşıma uygulanmaz.
+
+Cihaz kasaları temsilidir; karma model adları birebir donanım kopyası iddiası taşımaz. m320 ve t768 klasik fiziksel ana ekran düğmeli kasa kullanır. Kamera/hoparlör ve kasa ekranın CSS alanını örtmez; kasa geometrisi DeviceStage içindeki ölçülerden üretilir.

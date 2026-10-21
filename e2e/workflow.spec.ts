@@ -174,7 +174,7 @@ test('workflow displays the complete device at actual size without a fixed-heigh
   await expect(screen).toHaveCSS('width','320px');
   await expect(screen).toHaveCSS('height','568px');
   const dimensions=await screen.evaluate(el=>{const frame=el.parentElement!;const stage=frame.parentElement!.parentElement!.parentElement!.parentElement!;return {frame:frame.getBoundingClientRect().toJSON(),stage:stage.getBoundingClientRect().toJSON()};});
-  expect(dimensions.frame.height).toBe(592);
+  expect(dimensions.frame.height).toBe(708);
   expect(dimensions.frame.bottom).toBeLessThanOrEqual(dimensions.stage.bottom);
   await expect(first.getByText(/ölçek %100/)).toBeVisible();
   await page.setViewportSize({width:320,height:850});

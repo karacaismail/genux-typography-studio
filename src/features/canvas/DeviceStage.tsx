@@ -1,11 +1,11 @@
-import { useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { TIERS, tierOf, type Device } from '../../core';
 import { fmt } from '../../core/util';
 import { canvasVars } from './canvasVars';
 import classes from './DeviceStage.module.scss';
 
 const BEZEL: Record<Device['group'], { x: number; top: number; bottom: number; base: number; wide: number }> = {
-  mobile: { x: 12, top: 12, bottom: 12, base: 0, wide: 0 },
+  mobile: { x: 12, top: 30, bottom: 24, base: 0, wide: 0 },
   tablet: { x: 18, top: 18, bottom: 18, base: 0, wide: 0 },
   laptop: { x: 14, top: 14, bottom: 18, base: 18, wide: 0.07 },
   desktop: { x: 14, top: 14, bottom: 18, base: 120, wide: 0 },
@@ -59,7 +59,10 @@ export function DeviceStage({ device, width, height, landscape, zoom, onScreen, 
     return () => ro.disconnect();
   }, [screen, autoHeight]);
 
-  const b = BEZEL[device.group];
+  const legacy = device.id === 'm320' || device.id === 't768';
+  const b = legacy ? { ...BEZEL[device.group], x: 14, top: 64, bottom: 76 } : BEZEL[device.group];
+  const profile = legacy ? 'classic' : device.group === 'mobile' ? 'modern' : device.group;
+  const shellStyle = { '--device-side': `${b.x}px`, '--device-top': `${b.top}px`, '--device-bottom': `${b.bottom}px` } as CSSProperties;
   const frameW = width + 2 * b.x;
   const screenH = autoHeight ? Math.max(height, contentH) : height;
   const frameH = screenH + b.top + b.bottom;
@@ -81,7 +84,9 @@ export function DeviceStage({ device, width, height, landscape, zoom, onScreen, 
       <div className={classes.center}>
         <div className={classes.sizer} style={{ width: totalW * k, height: totalH * k }}>
           <div className={classes.frame} style={{ transform: `translateX(${extraX * k}px) scale(${k})` }}>
-            <div className={classes.device} data-kind={device.group}>
+            <div className={classes.device} data-kind={device.group} data-profile={profile} style={shellStyle}>
+              <span className={classes.hardware} aria-hidden="true"><span className={classes.camera}/><span className={classes.speaker}/></span>
+              {legacy && <span className={classes.home} aria-hidden="true"/>}
               <div
                 ref={setScreen}
                 className={classes.screen}

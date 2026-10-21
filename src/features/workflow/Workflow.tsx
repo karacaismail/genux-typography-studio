@@ -25,7 +25,7 @@ function readInitial() {
   catch { return {flow:emptyFlow(),notes:{},error:'İlerleme kaydı okunamadı. Eski kayıt korunuyor; JSON yedeğini içe aktarabilir veya yeni akış başlatabilirsiniz.'}; }
 }
 const FAMILIES = Object.keys(FAMILY_LABEL) as Family[];
-const FORMAT_FIELDS = ['ff','fst','tt','td','num','ta','wrap'] as const;
+const FORMAT_FIELDS = ['fst','tt','td','num','ta','wrap'] as const;
 export function Workflow({ onOpenEditor }: {onOpenEditor:()=>void}) {
   const [initial] = useState(readInitial);
   const [loaded,setLoaded]=useState(false);

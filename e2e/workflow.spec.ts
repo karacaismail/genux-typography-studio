@@ -18,6 +18,8 @@ test('collects a decision, resumes immediately after editor switch, and round-tr
   const stream=await(await download).createReadStream();let content='';for await(const chunk of stream!)content+=chunk.toString();
   const data=JSON.parse(content);
   expect(data.workflow.reviews['html:mobile:320:h1'].values.size).toBe(34);
+  expect(data.contexts.html.roles.h1.fontSize.min).toBe(34);
+  expect(data.workflow.engine.version).toBe(1);
   expect(data.workflow.notes['html:mobile:320:h1']).toBe('320 px mobil başlık kararı');
   await page.getByLabel('Yazı boyutu',{exact:true}).fill('39');
   await page.locator('input[type=file]').first().setInputFiles({name:'decisions.json',mimeType:'application/json',buffer:Buffer.from(content)});
@@ -83,10 +85,10 @@ test('puts specimen text on its own preview theme background even with a dark to
   const surface=page.getByTestId('group-surface');
   const sample=surface.locator('[data-group-role=h1]');
   await expect(surface).toHaveCSS('background-color','rgb(255, 255, 255)');
-  await expect(sample).toHaveCSS('color','rgb(20, 20, 20)');
+  await expect(sample).toHaveCSS('color','rgb(26, 26, 26)');
   await page.getByText('Koyu',{exact:true}).click();
   await expect(surface).toHaveCSS('background-color','rgb(26, 26, 26)');
-  await expect(sample).toHaveCSS('color','rgb(242, 242, 242)');
+  await expect(sample).toHaveCSS('color','rgb(230, 230, 230)');
 });
 
 test('numeric spinner has decrement left and increment right, preserving keyboard steps and bounds',async({page})=>{
@@ -422,4 +424,116 @@ test('phone frames distinguish classic android notch and island hardware',async(
     await expect(screen.locator('..')).toHaveAttribute('data-profile',profile);
     expect(await screen.evaluate(el=>el.clientWidth)).toBe(width);
   }
+});
+
+test('mobile-first engine learns confirmed choices, protects edits and survives reload',async({page})=>{
+  await page.setViewportSize({width:320,height:850});await page.goto('/');
+  await page.getByLabel('Yazı boyutu',{exact:true}).fill('40');
+  await page.getByRole('button',{name:'Kararı kaydet ve devam et',exact:true}).click();
+  await expect(page.getByRole('region',{name:'H2 karar formu',exact:true})).toBeVisible();
+  await expect(page.getByLabel('Yazı boyutu',{exact:true})).toHaveValue('35 px');
+  const panel=page.locator('details').filter({has:page.locator('summary').filter({hasText:'Karar motoru'})});
+  await panel.locator('summary').click();
+  await expect(panel.getByText(/320 px · H1/)).toBeVisible();
+  await expect(page.getByText('Taslak',{exact:true})).toBeVisible();
+  await page.getByLabel('Yazı boyutu',{exact:true}).fill('33');
+  await page.getByRole('button',{name:'Kaydet',exact:true}).click();
+  await page.reload();
+  await expect(page.getByLabel('Yazı boyutu',{exact:true})).toHaveValue('33 px');
+  await page.locator('summary').filter({hasText:'Karar motoru'}).click();
+  await page.getByRole('button',{name:'Otomatik yeniden hesapla',exact:true}).click();
+  await expect(page.getByLabel('Yazı boyutu',{exact:true})).toHaveValue('35 px');
+  await page.getByRole('button',{name:'Otomatik uygulamayı geri al',exact:true}).click();
+  await expect(page.getByLabel('Yazı boyutu',{exact:true})).toHaveValue('33 px');
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(320);
+});
+
+test('engine carries a mobile decision forward and refuses insufficient contrast approval',async({page})=>{
+  await page.goto('/');
+  await page.getByLabel('Yazı boyutu',{exact:true}).fill('40');
+  await page.getByRole('button',{name:'Kararı kaydet ve devam et',exact:true}).click();
+  await page.getByRole('radio',{name:'360 px',exact:true}).click();
+  await expect(page.getByLabel('Yazı boyutu',{exact:true})).toHaveValue('41 px');
+  await page.getByLabel('Yazı boyutu',{exact:true}).fill('16');
+  await page.locator('[data-output-theme="light"]').locator('label').filter({hasText:'#808080'}).click();
+  await expect(page.getByRole('button',{name:'Kararı kaydet ve devam et',exact:true})).toBeDisabled();
+  await expect(page.getByText(/Kaydetmek için açık ve koyu tema kontrastını düzelt/)).toBeVisible();
+});
+
+test('engine decisions reach the standard export and free editor',async({page})=>{
+  await page.addInitScript(()=>localStorage.setItem('genux-type-lab-v2',JSON.stringify({format:'genux-typography-decisions',version:2,scope:'changed',contexts:{},ui:{tourDone:true}})));
+  await page.goto('/?ctx=html&role=h1&device=m320');
+  await page.getByLabel('Yazı boyutu',{exact:true}).fill('40');
+  await page.getByRole('button',{name:'Kararı kaydet ve devam et',exact:true}).click();
+  await page.getByRole('button',{name:'Serbest editör',exact:true}).click();
+  await expect(page.getByRole('textbox',{name:'Boyut değeri (px)',exact:true})).toHaveValue('40');
+  await page.getByRole('button',{name:'Karar akışına dön',exact:true}).click();
+  await expect(page.getByRole('region',{name:'H2 karar formu',exact:true})).toBeVisible();
+  await expect(page.getByLabel('Yazı boyutu',{exact:true})).toHaveValue('35 px');
+});
+
+
+test('free editor changes return to workflow and are preserved on a second editor switch',async({page})=>{
+  await page.addInitScript(()=>localStorage.setItem('genux-type-lab-v2',JSON.stringify({format:'genux-typography-decisions',version:2,scope:'changed',contexts:{},ui:{tourDone:true}})));
+  await page.goto('/?ctx=html&role=h1&device=m320');
+  await page.getByLabel('Yazı boyutu',{exact:true}).fill('40');
+  await page.getByRole('button',{name:'Kararı kaydet ve devam et',exact:true}).click();
+  await page.getByRole('button',{name:'Serbest editör',exact:true}).click();
+  const size=page.getByRole('textbox',{name:'Boyut değeri (px)',exact:true});
+  await expect(size).toHaveValue('40');await size.fill('42');await size.press('Enter');
+  await page.getByRole('button',{name:'Karar akışına dön',exact:true}).click();
+  await page.getByRole('navigation',{name:'Bu kümedeki elementler',exact:true}).getByRole('button',{name:'H1',exact:true}).click();
+  await expect(page.getByLabel('Yazı boyutu',{exact:true})).toHaveValue('42 px');
+  await expect(page.getByText('Yeniden incele',{exact:true})).toBeVisible();
+  await page.getByRole('button',{name:'Serbest editör',exact:true}).click();
+  await expect(size).toHaveValue('42');
+});
+
+
+test('engine panel and large line sample retain visible keyboard focus at 320px',async({page})=>{
+  await page.setViewportSize({width:320,height:850});await page.goto('/');
+  await page.getByLabel('Yazı boyutu',{exact:true}).fill('80');
+  const summary=page.locator('summary').filter({hasText:'Karar motoru'});
+  await page.keyboard.press('Tab');await summary.focus();
+  await expect(summary).toBeFocused();
+  expect(await summary.evaluate(el=>getComputedStyle(el).boxShadow)).not.toBe('none');
+  await summary.press('Enter');
+  await expect(page.getByRole('button',{name:'Otomatik yeniden hesapla',exact:true})).toBeVisible();
+  const sample=page.getByRole('region',{name:'Satır testi metni',exact:true});
+  await sample.focus();await expect(sample).toBeFocused();
+  expect(await sample.evaluate(el=>getComputedStyle(el).boxShadow)).not.toBe('none');
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(320);
+});
+
+test('failed projected workspace write cannot turn old core values into workflow edits on reload',async({page})=>{
+  await page.addInitScript(()=>{
+    const original=Storage.prototype.setItem;
+    Storage.prototype.setItem=function(key,value){
+      if(key==='genux-type-lab-v2'){
+        const data=JSON.parse(value);
+        if(data.contexts?.html?.roles?.h1?.fontSize?.min===40)throw new DOMException('Simulated projected write failure','QuotaExceededError');
+      }
+      return original.call(this,key,value);
+    };
+  });
+  await page.goto('/');await page.getByLabel('Yazı boyutu',{exact:true}).fill('40');
+  await page.getByRole('button',{name:'Kararı kaydet ve devam et',exact:true}).click();
+  await page.getByRole('button',{name:'Serbest editör',exact:true}).click();
+  await expect(page.getByText('Editöre aktarım kaydedilemedi.',{exact:false})).toBeVisible();
+  await page.reload();
+  await page.getByRole('navigation',{name:'Bu kümedeki elementler',exact:true}).getByRole('button',{name:'H1',exact:true}).click();
+  await expect(page.getByLabel('Yazı boyutu',{exact:true})).toHaveValue('40 px');
+});
+
+test('pending editor handoff prevents edits until its latest snapshot is committed',async({page})=>{
+  await page.addInitScript(()=>{
+    const descriptor=Object.getOwnPropertyDescriptor(IDBTransaction.prototype,'oncomplete')!;
+    Object.defineProperty(IDBTransaction.prototype,'oncomplete',{...descriptor,set(handler){descriptor.set!.call(this,handler?function(this:IDBTransaction,event:Event){setTimeout(()=>handler.call(this,event),250);}:handler);}});
+  });
+  await page.goto('/?ctx=html&role=h1&device=m320');
+  await page.getByLabel('Yazı boyutu',{exact:true}).fill('40');
+  await page.getByRole('button',{name:'Serbest editör',exact:true}).click();
+  await expect(page.locator('[inert][aria-busy="true"]')).toHaveCount(1);
+  await page.keyboard.type('99');
+  await expect(page.getByRole('textbox',{name:'Boyut değeri (px)',exact:true})).toHaveValue('40');
 });

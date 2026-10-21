@@ -1,7 +1,10 @@
+import { projectWorkflowDecisions, reconcileEditorChanges, snapshotEditorProjection } from './projection';
+import { evaluateDecision, synchronizeDecision, lockDecision, undoDecision, decisionChecks } from './engine';
+import { DecisionEnginePanel } from './DecisionEnginePanel';
 import { Accordion, Alert, Badge, Button, FileButton, Group, Progress, Radio, SegmentedControl, Select, Textarea, useMantineColorScheme } from '@mantine/core';
 import { DeviceMobileIcon, DeviceTabletIcon, LaptopIcon, MonitorIcon, TelevisionIcon, ArrowLeftIcon, ArrowRightIcon, CheckCircleIcon, DownloadSimpleIcon, FloppyDiskIcon, MoonIcon, SunIcon } from '@phosphor-icons/react';
 import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
-import { recommendedRole, CHOICES, CONTEXTS, ROLE, buildExport, contrastInfo, contextLabel, enforceRole, importData, minSizeFor, resolveAt, sizeAt, type PropKey, type RoleOverrides, type Theme } from '../../core';
+import { CHOICES, CONTEXTS, ROLE, buildExport, contrastInfo, contextLabel, importData, minSizeFor, resolveAt, sizeAt, type PropKey, type RoleOverrides, type Theme } from '../../core';
 import { useStudio } from '../../store/studio';
 import { writeStored } from '../../store/persist';
 import { useStudioSearch } from '../../app/useStudioSearch';
@@ -34,7 +37,9 @@ const FORMAT_FIELDS = ['fst','td','num','ta','wrap'] as const;
 export function Workflow({ onOpenEditor }: {onOpenEditor:()=>void}) {
   const [initial] = useState(readInitial);
   const [loaded,setLoaded]=useState(false);
-  useEffect(()=>{let alive=true;readWorkflow().then((raw)=>{if(alive && raw){setFlow(parseFlow(raw));setNotes(cleanNotes((raw as Record<string,unknown>).notes));setReadable(true);setError('');}}).catch(()=>{if(alive){setReadable(false);setError('İlerleme veritabanı okunamadı. Mevcut kayıt korunuyor. JSON yedeğini içe aktarabilir veya yeni akış başlatabilirsin.');}}).finally(()=>{if(alive)setLoaded(true);});return()=>{alive=false;};},[]);
+  const [handoffPending,setHandoffPending]=useState(false);
+  const handoffBusy=useRef(false);
+  useEffect(()=>{let alive=true;readWorkflow().then((raw)=>{if(alive && raw){setFlow(reconcileEditorChanges(parseFlow(raw),useStudio.getState().decisions));setNotes(cleanNotes((raw as Record<string,unknown>).notes));setReadable(true);setError('');}}).catch(()=>{if(alive){setReadable(false);setError('İlerleme veritabanı okunamadı. Mevcut kayıt korunuyor. JSON yedeğini içe aktarabilir veya yeni akış başlatabilirsin.');}}).finally(()=>{if(alive)setLoaded(true);});return()=>{alive=false;};},[]);
   const [flow,setFlow] = useState<FlowState>(initial.flow);
   const [error,setError] = useState(initial.error);
   const [saved,setSaved] = useState('');
@@ -48,7 +53,18 @@ export function Workflow({ onOpenEditor }: {onOpenEditor:()=>void}) {
   const effective=useMemo(()=>decisionsForStep(flow,decisions,step),[flow,decisions,step]);
   const r=resolveAt(effective,step.ctx,id,width); const settings=effective.contexts[step.ctx].settings;
   const px=Math.round(sizeAt(r,settings,id,width));
-  const recommended=useMemo(()=>recommendedRole(step.ctx,id,width),[step.ctx,id,width]);
+  const prediction=useMemo(()=>evaluateDecision(flow,decisions,step,id),[flow,decisions,step,id]);
+  const forecast=useMemo(()=>{
+    const targets=step.roles.slice(step.roles.indexOf(id)+1,step.roles.indexOf(id)+4).map(role=>({step,role,label:ROLE[role].label}));
+    const next=FLOW_STEPS.find(s=>s.ctx===step.ctx && s.family===step.family && s.group===step.group && s.device.w>width);
+    if(next)targets.push({step:next,role:id,label:`${next.device.w} px · ${def.label}`});
+    return targets.map(target=>({label:target.label,size:evaluateDecision(flow,decisions,target.step,target.role).values.size}));
+  },[flow,decisions,step,id,width,def.label]);
+  const recommended=prediction.values;
+  const engineEntry=flow.engine?.entries[reviewKey(step,id)];
+  const checks=decisionChecks({...r,size:px,mode:'static',max:px,sizes:null},id);
+  const canApprove=checks.every(check=>check.pass);
+  useEffect(()=>{if(loaded && !handoffPending)setFlow(f=>synchronizeDecision(f,decisions,step,id));},[loaded,handoffPending,decisions,step,id,flow]);
   const [scheme,setScheme]=useState<Theme>('light');
   const [placement,setPlacement]=useState('page');
   const [zoom,setZoom]=useState<'fit'|'actual'>('actual');
@@ -73,14 +89,9 @@ export function Workflow({ onOpenEditor }: {onOpenEditor:()=>void}) {
   const currentReviewed=isReviewed(flow,decisions,step,id);
   const stale=!!flow.reviews[reviewKey(step,id)] && !currentReviewed;
   const navigate=(i:number,role?:string)=>{const target=FLOW_STEPS[Math.max(0,Math.min(FLOW_STEPS.length-1,i))];setFlow((f)=>({...f,cursor:target.key,role:role ?? target.roles[0]}));};
-  const patch=(p:RoleOverrides)=>{
-    // Shared HTML element rules remain inherited, but TV/extra monitor profiles are independent.
-    if(step.family==='tv' || !step.device.id.match(/^[mltd]/) || step.device.id.startsWith('monitor')) {
-      const key=reviewKey(step,id); const cleaned=enforceRole(id,{...r,...p});
-      setFlow((f)=>({...f,profiles:{...f.profiles,[key]:{...f.profiles?.[key],...Object.fromEntries(Object.keys(p).map((k)=>[k,cleaned[k as PropKey]]))}}}));
-    } else useStudio.getState().override(step.ctx,id,p,null,width);
-  };
+  const patch=(p:RoleOverrides)=>setFlow(f=>lockDecision(f,decisions,step,id,p));
   const approveNext=()=>{
+    if(!canApprove)return;
     const next=approve(flow,decisions,step,id); const ri=step.roles.indexOf(id);
     if (ri<step.roles.length-1) setFlow({...next,cursor:step.key,role:step.roles[ri+1]});
     else { const remaining=step.roles.find((x)=>!isReviewed(next,decisions,step,x));
@@ -89,7 +100,23 @@ export function Workflow({ onOpenEditor }: {onOpenEditor:()=>void}) {
       else setFlow(next);
     }
   };
-  const exportFile=()=>downloadText(`genux-karar-akisi-${stamp()}.json`,JSON.stringify({...buildExport(decisions,'all'),workflow:{...flow,notes,completedGroups:done,totalGroups:FLOW_STEPS.length,order:'context > device family > width > group > role',profiles:flow.profiles ?? {},devices:WORKFLOW_DEVICES.map(({device,family})=>({id:device.id,family,widthPx:device.w,heightPx:device.h}))}},null,2));
+  const openEditor=async()=>{
+    if(handoffBusy.current)return;
+    handoffBusy.current=true;setHandoffPending(true);
+    let completed=false;
+    try{
+      if(!await persist())return;
+      const current=latest.current;
+      const projected=projectWorkflowDecisions(current.flow,current.decisions);
+      const handoff={...current.flow,editorBaseline:snapshotEditorProjection(current.flow,projected)};
+      // Core workspace first: a failed write must never leave a false durable handoff marker.
+      if(!writeStored(projected,{...current.search,tourDone:true}))throw new Error('Kararlar saklanamadı.');
+      await writeWorkflow({...handoff,notes:current.notes});
+      setFlow(handoff);useStudio.getState().replace(projected);completed=true;onOpenEditor();
+    }catch{setStorageWritable(false);setError('Editöre aktarım kaydedilemedi. JSON indirerek yedekleyebilirsin.');}
+    finally{if(!completed){handoffBusy.current=false;setHandoffPending(false);}}
+  };
+  const exportFile=()=>downloadText(`genux-karar-akisi-${stamp()}.json`,JSON.stringify({...buildExport(projectWorkflowDecisions(flow,decisions),'all'),workflow:{...flow,notes,completedGroups:done,totalGroups:FLOW_STEPS.length,order:'context > device family > width > group > role',profiles:flow.profiles ?? {},devices:WORKFLOW_DEVICES.map(({device,family})=>({id:device.id,family,widthPx:device.w,heightPx:device.h}))}},null,2));
   const importFile=async(file:File|null)=>{
     if(!file)return;try{if(file.size>64*1024*1024)throw new Error('Dosya 64 MiB sınırını aşıyor.');const data=JSON.parse(await file.text());const loaded=importData(data,decisions,step.ctx);const progress=data.workflow ? parseFlow(data.workflow):emptyFlow();useStudio.getState().replace(loaded.decisions);setFlow(progress);setNotes(cleanNotes(data.workflow?.notes));setError(loaded.report.adjusted.length ? `${loaded.report.adjusted.length} kesin kural düzeltmesi uygulandı.`:'');setReadable(true);}catch(e){setError(`İçe aktarılamadı: ${e instanceof Error ? e.message:String(e)}`);}
   };
@@ -98,8 +125,8 @@ export function Workflow({ onOpenEditor }: {onOpenEditor:()=>void}) {
   const lineStyle=workflowRoleStyle(r,settings,id,width,scheme);
   const roleNavigator = (<div className={classes.roleStep}><StepLabel number={5}>Element</StepLabel><nav className={classes.roles} aria-label="Bu kümedeki elementler">{step.roles.map((role)=><button key={role} aria-current={id===role?'true':undefined} onClick={()=>setFlow((f)=>({...f,role,cursor:step.key}))}>{isReviewed(flow,decisions,step,role) && <CheckCircleIcon size={16}/>} {ROLE[role].label}</button>)}</nav></div>);
   if(!loaded)return <div className={classes.root}><p className={classes.main} role="status">Karar kayıtları yükleniyor…</p></div>;
-  return <div className={classes.root}>
-    <header className={classes.header}><div><span className={classes.brand}>GenUX</span><span className={classes.subtitle}>Karar akışı</span></div><div className={classes.headerProduct}><StepLabel number={1}>Ürün türü</StepLabel><Select aria-label="Ürün türü" value={step.ctx} allowDeselect={false} data={CONTEXTS.map(c=>({value:c.id,label:c.label}))} onChange={value=>{if(value)navigate(FLOW_STEPS.findIndex(item=>item.ctx===value));}}/></div><Radio.Group className={classes.devicePicker} classNames={{label:"gx-sr-only"}} label="Cihaz grubu" name="device-family" value={step.family} onChange={(v)=>navigate(FLOW_STEPS.findIndex((s)=>s.ctx===step.ctx && s.family===v))}><StepLabel number={2}>Cihaz grubu</StepLabel><div className={classes.deviceOptions}>{FAMILIES.map((f)=>{const Icon=FAMILY_ICONS[f];return <Radio.Card key={f} value={f} aria-label={FAMILY_LABEL[f]} tabIndex={step.family===f?0:-1} className={classes.deviceOption}><Icon size={32} weight={step.family===f?'fill':'regular'} aria-hidden="true"/><span>{FAMILY_LABEL[f]}</span></Radio.Card>;})}</div></Radio.Group><Group gap="xs" className={classes.headerActions}><span className={classes.saved} role="status">{!readable ? 'Kayıt engellendi' : !storageWritable ? 'Kayıt hatası' : saved ? `Kaydedildi ${saved}`:'Kaydediliyor'}</span><Button variant="subtle" color="gray" onClick={toggleColorScheme} aria-label="Uygulama temasını değiştir">{colorScheme==='dark'?<SunIcon size={20}/>:<MoonIcon size={20}/>}</Button><FileButton accept="application/json,.json" onChange={importFile}>{(props)=><Button {...props} variant="default">JSON içe aktar</Button>}</FileButton><Button variant="subtle" color="gray" onClick={async()=>{if(await persist())onOpenEditor();}}>Serbest editör</Button><Button variant="default" onClick={persist} leftSection={<FloppyDiskIcon size={18}/>}>Kaydet</Button><Button onClick={exportFile} leftSection={<DownloadSimpleIcon size={18}/>}>JSON indir</Button></Group></header>
+  return <div className={classes.root} inert={handoffPending} aria-busy={handoffPending}>
+    <header className={classes.header}><div><span className={classes.brand}>GenUX</span><span className={classes.subtitle}>Karar akışı</span></div><div className={classes.headerProduct}><StepLabel number={1}>Ürün türü</StepLabel><Select aria-label="Ürün türü" value={step.ctx} allowDeselect={false} data={CONTEXTS.map(c=>({value:c.id,label:c.label}))} onChange={value=>{if(value)navigate(FLOW_STEPS.findIndex(item=>item.ctx===value));}}/></div><Radio.Group className={classes.devicePicker} classNames={{label:"gx-sr-only"}} label="Cihaz grubu" name="device-family" value={step.family} onChange={(v)=>navigate(FLOW_STEPS.findIndex((s)=>s.ctx===step.ctx && s.family===v))}><StepLabel number={2}>Cihaz grubu</StepLabel><div className={classes.deviceOptions}>{FAMILIES.map((f)=>{const Icon=FAMILY_ICONS[f];return <Radio.Card key={f} value={f} aria-label={FAMILY_LABEL[f]} tabIndex={step.family===f?0:-1} className={classes.deviceOption}><Icon size={32} weight={step.family===f?'fill':'regular'} aria-hidden="true"/><span>{FAMILY_LABEL[f]}</span></Radio.Card>;})}</div></Radio.Group><Group gap="xs" className={classes.headerActions}><span className={classes.saved} role="status">{!readable ? 'Kayıt engellendi' : !storageWritable ? 'Kayıt hatası' : saved ? `Kaydedildi ${saved}`:'Kaydediliyor'}</span><Button variant="subtle" color="gray" onClick={toggleColorScheme} aria-label="Uygulama temasını değiştir">{colorScheme==='dark'?<SunIcon size={20}/>:<MoonIcon size={20}/>}</Button><FileButton accept="application/json,.json" onChange={importFile}>{(props)=><Button {...props} variant="default">JSON içe aktar</Button>}</FileButton><Button variant="subtle" color="gray" onClick={openEditor}>Serbest editör</Button><Button variant="default" onClick={persist} leftSection={<FloppyDiskIcon size={18}/>}>Kaydet</Button><Button onClick={exportFile} leftSection={<DownloadSimpleIcon size={18}/>}>JSON indir</Button></Group></header>
     <div className={classes.shell}>
       <aside className={classes.journey} aria-label="Karar yolculuğu"><section className={classes.journeyPrimary} aria-label="Çalışma ilerlemesi"><p className={classes.progressCount}>{done} / {FLOW_STEPS.length} onaylı küme</p><Progress value={done/FLOW_STEPS.length*100} aria-label="Tamamlanan kümeler"/><div className={classes.sidebarBreakpoints}><BreakpointChoice value={step.device.id} devices={WORKFLOW_DEVICES.filter((x)=>x.family===step.family).map(({device})=>device)} onChange={(v)=>navigate(FLOW_STEPS.findIndex((s)=>s.ctx===step.ctx && s.device.id===v && s.group===step.group))}/></div>
 
@@ -116,10 +143,11 @@ export function Workflow({ onOpenEditor }: {onOpenEditor:()=>void}) {
           <details className={classes.lineTests}><summary>Satır testi · 1 / 2 / 5 satır</summary><p className={classes.muted}>Satır kutusu: {px} × {r.lh} = {Math.round(px*r.lh*10)/10} px. Renkli şeritler satır yüksekliğini gösterir.</p>{[1,2,5].map((n)=><div key={n} className={classes.lineCard} data-theme={scheme} style={canvasVars(scheme)}><span className={classes.lineLabel}>{n} satır</span><div style={{...lineStyle,backgroundImage:'repeating-linear-gradient(to bottom, var(--canvas-guide) 0, var(--canvas-guide) 1em, transparent 1em, transparent 100%)',backgroundSize:`100% ${px*r.lh}px`}}>{LINE_SAMPLES[n].map((text,i)=><span key={i} style={{display:'block',whiteSpace:'normal'}}>{text}{' '}</span>)}</div></div>)}</details>
           </section>
           <section className={classes.form} aria-label={`${def.label} karar formu`}><div className={classes.previewBar}>{roleNavigator}<strong className={classes.previewReadout}>{def.label} · {px} / {Math.round(px*r.lh)} px</strong><SegmentedControl aria-label="Önizleme teması" size="sm" value={scheme} data={[{value:'light',label:'Açık'},{value:'dark',label:'Koyu'}]} onChange={(v)=>setScheme(v as Theme)}/></div><div className={classes.formIdentity}><strong>{def.label}</strong><Badge variant="light">{currentReviewed?'Onaylandı':stale?'Yeniden incele':'Taslak'}</Badge></div>{!currentContrast.pass && <Alert className={classes.contrastNotice} color="orange" title="Kontrast AA altında">{currentContrast.ratio.toFixed(2)}:1 · Gereken {currentContrast.need}:1 · Çıktı tonunu kontrol et.</Alert>}
+          <DecisionEnginePanel forecast={forecast} entry={engineEntry} prediction={prediction} checks={checks} reviewed={currentReviewed} hasReview={!!flow.reviews[reviewKey(step,id)]} onRecalculate={()=>setFlow(f=>synchronizeDecision(f,decisions,step,id,'recalculate',true))} onUndo={()=>setFlow(f=>undoDecision(f,step,id))}/>
           <div className={classes.fields}><NumberStepper label="Yazı boyutu" recommended={recommended.size} value={px} min={minSizeFor(id)} max={120} step={1} decimalScale={0} suffix=" px" disabled={def.kind==='long'} onChange={(v)=>{if(typeof v==='number')patch({size:v,mode:'static'});}}/><Radio.Group className={classes.weightPicker} label="Ağırlık" description={<span id="recommended-weight" className="gx-sr-only">Önerilen ağırlık: {recommended.w}</span>} name="font-weight" value={String(r.w)} onChange={(v)=>patch({w:Number(v)})}><div className={classes.weightOptions}>{[300,400,500,600,700,800,900].map((w)=><Radio.Card key={w} value={String(w)} tabIndex={r.w===w ? 0 : -1} aria-label={`Ağırlık ${w}`} aria-describedby={w===recommended.w?"recommended-weight":undefined} className={classes.weightOption}><span>{w}</span>{w===recommended.w && <RecommendationMark value={`Ağırlık ${w}`}/>}</Radio.Card>)}</div></Radio.Group><LineHeightChoice key={id} recommended={recommended.lh} value={r.lh} onChange={(lh)=>patch({lh})}/><NearLineTest id={id} r={r} settings={settings} width={width} scheme={scheme}/></div>
           <section aria-label="Çıktı tonları · açık / koyu"><h3 className={classes.colorTitle}>Çıktı tonları · açık / koyu</h3>{(['light','dark'] as const).map((t)=><div key={t} className={classes.color}><ColorField recommended={recommended.c[t]} id={id} r={r} theme={t} onChange={(hex)=>patch({c:{...r.c,[t]:hex}})}/></div>)}</section><Accordion multiple defaultValue={[]}><Accordion.Item value="advanced"><Accordion.Control>Diğer tipografi özellikleri</Accordion.Control><Accordion.Panel><div className={classes.fields}>{FORMAT_FIELDS.map((key)=><Select key={key} label={<RecommendationLabel value={CHOICES[key].find(([v])=>v===recommended[key])?.[1] ?? String(recommended[key])}>{({ff:'Yazı tipi',fst:'Stil',tt:'Harf dönüşümü',td:'Çizgi',num:'Rakamlar',ta:'Hizalama',wrap:'Satır kırma'})[key]}</RecommendationLabel>} renderOption={({option})=><span className={classes.recommendedOption}>{option.label}{option.value===recommended[key] && <RecommendationMark value={option.label}/>}</span>} allowDeselect={false} value={String(r[key])} data={CHOICES[key].map(([value,label])=>({value,label}))} onChange={(v)=>{if(v)patch({[key]:v});}}/>)}{field('Kelime aralığı','ws',0,0.5,0.01,' em')}{field('Satır uzunluğu','mw',0,120,1,' ch')}{field('Üst boşluk','mt',0,3,0.05,' em')}{field('Alt boşluk','mb',0,3,0.05,' em')}</div></Accordion.Panel></Accordion.Item></Accordion>
           <Textarea maxLength={4000} label="Karar notu" placeholder="Bu kullanım için neden bu değeri seçtin?" value={notes[reviewKey(step,id)]??''} onChange={(e)=>{setNotes((n)=>({...n,[reviewKey(step,id)]:e.target.value}));}}/>
-          <p className={classes.muted}>Kaydet ve devam et, bu elementin değerlerini tarihli bir karar olarak onaylar. Ayar değişirse onayı yeniden incelemen gerekir.</p><Button fullWidth onClick={approveNext} rightSection={<ArrowRightIcon size={18}/>}>Kararı kaydet ve devam et</Button>
+          <p className={classes.muted}>Kaydet ve devam et, bu elementin değerlerini tarihli bir karar olarak onaylar. Ayar veya kaynak karar değişirse onayı yeniden incelemen gerekir.</p>{!canApprove && <p className={classes.engineWarning}>Kaydetmek için açık ve koyu tema kontrastını düzelt: {checks.filter(check=>!check.pass).map(check=>check.detail).join(' · ')}</p>}<Button fullWidth disabled={!canApprove} onClick={approveNext} rightSection={<ArrowRightIcon size={18}/>}>Kararı kaydet ve devam et</Button>
           </section>
         </div>
         <footer className={classes.navigation}><Button variant="default" disabled={index===0} leftSection={<ArrowLeftIcon size={18}/>} onClick={()=>navigate(index-1)}>Önceki küme</Button><span className={classes.muted}>Küme {index+1} / {FLOW_STEPS.length}</span><Button variant="default" disabled={!stepDone(flow,decisions,step) || index===FLOW_STEPS.length-1} onClick={()=>navigate(index+1)}>Sonraki küme</Button></footer>

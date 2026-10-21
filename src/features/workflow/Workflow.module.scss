@@ -180,7 +180,7 @@
 .headerActions button { min-height:var(--gx-workflow-header-hit); }
 
 .stepLabel { display:flex; align-items:center; gap:var(--mantine-spacing-xs); margin:0 0 calc(var(--mantine-spacing-xs) / 2); min-height:20px; font-size:var(--mantine-font-size-sm); line-height:20px; font-weight:500; color:var(--gx-text-2); }
-.stepNumber { display:inline-flex; align-items:center; justify-content:center; min-width:20px; height:20px; border-radius:var(--mantine-radius-xs); background:var(--gx-sunken); color:var(--gx-text); font-variant-numeric:tabular-nums; }
+.stepNumber { box-sizing:border-box; border:2px solid var(--gx-step-border); display:inline-flex; align-items:center; justify-content:center; min-width:20px; height:20px; border-radius:var(--mantine-radius-xs); background:var(--gx-sunken); color:var(--gx-text); font-variant-numeric:tabular-nums; }
 .roleStep { min-width:0; flex:1 1 auto; }
 .roles { padding-block:var(--mantine-spacing-xs); }
 .previewBar { padding-block:0; }

@@ -401,3 +401,15 @@ test('near line test follows interface theme independently from preview theme',a
   await page.getByRole('button',{name:'Uygulama temasını değiştir',exact:true}).click();
   await expect(test).toHaveCSS('background-color','rgb(255, 255, 255)');
 });
+
+test('all device families texture only the physical shell',async({page})=>{
+  await page.goto('/');
+  for(const name of ['Mobil','Tablet','Laptop','Bilgisayar','Televizyon']){
+    await page.getByRole('radio',{name,exact:true}).click();
+    const screen=page.getByRole('region',{name:/Önizleme ekranı,/}).first();
+    const shell=screen.locator('..');
+    await expect(shell).toHaveCSS('background-image',/repeating-linear-gradient/);
+    await expect(screen).toHaveCSS('background-image','none');
+    await expect(screen).toHaveCSS('background-color','rgb(255, 255, 255)');
+  }
+});

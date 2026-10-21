@@ -30,11 +30,10 @@
 }
 // Kasa ölçüleri DeviceStage geometrisiyle aynı kaynaktan gelir.
 .device {
-  --device-shell: #202124;
-  --device-edge: #737578;
   position: relative;
   padding: var(--device-top) var(--device-side) var(--device-bottom);
-  background: var(--device-shell);
+  background-color: var(--device-shell);
+  background-image: var(--device-finish);
   box-shadow: inset 0 0 0 2px var(--device-edge), inset 0 0 0 4px var(--device-shell);
   &[data-kind='mobile'] { border-radius:44px; }
   &[data-kind='tablet'] { border-radius:30px; }
@@ -70,7 +69,9 @@
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  background: var(--device-edge, #737578);
+  background-color: var(--device-shell);
+  background-image: var(--device-finish);
+  box-shadow:inset 0 1px 0 var(--device-edge);
   &[data-kind='laptop'] {
     top: 100%;
     width: 114%;

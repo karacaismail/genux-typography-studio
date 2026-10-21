@@ -1,5 +1,5 @@
 import { createTheme, type CSSVariablesResolver, type MantineColorsTuple } from '@mantine/core';
-import { COLOR_TOKENS, FOCUS_BAR, MOTION } from './tokens';
+import { COLOR_TOKENS, DEVICE_MATERIAL, FOCUS_BAR, MOTION } from './tokens';
 
 const accent: MantineColorsTuple = ['#eef3fe', '#dbe5fd', '#b5c8f9', '#8eaaf5', '#6c91f1', '#5580ef', '#2f63e6', '#2457d6', '#1b47b5', '#123791'];
 const gray: MantineColorsTuple = ['#f8f8f7', '#f1f1f0', '#e7e7e5', '#d9d9d6', '#bdbdb9', '#9a9a96', '#74746f', '#565653', '#3a3a37', '#1f1f1d'];
@@ -78,6 +78,7 @@ export const resolver: CSSVariablesResolver = () => {
   });
   return {
     variables: {
+      ...Object.fromEntries(Object.entries(DEVICE_MATERIAL).map(([key,value])=>[`--device-${key}`,value])),
       '--gx-ease': MOTION.ease,
       '--gx-dur-fast': `${MOTION.fast}ms`,
       '--gx-dur': `${MOTION.base}ms`,

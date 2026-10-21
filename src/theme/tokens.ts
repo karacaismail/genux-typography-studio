@@ -87,3 +87,10 @@ export const CANVAS_TOKENS: { light: Scheme; dark: Scheme } = {
 
 /** Odak göstergesi: 3 px alt çizgi. Çevreleyen halka kullanılmaz. */
 export const FOCUS_BAR = '3px';
+
+/** Fiziksel cihaz kasası: ekran içeriğine uygulanmayan sabit malzeme. */
+export const DEVICE_MATERIAL = {
+  shell: '#292b2e',
+  edge: '#8b8e93',
+  finish: 'linear-gradient(135deg, rgba(255,255,255,.20) 0%, rgba(255,255,255,.035) 28%, transparent 45%, rgba(0,0,0,.22) 72%, rgba(255,255,255,.09) 100%), repeating-linear-gradient(115deg, rgba(255,255,255,.055) 0px, rgba(255,255,255,.055) 1px, transparent 1px, transparent 4px)',
+} as const;

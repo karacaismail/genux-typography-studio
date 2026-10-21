@@ -130,3 +130,5 @@ Workflow çıktı tonları açık/koyu bölümü sürekli görünürdür; accord
 Çıktı renk alanları kendi light/dark semantik tokenlarını kapsar; kartela, onaltılık alanı ve kontrast açıklamasının zemini/metni uygulama temasından bağımsızdır.
 
 Satır yüksekliği canlı testinin zemini ve okunabilir metin rengi arayüz temasını izler; telefon önizleme temasından bağımsızdır. Çıktı renk alanlarının kendi açık/koyu zeminleri korunur.
+
+Cihaz kasaları ortak DEVICE_MATERIAL tokenlarıyla sabit, ince çapraz doku ve statik parlama kullanır. Efekt kasa/stand arka planındadır; ekranın üzerine katman çizilmez, ekran geometrisi ve renkleri korunur. TV ortak desktop kasa profilini kullanır.

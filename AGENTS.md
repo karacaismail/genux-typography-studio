@@ -118,3 +118,5 @@ Alt kırılımda px ve model açıklaması tek `a[role=radio]` hedefinin içinde
 Sidebar seçili ürün satırında “Çalışılıyor” metni kullanılmaz; seçili renk ve aria-current yeterlidir. Küme adları yalnız “Headings” ve “Sub-title” olarak gösterilir; tekrar eden Türkçe açıklama eklenmez.
 
 Workflow header en fazla 120 CSS px yüksekliğindedir (`--gx-workflow-header-max`). Tek satır düzen ve dar alanda yerel yatay kaydırma kullanılır; cihaz grubu etiketi erişilebilir ad olarak korunup görsel olarak gizlenir. Eylem butonları en az 44 px kalır (`--gx-workflow-header-hit`); kontroller kesilmez veya küçük yazıya dönüştürülmez.
+
+Seçim gruplarının sol üstünde iş akışı sırası gösterilir: 1 Ürün türü, 2 Cihaz grubu, 3 Alt kırılım, 4 Metin kümesi, 5 Element, 6 Kullanım konumu. Bu sıra mevcut bağlam → cihaz → genişlik → küme → rol akışıdır; seçimi kilitlemez. Önizleme üzerindeki “Ekran 1/2” görünen başlıkları kaldırılmıştır; erişilebilir bölge adları korunur. Element sekmelerinin üst ve alt padding'i eşittir; ortak spacing-xs tokenını kullanır.

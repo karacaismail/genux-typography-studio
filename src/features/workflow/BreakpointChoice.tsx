@@ -1,6 +1,7 @@
 import { Radio, UnstyledButton } from '@mantine/core';
 import { useLayoutEffect, useRef, useState } from 'react';
 import type { Device } from '../../core';
+import { StepLabel } from './StepLabel';
 import classes from './Workflow.module.scss';
 
 export function BreakpointChoice({devices,value,onChange}:{devices:Device[];value:string;onChange:(id:string)=>void}) {
@@ -21,7 +22,8 @@ export function BreakpointChoice({devices,value,onChange}:{devices:Device[];valu
     targets.current.forEach(target=>observer.observe(target));
     return ()=>observer.disconnect();
   },[value,devices]);
-  return <Radio.Group label="Alt kırılım" name="breakpoint" value={value} onChange={onChange} className={classes.breakpointPicker}>
+  return <Radio.Group classNames={{label:"gx-sr-only"}} label="Alt kırılım" name="breakpoint" value={value} onChange={onChange} className={classes.breakpointPicker}>
+    <StepLabel number={3}>Alt kırılım</StepLabel>
     <div ref={parent} className={classes.breakpointOptions}>
       <div aria-hidden="true" className={classes.breakpointIndicator} data-ready={rect.w>0 || undefined} style={{width:rect.w,height:rect.h,transform:`translate(${rect.x}px, ${rect.y}px)`}}/>
       {devices.map((device,index)=><UnstyledButton component="a" href={`#device-${device.id}`} id={`device-${device.id}`} ref={el=>{if(el)links.current.set(device.id,el);else links.current.delete(device.id);}} className={classes.breakpointItem} key={device.id} role="radio" aria-checked={device.id===value} tabIndex={device.id===value?0:-1} aria-label={`${device.w} px`} aria-describedby={`breakpoint-${device.id}`} onClick={event=>{event.preventDefault();onChange(device.id);}} onKeyDown={event=>{

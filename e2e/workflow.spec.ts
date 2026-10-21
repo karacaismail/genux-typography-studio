@@ -319,3 +319,15 @@ test('workflow header stays within 120px while retaining all controls at narrow 
   await header.getByRole('button',{name:'Kaydet',exact:true}).click();
   expect((await header.getByRole('button',{name:'Kaydet',exact:true}).boundingBox())!.height).toBeGreaterThanOrEqual(44);
 });
+
+
+test('selection groups show six ordered labels and element tabs have symmetric spacing',async({page})=>{
+  await page.setViewportSize({width:1680,height:1000});await page.goto('/');
+  for(const [number,label] of ['Ürün türü','Cihaz grubu','Alt kırılım','Metin kümesi','Element','Kullanım konumu'].entries()){
+    await expect(page.locator(`[data-workflow-step="${number+1}"]`)).toHaveText(`${number+1}${label}`);
+  }
+  await expect(page.getByRole('heading',{name:/Ekran [12]/})).toHaveCount(0);
+  const nav=page.getByRole('navigation',{name:'Bu kümedeki elementler',exact:true});
+  const spacing=await nav.evaluate(el=>({top:getComputedStyle(el).paddingTop,bottom:getComputedStyle(el).paddingBottom}));expect(spacing.top).toBe(spacing.bottom);expect(parseFloat(spacing.top)).toBeGreaterThan(0);
+  expect((await page.getByRole('banner').boundingBox())!.height).toBeLessThanOrEqual(120);
+});

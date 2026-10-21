@@ -8,7 +8,7 @@ import classes from './Workflow.module.scss';
 export function GroupPreview({decisions,ctx,roles,selected,width,scheme,onSelect,device,zoom}:{decisions:Decisions;ctx:ContextId;roles:string[];selected:string;width:number;scheme:Theme;device:Device;zoom:'fit'|'actual';onSelect:(id:string)=>void}) {
   const settings=decisions.contexts[ctx].settings;
   return <section className={classes.groupPreview} aria-label="Ekran 2 · Kümenin tamamı" style={canvasVars(scheme)}>
-    <h3 className={classes.screenLabel} title={`${width} px · ${roles.length} element · Düzenlemek için bir örnek seç`}>Ekran 2 · Kümenin tamamı</h3>
+
     <div className={classes.deviceStage}><DeviceStage device={device} width={width} height={device.h} theme={scheme} zoom={zoom} landscape={false}><div data-testid="group-surface" style={{...canvasVars(scheme),width,background:'var(--canvas)'}}><div className={classes.groupRows}>{roles.map((id)=>{
       const r=resolveAt(decisions,ctx,id,width);
       const px=Math.round(sizeAt(r,settings,id,width));

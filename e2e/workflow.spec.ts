@@ -135,3 +135,29 @@ test('line height is a horizontal radio choice with precise custom entry',async(
   await page.getByLabel('Özel satır yüksekliği değeri',{exact:true}).fill('1.35');
   await expect(page.locator('[data-group-role=h1]')).toHaveCSS('line-height','43.2px');
 });
+
+test('compact workspace combines context and controls without reducing hit targets',async({page})=>{
+  await page.setViewportSize({width:1680,height:1000});await page.goto('/');
+  const title=page.getByRole('heading',{name:'Headings · başlıklar',exact:true});await title.waitFor();
+  const headingBox=await title.boundingBox();
+  const contextBox=await page.getByText('HTML / Mobil / 320 px',{exact:true}).boundingBox();
+  expect(Math.abs(headingBox!.y-contextBox!.y)).toBeLessThan(12);
+  const first=page.getByRole('region',{name:'Ekran 1 · Seçili element',exact:true});
+  expect((await first.boundingBox())!.y).toBeLessThan(320);
+  const nav=page.getByRole('navigation',{name:'Bu kümedeki elementler',exact:true});
+  expect((await nav.getByRole('button',{name:'H1',exact:true}).boundingBox())!.height).toBeGreaterThanOrEqual(44);
+  await page.setViewportSize({width:320,height:850});
+  expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(320);
+});
+
+test('smart sticky inspector stays in viewport and exposes a live multiline height test beside the controls',async({page})=>{
+  await page.setViewportSize({width:1680,height:900});await page.goto('/');
+  const form=page.getByRole('region',{name:'H1 karar formu',exact:true});await form.waitFor();
+  await page.getByRole('radio',{name:'Satır yüksekliği 2',exact:true}).click();
+  const testSample=page.getByTestId('near-line-sample');await expect(testSample).toHaveCSS('line-height','64px');
+  await expect(testSample.locator(':scope > div')).toHaveCount(2);
+  await page.getByRole('region',{name:'Satır yüksekliği canlı testi',exact:true}).getByText('5 satır',{exact:true}).click();await expect(testSample.locator(':scope > div')).toHaveCount(5);
+  await page.evaluate(()=>window.scrollTo(0,300));
+  const box=await form.boundingBox();expect(box!.y).toBeGreaterThanOrEqual(0);expect(box!.y+box!.height).toBeLessThanOrEqual(901);
+  expect(await form.evaluate(e=>getComputedStyle(e).overflowY)).toBe('auto');
+});

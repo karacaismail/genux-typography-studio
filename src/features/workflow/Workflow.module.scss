@@ -82,3 +82,36 @@
 @media(prefers-reduced-motion:reduce) { .weightOption { transition-duration:0s; } }
 
 .weightOption { width:auto; flex:0 0 auto; }
+
+// Shared compact workspace rhythm: retain outer whitespace and 44px targets.
+.contextLine { display:flex; align-items:baseline; flex-wrap:wrap; gap:var(--mantine-spacing-sm) var(--mantine-spacing-lg); }
+.contextLine .eyebrow { margin:0; }
+.stageProgress { margin:0; margin-inline-start:auto; font-size:var(--mantine-font-size-sm); color:var(--gx-text-2); }
+.selectors { margin-block:var(--mantine-spacing-md); }
+.roles { padding-block:0; min-width:0; flex:1 1 auto; }
+.previewBar { padding-block:var(--mantine-spacing-sm); gap:var(--mantine-spacing-sm); }
+.previewReadout { font-size:var(--mantine-font-size-sm); font-weight:500; white-space:nowrap; }
+.previewPair { margin-block:var(--mantine-spacing-sm); }
+.screenLabel { padding-block:var(--mantine-spacing-sm); }
+@media(max-width:47.99em) { .stageProgress { margin-inline-start:0; } .previewBar .roles { flex-basis:100%; } }
+// Values stay readable; disabled controls never become large filled blocks.
+.fields { grid-template-columns:repeat(auto-fit,minmax(min(100%,168px),1fr)); }
+.stepperField { min-width:0; }
+.stepper { display:grid; grid-template-columns:44px minmax(0,1fr) 44px; align-items:center; border:1px solid var(--gx-line-field); border-radius:var(--mantine-radius-sm); background:var(--gx-surface); }
+.stepValue { min-width:0; }
+.stepButton { border-radius:var(--mantine-radius-xs); }
+.stepButton[data-disabled],.stepper[data-disabled] .stepButton { background:transparent; color:var(--gx-text-3); opacity:.45; }
+.formHeader { position:static; }
+@media(min-width:75em) and (min-height:600px) {
+  .form { position:sticky; top:var(--mantine-spacing-lg); max-height:calc(100dvh - 2 * var(--mantine-spacing-lg)); overflow-y:auto; overscroll-behavior:contain; scroll-padding-block:var(--mantine-spacing-lg); }
+}
+
+.selectors { margin-block:var(--mantine-spacing-sm); }
+.previewBar { padding-block:var(--mantine-spacing-xs); }
+.previewPair { margin-block:var(--mantine-spacing-xs); }
+.nearLineTest { grid-column:1 / -1; min-width:0; padding:var(--mantine-spacing-md); background:var(--canvas); color:var(--canvas-text); border-radius:var(--mantine-radius-sm); }
+.nearLineHead { display:flex; align-items:center; justify-content:space-between; gap:var(--mantine-spacing-sm); flex-wrap:wrap; font-size:var(--mantine-font-size-sm); }
+.nearLineReadout { margin-block:var(--mantine-spacing-sm); font-size:var(--mantine-font-size-sm); }
+.nearLineBody { overflow:auto; padding-block:var(--mantine-spacing-sm); }
+.previewBar { padding-block:0; }
+.nearLineBody { background-origin:content-box; background-clip:content-box; }

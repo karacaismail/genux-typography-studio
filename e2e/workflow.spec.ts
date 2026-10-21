@@ -126,14 +126,17 @@ test('weight is a horizontal radio choice and immediately updates both previews'
   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(320);
 });
 
-test('line height is a horizontal radio choice with precise custom entry',async({page})=>{
+test('line height offers only the approved horizontal radio choices',async({page})=>{
   await page.goto('/');
   const choice=page.getByRole('radio',{name:'Satır yüksekliği 1.5',exact:true});await choice.click();await expect(choice).toBeChecked();
   await expect(page.getByTestId('form-sample')).toHaveCSS('line-height','48px');
   await expect(page.locator('[data-group-role=h1]')).toHaveCSS('line-height','48px');
-  await page.getByRole('radio',{name:'Özel satır yüksekliği',exact:true}).click();
-  await page.getByLabel('Özel satır yüksekliği değeri',{exact:true}).fill('1.35');
-  await expect(page.locator('[data-group-role=h1]')).toHaveCSS('line-height','43.2px');
+  const group=page.getByRole('radiogroup',{name:'Satır yüksekliği',exact:true});
+  await expect(group.getByRole('radio')).toHaveCount(10);
+  await expect(page.getByRole('radio',{name:'Özel satır yüksekliği',exact:true})).toHaveCount(0);
+  await expect(page.getByRole('radio',{name:'Satır yüksekliği 0.8',exact:true})).toHaveCount(0);
+  await page.getByRole('radio',{name:'Satır yüksekliği 1.1',exact:true}).click();
+  await expect(page.locator('[data-group-role=h1]')).toHaveCSS('line-height','35.2px');
 });
 
 test('compact workspace combines context and controls without reducing hit targets',async({page})=>{

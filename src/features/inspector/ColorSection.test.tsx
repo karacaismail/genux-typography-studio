@@ -16,17 +16,19 @@ describe('ColorField', () => {
     fireEvent.change(field, { target: { value: '#333' } });
     expect(onChange).toHaveBeenLastCalledWith('#333333');
   });
-  it('açık tema paleti #999999 ile biter; koyu tema açık tonları korur', () => {
+  it('açık tema paleti #808080 ile biter; koyu tema #808080 ile başlar', () => {
     const { unmount } = renderUi(<ColorField id="h1" r={r} theme="light" onChange={vi.fn()} />);
-    expect(screen.getAllByRole('radio')).toHaveLength(7);
+    expect(screen.getAllByRole('radio')).toHaveLength(6);
     expect(screen.queryByRole('radio', { name: '#b3b3b3' })).not.toBeInTheDocument();
-    expect(screen.getByRole('radio', { name: '#999999' })).toBeInTheDocument();
+    expect(screen.queryByRole('radio', { name: '#999999' })).not.toBeInTheDocument();
+    expect(screen.getByRole('radio', { name: '#808080' })).toBeInTheDocument();
     unmount();
     renderUi(<ColorField id="h1" r={r} theme="dark" onChange={vi.fn()} />);
     expect(screen.getByRole('radio', { name: '#ffffff' })).toBeInTheDocument();
-    expect(screen.getAllByRole('radio')).toHaveLength(7);
+    expect(screen.getAllByRole('radio')).toHaveLength(6);
     expect(screen.queryByRole('radio', { name: '#4d4d4d' })).not.toBeInTheDocument();
-    expect(screen.getByRole('radio', { name: '#666666' })).toBeInTheDocument();
+    expect(screen.queryByRole('radio', { name: '#666666' })).not.toBeInTheDocument();
+    expect(screen.getByRole('radio', { name: '#808080' })).toBeInTheDocument();
   });
   it('kartela radyo grubudur ve seçim değeri bildirir', () => {
     const onChange = vi.fn();

@@ -89,7 +89,7 @@ Akışın Ekran1'i seçili elementi, Ekran2'si geçerli kümenin bütün rolleri
 
 ## Akış form kontrol tercihleri (2026-10-21)
 
-Sayısal alanlar NumberStepper kullanır: solda eksi, sağda artı; Mantine sayısal ayrıştırması, min/max ve klavye okları korunur. Kontrol ve butonlar en az44 px yüksekliktedir. Ağırlık300–900 ve satır yüksekliği0,8/1/1,25/1,5/1,75/2 yatay sekme görünümlü Radio.Card seçenekleridir; dar alanda sarılır. Özel satır yüksekliği0,6–2,5 aralığında hassas giriş sunar. Her radio grubunda yalnız seçili kart Tab durağıdır; oklar seçenek değiştirir. Radio geçiş parçaları merkezi hareket adaptöründe tokenlara bağlıdır.
+Sayısal alanlar NumberStepper kullanır: solda eksi, sağda artı; Mantine sayısal ayrıştırması, min/max ve klavye okları korunur. Kontrol ve butonlar en az44 px yüksekliktedir. Ağırlık300–900 ve satır yüksekliği1,0/1,1/1,2/1,25/1,3/1,4/1,5/1,6/1,75/2,0 yatay sekme görünümlü Radio.Card seçenekleridir; dar alanda sarılır. Başka satır yüksekliği seçeneği sunulmaz. Açık tema kartelası #000000–#808080, koyu tema kartelası #808080–#ffffff aralığında altışar ton içerir. Her radio grubunda yalnız seçili kart (eski değer listede yoksa ilk kart) Tab durağıdır; oklar seçenek değiştirir. Radio geçiş parçaları merkezi hareket adaptöründe tokenlara bağlıdır.
 
 ## Kompakt çalışma alanı ve denetçi (2026-10-21)
 

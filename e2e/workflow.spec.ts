@@ -249,7 +249,7 @@ test('recommendations remain independent of selected values and cover both edito
   await expect(lh.getByRole('img')).toHaveCount(1);
   await expect(weight).toHaveAccessibleDescription(/600/);
   await expect(lh.getByRole("radio",{name:"Satır yüksekliği 1.25",exact:true})).toHaveAccessibleDescription(/1.25/);
-  await page.getByRole('button',{name:'Çıktı tonları · açık / koyu',exact:true}).click();
+  await expect(page.getByRole('region',{name:'Çıktı tonları · açık / koyu',exact:true})).toBeVisible();
   await expect(page.getByRole('radiogroup',{name:'Açık tema metin rengi'}).getByRole('img')).toHaveCount(1);
   await expect(page.getByRole('radiogroup',{name:'Koyu tema metin rengi'}).getByRole('img')).toHaveCount(1);
   await page.setViewportSize({width:320,height:850});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(320);
@@ -356,7 +356,8 @@ test('inspector removes repeated specimen content but keeps review state and con
   await expect(form.getByText('Onaylandı',{exact:true})).toBeVisible();
   await page.getByLabel('Yazı boyutu',{exact:true}).fill('26');
   await expect(form.getByText('Yeniden incele',{exact:true})).toBeVisible();
-  await form.getByRole('button',{name:'Çıktı tonları · açık / koyu',exact:true}).click();
+  await expect(form.getByRole('button',{name:'Çıktı tonları · açık / koyu',exact:true})).toHaveCount(0);
+  await expect(form.getByRole('radiogroup',{name:'Koyu tema metin rengi',exact:true})).toBeVisible();
   await form.getByRole('radiogroup',{name:'Açık tema metin rengi',exact:true}).locator('label').filter({hasText:'#808080'}).click();
   await expect(form.getByRole('alert')).toHaveCount(0);
   await page.getByLabel('Yazı boyutu',{exact:true}).fill('16');

@@ -124,3 +124,5 @@ Seçim gruplarının sol üstünde iş akışı sırası gösterilir: 1 Ürün t
 Kırılım kartları kompakt yoğunluk kullanır: 4 px iç dolgu, 4 px ölçü–açıklama aralığı, wrapper için spacing-xs (8 px) boşluk/dolgu. Ölçü yüzeyi 28 px tokenıyla yönetilir; tıklama hedefi bütün bağlantıdır ve 44 px altına inmez (tek satır açıklamada yaklaşık 62 px). Metin boyutu küçültülmez; uzun açıklama doğal sarılır.
 
 Karar panelinin üstünde element seçimi, ölçü özeti ve önizleme teması bulunur. Tekrarlanan büyük specimen/açıklama alanı kullanılmaz; onay durumu kompakt, kontrast uyarısı yalnız core contrastInfo başarısızsa gösterilir. Adım rozetleri eşit en/boy, radius %100 ve 2px kırmızı kenarlık kullanır.
+
+Workflow çıktı tonları açık/koyu bölümü sürekli görünürdür; accordion veya kapatma kontrolü kullanılmaz.

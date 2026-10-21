@@ -286,7 +286,7 @@ test('sidebar separates product progress from text-group navigation',async({page
   await page.setViewportSize({width:1680,height:1000});await page.goto('/');
   const rail=page.getByRole('complementary',{name:'Karar yolculuğu'});
   await expect(rail.getByRole('region',{name:'Çalışma ilerlemesi'})).toBeVisible();
-  await expect(rail.getByText('0 / 1144 küme onaylandı',{exact:true})).toBeVisible();
+  await expect(rail.getByText('0 / 1144 onaylı küme',{exact:true})).toBeVisible();
   await expect(rail.getByRole('navigation',{name:'Ürün türleri'}).getByRole('button')).toHaveCount(6);
   await expect(rail.getByText('Çalışma planı',{exact:true})).toHaveCount(0);
   await expect(rail.getByText('Bir karar.',{exact:false})).toHaveCount(0);

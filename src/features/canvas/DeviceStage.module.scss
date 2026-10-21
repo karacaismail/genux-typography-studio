@@ -48,7 +48,7 @@
 }
 .screen {
   overflow: auto;
-  overscroll-behavior: contain;
+  overscroll-behavior: auto;
   background: var(--canvas);
   scrollbar-width: thin;
   .device[data-kind='mobile'] & {

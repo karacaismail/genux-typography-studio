@@ -180,3 +180,19 @@ test('workflow displays the complete device at actual size without a fixed-heigh
   await page.setViewportSize({width:320,height:850});
   expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(320);
 });
+
+test('scroll chains from the preview and inspector boundaries to the page',async({page})=>{
+  await page.setViewportSize({width:1680,height:900});await page.goto('/');
+  const screen=page.getByRole('region',{name:'Ekran 1 · Seçili element',exact:true}).getByRole('region',{name:'Önizleme ekranı, 320 piksel',exact:true});
+  await screen.evaluate(el=>{const filler=document.createElement('div');filler.style.height='1600px';el.append(filler);el.scrollTop=el.scrollHeight;});
+  await screen.hover();
+  await screen.evaluate(el=>{el.scrollTop=el.scrollHeight;});
+  const before=await page.evaluate(()=>window.scrollY);
+  await page.mouse.wheel(0,400);
+  await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBeGreaterThan(before);
+  const form=page.getByRole('region',{name:'H1 karar formu',exact:true});
+  await form.evaluate(el=>{el.scrollTop=el.scrollHeight;});
+  await form.hover();await form.evaluate(el=>{el.scrollTop=el.scrollHeight;});const after=await page.evaluate(()=>window.scrollY);
+  await page.mouse.wheel(0,400);
+  await expect.poll(()=>page.evaluate(()=>window.scrollY)).toBeGreaterThan(after);
+});

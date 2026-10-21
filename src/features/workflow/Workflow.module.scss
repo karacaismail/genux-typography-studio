@@ -103,7 +103,7 @@
 .stepButton[data-disabled],.stepper[data-disabled] .stepButton { background:transparent; color:var(--gx-text-3); opacity:.45; }
 .formHeader { position:static; }
 @media(min-width:75em) and (min-height:600px) {
-  .form { position:sticky; top:var(--mantine-spacing-lg); max-height:calc(100dvh - 2 * var(--mantine-spacing-lg)); overflow-y:auto; overscroll-behavior:contain; scroll-padding-block:var(--mantine-spacing-lg); }
+  .form { position:sticky; top:var(--mantine-spacing-lg); max-height:calc(100dvh - 2 * var(--mantine-spacing-lg)); overflow-y:auto; overscroll-behavior:auto; scroll-padding-block:var(--mantine-spacing-lg); }
 }
 
 .selectors { margin-block:var(--mantine-spacing-sm); }

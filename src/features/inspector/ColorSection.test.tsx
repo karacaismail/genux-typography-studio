@@ -24,6 +24,9 @@ describe('ColorField', () => {
     unmount();
     renderUi(<ColorField id="h1" r={r} theme="dark" onChange={vi.fn()} />);
     expect(screen.getByRole('radio', { name: '#ffffff' })).toBeInTheDocument();
+    expect(screen.getAllByRole('radio')).toHaveLength(7);
+    expect(screen.queryByRole('radio', { name: '#4d4d4d' })).not.toBeInTheDocument();
+    expect(screen.getByRole('radio', { name: '#666666' })).toBeInTheDocument();
   });
   it('kartela radyo grubudur ve seçim değeri bildirir', () => {
     const onChange = vi.fn();

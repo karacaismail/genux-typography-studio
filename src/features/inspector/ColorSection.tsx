@@ -22,7 +22,7 @@ export function ColorField({ id, r, theme, onChange }: Props) {
   useEffect(() => { setText(value); setError(null); }, [value]);
   const c = contrastInfo(r, id, theme);
   const bg = BG[theme].surface;
-  const tones = theme === 'light' ? GRAYS.filter((g) => g <= 153) : GRAYS;
+  const tones = theme === 'light' ? GRAYS.filter((g) => g <= 153) : GRAYS.filter((g) => g >= 102);
 
   return (
     <div className={classes.colorField}>

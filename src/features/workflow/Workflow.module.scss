@@ -168,3 +168,5 @@
 }
 
 .breakpointItem { text-decoration:none; color:inherit; cursor:pointer; }
+// Tek bağlantının ölçü ve açıklama alanını birlikte saran işlevsel sınır.
+.breakpointItem { box-sizing:border-box; border:1px solid var(--gx-line-field); border-radius:var(--mantine-radius-sm); padding:var(--mantine-spacing-xs); }

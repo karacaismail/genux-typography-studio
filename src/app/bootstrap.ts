@@ -4,6 +4,7 @@ import { readStored } from '../store/persist';
 import { useStudio } from '../store/studio';
 import { useUi } from '../store/ui';
 
+export const entryQuery = window.location.search;
 export const boot = readStored();
 
 // Varsayılan olmuş değerlerle aynı ezmeler kaldırılır ("değişti" görünmesin; varsayılan güncellenince onu izlesin).
@@ -20,19 +21,23 @@ if (sel && typeof sel === 'object') {
 }
 useUi.setState({ tourDone: boot.ui.tourDone === true || boot.found });
 
-// İlk açılış: önizleme cihazı ekranın kendi sınıfından başlar (dar ekranda dizüstü %25'e küçülmesin).
+// A fresh workflow starts at its mobile-first baseline, independent of the host viewport.
+// Explicit queries are user intent and are left untouched.
 if (!window.location.search && !boot.found) {
-  const w = window.innerWidth;
-  const device = w < 600 ? 'm320' : w < 960 ? 't600' : 'l1280';
-  window.history.replaceState(window.history.state, '', `${window.location.pathname}?device=${device}${window.location.hash}`);
+  window.history.replaceState(window.history.state, '', `${window.location.pathname}?device=m320${window.location.hash}`);
 }
 if (!window.location.search && boot.found) {
   const p = new URLSearchParams();
-  (['ctx', 'role', 'device', 'orient', 'theme', 'view'] as const).forEach((k) => {
-    const v = boot.ui[k];
-    if (typeof v === 'string') p.set(k, v);
-  });
-  if (!p.has('role') && typeof boot.ui.ctx === 'string' && sel?.[boot.ui.ctx]) p.set('role', sel[boot.ui.ctx]);
-  const q = p.toString();
-  if (q) window.history.replaceState(window.history.state, '', `${window.location.pathname}?${q}${window.location.hash}`);
+  if (boot.ui.workspace === 'free') {
+    p.set('workspace', 'free');
+    (['ctx', 'role', 'device', 'orient', 'theme', 'view'] as const).forEach((k) => {
+      const v = boot.ui[k];
+      if (typeof v === 'string') p.set(k, v);
+    });
+    if (!p.has('role') && typeof boot.ui.ctx === 'string' && sel?.[boot.ui.ctx]) p.set('role', sel[boot.ui.ctx]);
+  } else {
+    // IndexedDB owns the workflow cursor. Core editor UI must not masquerade as a deep link.
+    p.set('workspace', 'workflow');
+  }
+  window.history.replaceState(window.history.state, '', `${window.location.pathname}?${p.toString()}${window.location.hash}`);
 }

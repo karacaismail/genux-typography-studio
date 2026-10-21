@@ -13,9 +13,10 @@ import { GlobalToolbar } from '../features/toolbar/GlobalToolbar';
 import { useUi } from '../store/ui';
 import { savePresetNow } from './actions';
 import { LazyMount } from './LazyMount';
-import { boot } from './bootstrap';
+import { boot, entryQuery } from './bootstrap';
 import { useFontStatus, usePersistence } from './usePersistence';
 import { useStudioSearch } from './useStudioSearch';
+import { freeEditorDeviceId } from './search';
 import classes from './Studio.module.scss';
 import { Workflow } from '../features/workflow/Workflow';
 
@@ -28,7 +29,8 @@ const FullscreenPreview = lazy(() => import('../features/preview/FullscreenPrevi
 
 export function Studio() {
   const [search, setSearch] = useStudioSearch();
-  return search.workspace === 'free' ? <><LegacyStudio /><Button className={classes.returnFlow} onClick={() => setSearch({workspace:'workflow'})}>Karar akışına dön</Button></> : <Workflow onOpenEditor={() => { void setSearch({workspace:'free'}); }} />;
+  const [editorVisited,setEditorVisited]=useState(search.workspace==='free');
+  return search.workspace === 'free' ? <><LegacyStudio /><Button className={classes.returnFlow} onClick={() => setSearch({workspace:'workflow'})}>Karar akışına dön</Button></> : <Workflow entryQuery={editorVisited?'':entryQuery} onOpenEditor={() => {setEditorVisited(true); void setSearch({workspace:'free',device:freeEditorDeviceId(search.device)}); }} />;
 }
 
 function LegacyStudio() {

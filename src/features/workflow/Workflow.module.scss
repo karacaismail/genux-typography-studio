@@ -216,3 +216,9 @@
 .stageProgress { min-width:0; max-width:100%; }
 .formIdentity .previewReadout { font-weight:700; }
 @media(max-width:47.99em) { .stageProgress { flex-basis:100%; } }
+
+.engineTable { max-width:100%; overflow-x:auto; }
+.engineTable th { white-space:nowrap; }
+.engineTable td { min-width:112px; word-break:normal; overflow-wrap:normal; }
+.engineTable td:last-child { min-width:200px; }
+.engineTable p { margin-block:var(--mantine-spacing-xs); }

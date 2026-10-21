@@ -2,8 +2,8 @@ import { PHONE_MODELS } from './hardware';
 import type { BgKey, CategoryId, ContextId, ContextSettings, Device, ProductId, Theme, TierId } from './types';
 
 /** GenUX kuralı (kullanıcı kararları 2026-10-18 ve 2026-10-19): okuma metni varsayılanı 16 (en az 16);
- *  istisna varsayılanı 14; etiket ve pill bileşenleri 12; 12 en alt sınır; uzun okuma 18 sabit. */
-export const HARD = { minReadable: 12, standard: 16, exception: 14, tagPill: 12, minReading: 16, longReading: 18, minWeight: 300 } as const;
+ *  istisna varsayılanı 14; etiket ve pill bileşenleri 14; 14 en alt sınır; uzun okuma 18 sabit. */
+export const HARD = { minReadable: 14, standard: 16, exception: 14, tagPill: 14, minReading: 16, longReading: 18, minWeight: 300 } as const;
 
 /** Kararlar, mobil öncelikli: temel ekran 320 px (kullanıcı kararı 2026-10-19). */
 export const DECISIONS: Record<string, number> = { h1: 32, h2: 28, h3: 24, h4: 21, h5: 18, h6: 16, body: 16, paragraph: 16, long: 18 };

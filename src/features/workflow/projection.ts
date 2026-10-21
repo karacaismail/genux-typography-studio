@@ -1,17 +1,28 @@
 import { lockDecision } from './engine';
-import { applyOverrideAt, BREAKPOINTS, contrastInfo, CONTEXTS, DEVICES, grayHex, resolveAt, rolesOf, sizeAt, PROPS, eqProp, type Decisions, type RoleProps } from '../../core';
-import { decisionsForStep, REVIEW_TARGETS, type FlowState } from './model';
+import { applyOverrideAt, BREAKPOINTS, contrastInfo, CONTEXTS, grayHex, resolveAt, rolesOf, sizeAt, PROPS, eqProp, type Decisions, type RoleProps } from '../../core';
+import { decisionStatus, decisionsForStep, REVIEW_TARGETS, type FlowState } from './model';
 
+const projectedProfiles=new WeakMap<FlowState,WeakMap<Decisions,NonNullable<FlowState['profiles']>>>();
+
+/** v2 represents family + width, not shell IDs. Unrepresented widths remain workflow-only. */
+function projectionProfiles(f:FlowState,d:Decisions):NonNullable<FlowState['profiles']>{
+  return Object.fromEntries(Object.entries(f.profiles??{}).filter(([key])=>{
+    const target=REVIEW_TARGETS.get(key);
+    if(!target || target.step.family==='tv' || !BREAKPOINTS.includes(target.step.device.w))return false;
+    const status=decisionStatus(f,d,target.step,target.role);
+    return status==='approved' || status==='manual' || status==='auto';
+  }));
+}
 /** v2 has shared role colors/mode, while workflow retains exact family/viewport profiles.
  * Project standard device decisions into its existing contract; never collapse TV/monitor profiles. */
 export function projectWorkflowDecisions(f:FlowState,d:Decisions):Decisions{
-  const standard=new Set(DEVICES.map(device=>device.id));
-  const entries=Object.keys(f.profiles??{}).flatMap(key=>{const target=REVIEW_TARGETS.get(key);return target && standard.has(target.step.device.id) && target.step.family!=='tv'?[target]:[];})
+  const profiles=projectionProfiles(f,d), accepted={...f,profiles};
+  const entries=Object.keys(profiles).flatMap(key=>{const target=REVIEW_TARGETS.get(key);return target?[target]:[];})
     .sort((a,b)=>CONTEXTS.findIndex(c=>c.id===a.step.ctx)-CONTEXTS.findIndex(c=>c.id===b.step.ctx) || a.step.device.w-b.step.device.w);
   let out=d;
   const colors=new Map<string,{ctx:typeof entries[number]['step']['ctx'];id:string;values:RoleProps}>();
   for(const {step,role} of entries){
-    const values=resolveAt(decisionsForStep(f,d,step),step.ctx,role,step.device.w);
+    const values=resolveAt(decisionsForStep(accepted,d,step),step.ctx,role,step.device.w);
     const applied=Math.round(sizeAt(values,d.contexts[step.ctx].settings,role,step.device.w));
     out=applyOverrideAt(out,step.ctx,role,{...values,size:applied,max:applied,mode:'static',sizes:null,gr:1},step.device.w);
     const key=`${step.ctx}:${role}`;if(!colors.has(key))colors.set(key,{ctx:step.ctx,id:role,values});
@@ -31,14 +42,15 @@ export function projectWorkflowDecisions(f:FlowState,d:Decisions):Decisions{
     }
     out=applyOverrideAt(out,ctx,id,{c},320);
   }
+  let cache=projectedProfiles.get(f);if(!cache)projectedProfiles.set(f,(cache=new WeakMap()));
+  cache.set(out,profiles);
   return out;
 }
 
 /** Snapshot only projected workflow targets, not an entire second decision store. */
 export function snapshotEditorProjection(f:FlowState,d:Decisions):NonNullable<FlowState['editorBaseline']>{
-  const standard=new Set(DEVICES.map(device=>device.id));
-  return Object.fromEntries(Object.keys(f.profiles??{}).flatMap(key=>{
-    const target=REVIEW_TARGETS.get(key);if(!target || target.step.family==='tv' || !standard.has(target.step.device.id))return [];
+  return Object.fromEntries(Object.keys(projectedProfiles.get(f)?.get(d)??projectionProfiles(f,d)).flatMap(key=>{
+    const target=REVIEW_TARGETS.get(key);if(!target)return [];
     return [[key,structuredClone(resolveAt(d,target.step.ctx,target.role,target.step.device.w))]];
   }));
 }

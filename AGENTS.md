@@ -33,7 +33,7 @@ npm run build
 
 ## Alan kuralları (kullanıcı kararı, değişmez)
 
-- Okuma metni 16 (≥ 16) · istisna 14 · etiket/pill 12 · en alt sınır 12 · uzun okuma 18 sabit.
+- Okuma metni 16 (≥ 16) · istisna 14 · etiket/pill 14 · en alt sınır 14 · uzun okuma 18 sabit.
 - Başlıklar 320'de H1 32 · H2 28 · H3 24 · H4 21 · H5 18 · H6 16; 1920'de 40/35/30/26/22/18 (otomatik ölçek).
 - Çıktı renkleri yalnız gri (R = G = B). Arayüz renkleri bu kurala tabi değildir.
 - Kurallar yalnız `src/core/enforce.ts` içinde uygulanır; arayüz katmanında kural tekrarlanmaz.
@@ -50,7 +50,7 @@ npm run build
 - Gruplar: mobil 320–599 · tablet 600–959 · laptop 960–1919 · masaüstü 1920+ (`TIERS`, `GROUP_BPS`, `GROUP_FIRST`). Kırılımlar = `DEVICES` genişlikleri; 320 temel.
 - Boyut otomatik: `autoScale` (`constants.ts`), çapa = en yakın alt kırılımdaki özel `size` ya da 320 değeri; üs `ln(gr)/ln(1920/320)`; 0,1 px yuvarlama (tam/yarım piksel yuvarlama 1,125 oranını bozuyordu).
 - `gr` (ekranla büyüme), `c`, `mode`, `sizes` kırılıma girmez (`SCREEN_EXCLUDED`); düzenlemeleri temel katmana yazılır. Diğer özellikler kırılımlarda küçükten büyüğe kalıtılır.
-- Kararlar: `DECISIONS` (320) + `DECISION_GROWTH`; `decisionAt(id, w)`. Okuma 16 · istisna 14 · pill 12 · uzun okuma 18 (`HARD`, `LONG_READING_CONDITION`). Başlık oranı eşiği `DEFAULT_RATIO` 1,125.
+- Kararlar: `DECISIONS` (320) + `DECISION_GROWTH`; `decisionAt(id, w)`. Okuma 16 · istisna 14 · pill 14 · uzun okuma 18 (`HARD`, `LONG_READING_CONDITION`). Başlık oranı eşiği `DEFAULT_RATIO` 1,125.
 - Kayıtlı çalışma alanı yüklenirken üst katmana eşit temel ezmeler kaldırılır (`pruneRedundant`).
 
 ## Arayüz kuralları
@@ -143,6 +143,6 @@ Telefon ve tablet önizlemelerinde “Dikey / Yatay” yalnız önizleme yönün
 
 ## Mobil öncelikli ECA karar motoru
 
-Workflow otomatik taslakları `engine.ts` içindeki sürümlü, öncelikli ECA kurallarıyla üretir. Aynı bağlamda yalnız geçerli kullanıcı onaylarından öğrenilir; daha büyük genişlik veya sonraki cihaz ailesinden geriye öğrenilmez. Otomatik taslaklar onay değildir. Manuel değerler ve geçerli onaylar korunur; kaynak değişince bağımlı onay geçersizleşir fakat eski değerler ezilmez. Tek seviyeli geri alma önceki manuel değeri ve motor durumunu korur. Kaynak snapshot'ı yerine doğrulanmış canlı çözüm öğrenmede kullanılır.
+Workflow sürümlü, deterministik ECA kuralları kullanır; keyfî eval veya ML yoktur. Kaynaklar yalnız geçerli insan incelemelerinin canlı çözümleridir; aynı bağlam ve eşleşen elementlerde HTML → ürün kalıtımı uygulanır. Büyük genişlik/sonraki aileden geriye öğrenilmez. Manuel, insan onayı, kabul edilmiş motor (`auto`), çakışma/eski ve taslak ayrı durumlardır; otomatik kararlar insan kanıtı olmaz. Onay/kapsam olayları ileri hedefleri değerlendirir; kaynak değişimi ters bağımlılık grafiğinin geçişli kapanışını tarar. İnsan ve manuel değerler ezilmez. Geri alma/ileri alma 20 snapshot ile sınırlıdır; sürüm yenileme mevcut motor sonuçlarını yeniden değerlendirir.
 
-`projectWorkflowDecisions` v2 JSON ve serbest editöre standart cihaz kararlarını taşır. TV/ek monitörler ve ekran bazlı kesin renkler workflow profillerinde kalır; v2 ortak renkleri aktarımda ilgili boyutlar için güvenli tutulur. İki tema kontrastı arayüz ve model onay kapısında doğrulanır. Bu tam WCAG AA belgesi değildir. Katalog önerileri serbest editörde sabittir; workflow'da yeşil öneriler yeni motor hesabını izler ve mevcut manuel seçimden bağımsızdır. Kurallar, veri sözleşmesi, kaynaklar ve kontroller: `docs/decision-engine.md`.
+`projectWorkflowDecisions` geçerli insan/manuel/kabul edilmiş motor değerlerini temsil edilebilir v2 genişliklerine taşır. Desktop 3440/3840 standart katalogdadır; TV ve v2'de temsil edilmeyen genişlikler workflow uzantısında korunur. Gerçek katalog kelimesinin normal genişliği insan onay kapısındadır; otomatik aday ayrıca gerçek örneğin aralık stresine göre sınırlandırılır. Sentetik uzun kelimeler ve okuma varsayılanları uyarıdır; fallback heuristiği ve canvas ölçümü bütün ürün AA garantisi değildir. Başlık oranı istisnası gerekçe ister. İnsan çiftlerinden çıkarılmış oran geometrik ortalamayla hesaplanır ve 0,025 yakınlıkta standart oranlara oturtulur; açık özel politika aynen korunur. Güncel 14 CSS px alt sınırı eski 12 px import değerlerini düzeltme raporuyla yükseltir; tarihsel inceleme snapshot’ı korunur ve güncel onay yeniden değerlendirilir. Kalıcılıkta `JOURNAL_KEY` yalnız kullanıcı farkları/not/politika için sınırlı acil günlüktür; tam defter kopyalanmaz. Senkron günlük ardından acil IDB yazımı kullanılır; hata/çakışmada günlük ve daha yeni insan değeri korunur, otomatik yazım durdurulur. Bu process kill garantisi değildir. Politika katkıları en fazla 30; kompakt bağımlılık tokenları eski fingerprint karşılaştırmasıyla uyumludur, sürüm ve köken regresyonları korunmalıdır. Ayrıntılar ve dürüst PASS/FAIL/not_run kaydı: `docs/decision-engine.md`, `docs/engine-audit-actions.md`.

@@ -1,0 +1,43 @@
+.root {
+  min-inline-size: 0;
+  color: var(--gx-text);
+  font-family: var(--mantine-font-family);
+  font-size: var(--mantine-font-size-sm);
+
+  :global(.mantine-Input-input),
+  :global(.mantine-InputWrapper-label),
+  :global(.mantine-InputWrapper-description),
+  :global(.mantine-InputWrapper-error),
+  :global(.mantine-Radio-label),
+  :global(.mantine-Text-root),
+  :global(.mantine-Button-label) {
+    font-size: var(--mantine-font-size-sm);
+  }
+
+  :global(.mantine-Input-input),
+  :global(.mantine-Button-root),
+  :global(.mantine-Radio-body) {
+    min-block-size: var(--gx-workflow-header-hit);
+  }
+
+  :global(.mantine-Radio-label) {
+    display: flex;
+    align-items: center;
+    white-space: normal;
+  }
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: var(--mantine-spacing-sm);
+  min-inline-size: 0;
+
+  > * { min-inline-size: 0; }
+}
+
+.strategies {
+  align-items: stretch;
+  flex-wrap: wrap;
+  gap: var(--mantine-spacing-sm);
+}

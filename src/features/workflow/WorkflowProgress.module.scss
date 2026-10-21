@@ -29,3 +29,5 @@
 .localLabel {
   color: var(--gx-text-2);
 }
+
+.statuses { display:flex; flex-wrap:wrap; gap:var(--mantine-spacing-xs) var(--mantine-spacing-sm); max-width:100%; color:var(--gx-text-2); }

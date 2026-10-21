@@ -55,7 +55,7 @@ describe('enforceRole: kesin kurallar', () => {
   });
   it('ekrana göre boyutların her biri kurallardan geçer', () => {
     const r = enforceRole('h1', { mode: 'tiers', sizes: { mobile: 4, tablet: 32, laptop: 36, desktop: 999 } });
-    expect(r.sizes).toEqual({ mobile: 12, tablet: 32, laptop: 36, desktop: 120 });
+    expect(r.sizes).toEqual({ mobile: 14, tablet: 32, laptop: 36, desktop: 120 });
   });
   it('tiers modunda boyut listesi yoksa tek boyuttan doldurulur', () => {
     expect(enforceRole('h2', { mode: 'tiers' }).sizes).toEqual({ mobile: 28, tablet: 28, laptop: 28, desktop: 28 });
@@ -167,8 +167,8 @@ describe('boyut hesapları', () => {
   });
   it('göreli: alt sınırlı em', () => {
     const d = fresh();
-    expect(cssSize(resolveRole(d, 'html', 'sub'), S(d, 'html'), 'sub')).toBe('max(0.75rem, 0.75em)');
-    expect(sizeAt(resolveRole(d, 'html', 'rt'), S(d, 'html'), 'rt', 1280)).toBe(12);
+    expect(cssSize(resolveRole(d, 'html', 'sub'), S(d, 'html'), 'sub')).toBe('max(0.875rem, 0.75em)');
+    expect(sizeAt(resolveRole(d, 'html', 'rt'), S(d, 'html'), 'rt', 1280)).toBe(14);
   });
 });
 

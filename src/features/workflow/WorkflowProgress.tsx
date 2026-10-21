@@ -6,10 +6,13 @@ export interface WorkflowProgressProps {
   totalGroups: number;
   reviewedElements: number;
   totalElements: number;
+  autoDecisions?: number;
+  pendingDecisions?: number;
+  humanDecisions?: number;
 }
 
 /** Counts are supplied by the workflow; element progress belongs to the current group. */
-export function WorkflowProgress({ completedGroups, totalGroups, reviewedElements, totalElements }: WorkflowProgressProps) {
+export function WorkflowProgress({ completedGroups, totalGroups, reviewedElements, totalElements, autoDecisions=0, pendingDecisions=0, humanDecisions=0 }: WorkflowProgressProps) {
   const groupsLabel = `${completedGroups} / ${totalGroups} onaylı küme`;
   const elementsLabel = `${reviewedElements} / ${totalElements} element onaylandı`;
 
@@ -35,6 +38,11 @@ export function WorkflowProgress({ completedGroups, totalGroups, reviewedElement
           aria-label="Geçerli kümedeki elementlerin onay ilerlemesi"
           aria-valuetext={elementsLabel}
         ><Progress.Section value={elementsPercent} color="var(--gx-accent)" withAria={false}/></Progress.Root>
+      </div>
+      <div className={classes.statuses} aria-label="Karar durumları">
+        <span>İnsan onayı: {humanDecisions}</span>
+        <span>Motor kararı: {autoDecisions}</span>
+        <span>İnceleme bekleyen: {pendingDecisions}</span>
       </div>
     </div>
   );

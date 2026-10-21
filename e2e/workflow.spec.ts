@@ -56,7 +56,7 @@ test('preserves an unsupported IndexedDB record until explicit recovery',async({
   await page.goto('/?workspace=free');
   await page.evaluate(()=>new Promise<void>((resolve,reject)=>{const req=indexedDB.open('genux-typography-workflow',1);req.onupgradeneeded=()=>req.result.createObjectStore('workspace');req.onsuccess=()=>{const tx=req.result.transaction('workspace','readwrite');tx.objectStore('workspace').put({version:999,original:'keep-me'},'current');tx.oncomplete=()=>{req.result.close();resolve();};tx.onerror=()=>reject(tx.error);};}));
   await page.goto('/?workspace=workflow');
-  await expect(page.getByText('İlerleme veritabanı okunamadı.',{exact:false})).toBeVisible();
+  await expect(page.getByText('İlerleme veya kurtarma kaydı okunamadı.',{exact:false})).toBeVisible();
   await page.getByLabel('Karar notu',{exact:true}).fill('Yeni taslak');
   await page.waitForTimeout(400);
   const version=await page.evaluate(()=>new Promise((resolve,reject)=>{const req=indexedDB.open('genux-typography-workflow',1);req.onsuccess=()=>{const read=req.result.transaction('workspace','readonly').objectStore('workspace').get('current');read.onsuccess=()=>resolve(read.result.version);read.onerror=()=>reject(read.error);};}));
@@ -85,10 +85,10 @@ test('puts specimen text on its own preview theme background even with a dark to
   const surface=page.getByTestId('group-surface');
   const sample=surface.locator('[data-group-role=h1]');
   await expect(surface).toHaveCSS('background-color','rgb(255, 255, 255)');
-  await expect(sample).toHaveCSS('color','rgb(26, 26, 26)');
+  await expect(sample).toHaveCSS('color','rgb(20, 20, 20)');
   await page.getByText('Koyu',{exact:true}).click();
   await expect(surface).toHaveCSS('background-color','rgb(26, 26, 26)');
-  await expect(sample).toHaveCSS('color','rgb(230, 230, 230)');
+  await expect(sample).toHaveCSS('color','rgb(242, 242, 242)');
 });
 
 test('numeric spinner has decrement left and increment right, preserving keyboard steps and bounds',async({page})=>{
@@ -258,12 +258,12 @@ test('recommendations remain independent of selected values and cover both edito
   await expect(weight).toHaveAccessibleDescription(/600/);
   await expect(lh.getByRole("radio",{name:"Satır yüksekliği 1.25",exact:true})).toHaveAccessibleDescription(/1.25/);
   await expect(page.getByRole('region',{name:'Çıktı tonları · açık / koyu',exact:true})).toBeVisible();
-  await expect(page.getByRole('radiogroup',{name:'Açık tema metin rengi'}).getByRole('img')).toHaveCount(1);
-  await expect(page.getByRole('radiogroup',{name:'Koyu tema metin rengi'}).getByRole('img')).toHaveCount(1);
+  await expect(page.locator('[data-output-theme=light]').getByRole('img')).toHaveCount(1);
+  await expect(page.locator('[data-output-theme=dark]').getByRole('img')).toHaveCount(1);
   await page.setViewportSize({width:320,height:850});expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBe(320);
   await page.setViewportSize({width:1680,height:1000});
   await page.getByRole('button',{name:'Serbest editör',exact:true}).click();
-  await expect(page.getByRole('complementary',{name:'Denetçi'}).getByText('Önerilen: 38',{exact:true})).toBeVisible();
+  await expect(page.getByRole('complementary',{name:'Denetçi'}).getByText('Önerilen: 32',{exact:true})).toBeVisible();
   await page.getByRole("combobox",{name:"Boyut modu",exact:true}).click();
   await page.getByRole("option",{name:"İki uç · otomatik tam sayı",exact:true}).click();
   const inspector=page.getByRole("complementary",{name:"Denetçi"});
@@ -443,14 +443,12 @@ test('mobile-first engine learns confirmed choices, protects edits and survives 
   await expect(page.getByRole('region',{name:'H2 karar formu',exact:true})).toBeVisible();
   await expect(page.getByLabel('Yazı boyutu',{exact:true})).toHaveValue('35 px');
   const panel=page.locator('details').filter({has:page.locator('summary').filter({hasText:'Karar motoru'})});
-  await panel.locator('summary').click();
   await expect(panel.getByText(/320 px · H1/)).toBeVisible();
-  await expect(page.getByText('Taslak',{exact:true})).toBeVisible();
+  await expect(page.getByRole('radiogroup',{name:'Önizleme teması',exact:true}).locator('..').getByText('Motor kararı',{exact:true})).toBeVisible();
   await page.getByLabel('Yazı boyutu',{exact:true}).fill('33');
   await page.getByRole('button',{name:'Kaydet',exact:true}).click();
   await page.reload();
   await expect(page.getByLabel('Yazı boyutu',{exact:true})).toHaveValue('33 px');
-  await page.locator('summary').filter({hasText:'Karar motoru'}).click();
   await page.getByRole('button',{name:'Otomatik yeniden hesapla',exact:true}).click();
   await expect(page.getByLabel('Yazı boyutu',{exact:true})).toHaveValue('35 px');
   await page.getByRole('button',{name:'Otomatik uygulamayı geri al',exact:true}).click();
@@ -467,7 +465,7 @@ test('engine carries a mobile decision forward and refuses insufficient contrast
   await page.getByLabel('Yazı boyutu',{exact:true}).fill('16');
   await page.locator('[data-output-theme="light"]').locator('label').filter({hasText:'#808080'}).click();
   await expect(page.getByRole('button',{name:'Kararı kaydet ve devam et',exact:true})).toBeDisabled();
-  await expect(page.getByText(/Kaydetmek için açık ve koyu tema kontrastını düzelt/)).toBeVisible();
+  await expect(page.getByText(/Kaydetmek için engelleyici kontrolleri düzelt/)).toBeVisible();
 });
 
 test('engine decisions reach the standard export and free editor',async({page})=>{
@@ -476,7 +474,7 @@ test('engine decisions reach the standard export and free editor',async({page})=
   await page.getByLabel('Yazı boyutu',{exact:true}).fill('40');
   await page.getByRole('button',{name:'Kararı kaydet ve devam et',exact:true}).click();
   await page.getByRole('button',{name:'Serbest editör',exact:true}).click();
-  await expect(page.getByRole('textbox',{name:'Boyut değeri (px)',exact:true})).toHaveValue('40');
+  await expect(page.getByRole('textbox',{name:'Boyut değeri (px)',exact:true})).toHaveValue('35');
   await page.getByRole('button',{name:'Karar akışına dön',exact:true}).click();
   await expect(page.getByRole('region',{name:'H2 karar formu',exact:true})).toBeVisible();
   await expect(page.getByLabel('Yazı boyutu',{exact:true})).toHaveValue('35 px');
@@ -488,6 +486,7 @@ test('free editor changes return to workflow and are preserved on a second edito
   await page.goto('/?ctx=html&role=h1&device=m320');
   await page.getByLabel('Yazı boyutu',{exact:true}).fill('40');
   await page.getByRole('button',{name:'Kararı kaydet ve devam et',exact:true}).click();
+  await page.getByRole('navigation',{name:'Bu kümedeki elementler',exact:true}).getByRole('button',{name:'H1',exact:true}).click();
   await page.getByRole('button',{name:'Serbest editör',exact:true}).click();
   const size=page.getByRole('textbox',{name:'Boyut değeri (px)',exact:true});
   await expect(size).toHaveValue('40');await size.fill('42');await size.press('Enter');
@@ -507,6 +506,8 @@ test('engine panel and large line sample retain visible keyboard focus at 320px'
   await page.keyboard.press('Tab');await summary.focus();
   await expect(summary).toBeFocused();
   expect(await summary.evaluate(el=>getComputedStyle(el).boxShadow)).not.toBe('none');
+  await summary.press('Enter');
+  await expect(page.getByRole('button',{name:'Otomatik yeniden hesapla',exact:true})).toBeHidden();
   await summary.press('Enter');
   await expect(page.getByRole('button',{name:'Otomatik yeniden hesapla',exact:true})).toBeVisible();
   await page.getByRole('radiogroup',{name:'Seçili ekran görünümü',exact:true}).getByText('Satır testleri',{exact:true}).click();

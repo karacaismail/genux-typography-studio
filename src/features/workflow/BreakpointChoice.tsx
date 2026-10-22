@@ -1,4 +1,4 @@
-import { phoneModel } from '../../core/hardware';
+import { hardwareModel } from '../../core/hardware';
 import { Radio, UnstyledButton } from '@mantine/core';
 import { useLayoutEffect, useRef, useState } from 'react';
 import type { Device } from '../../core';
@@ -35,7 +35,7 @@ export function BreakpointChoice({devices,value,onChange}:{devices:Device[];valu
         if(direction){event.preventDefault();const next=devices[(index+direction+devices.length)%devices.length];links.current.get(next.id)?.focus();onChange(next.id);}
       }}>
         <span ref={el=>{if(el)targets.current.set(device.id,el);else targets.current.delete(device.id);}} data-checked={device.id===value || undefined} className={classes.breakpointButton}>{device.w} px</span>
-        <span id={`breakpoint-${device.id}`} className={classes.breakpointCaption}>{phoneModel(device.id)?.name ?? device.name}</span>
+        <span id={`breakpoint-${device.id}`} className={classes.breakpointCaption}>{hardwareModel(device.id)?.name ?? device.name}</span>
       </UnstyledButton>)}
     </div>
   </Radio.Group>;

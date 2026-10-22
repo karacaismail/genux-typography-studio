@@ -201,3 +201,16 @@
 .device[data-model='m360'][data-landscape] .hardware { top:50%; left:calc(var(--device-side) + var(--device-cutout-inset) + var(--device-cutout-height) / 2); height:var(--device-cutout-height); }
 .device[data-model='m360'][data-landscape] .sideKeys { left:21%; right:auto; top:-2px; width:64px; height:3px; }
 .device[data-model='m360'][data-landscape] .powerKey { left:36%; right:auto; top:-2px; width:32px; height:3px; }
+
+// Tablet hardware uses published body/panel ratios; cameras sit in the bezel, never in the screen.
+.device[data-kind='tablet'][data-model] {
+  --device-tablet-rim:inset 0 0 0 1px #a5abb0,inset 0 0 0 3px #555c63,inset 0 0 0 5px #1c2025;
+}
+.device[data-kind='tablet'][data-model]::after { box-shadow:var(--device-tablet-rim),var(--device-edge-light); }
+.device[data-kind='tablet'][data-model] .hardware { top:0; left:0; width:100%; height:var(--device-top); transform:none; }
+.device[data-kind='tablet'][data-model] .camera { left:calc(var(--device-tablet-camera-x) - var(--device-tablet-camera-size) / 2); top:50%; width:var(--device-tablet-camera-size); height:var(--device-tablet-camera-size); transform:translateY(-50%); }
+.device[data-kind='tablet'][data-model] .speaker { display:none; }
+.device[data-kind='tablet'][data-model][data-landscape] .hardware { top:0; left:0; width:var(--device-side); height:100%; transform:none; }
+.device[data-kind='tablet'][data-model][data-landscape] .camera { left:50%; top:var(--device-tablet-camera-y); transform:translate(-50%,-50%); }
+.device[data-model='t768'] .home { box-shadow:inset 0 0 0 2px var(--device-edge),var(--device-home-ring); }
+.device[data-model='t600'] { --device-tablet-rim:inset 0 0 0 1px #5c6065,inset 0 0 0 4px #15171a; }

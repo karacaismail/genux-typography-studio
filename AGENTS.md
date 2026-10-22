@@ -170,3 +170,11 @@ Workflow sürümlü, deterministik ECA kuralları kullanır; keyfî eval veya ML
 ### Galaxy S20 ön yüz geometrisi (22 Ekim 2026)
 
 `m360` Samsung'un 69,1 × 151,7 × 7,9 mm gövde ölçülerini ve 360 × 800 mantıksal ekranını korur. Optik rekonstrüksiyon gövde/ekran köşeleri 40/30 CSS px, ortadaki dairesel kamera deliği 12 × 12 CSS px ve ekran kenarından boşluğu 9 CSS px'tir; üretici CAD ölçüsü değildir. Kavisli cam kenar ışıkları yalnız m360'a uygulanır. Ses ve güç tuşları sağ kenardadır; iPhone tarzı sol tuşlar yoktur. Yatayda kamera kısa kenarın ortasına ve sağ tuşlar üst kenara döner; güvenli içerik kamera deliğinin dışında kalır. Hardware ve workflow geometri regresyonları korunmalıdır.
+
+### Modele bağlı tablet çerçeveleri (22 Ekim 2026)
+
+Tablet grubu mevcut `t600/t744/t768/t820/t834` kimlik ve CSS genişliklerini korur. Sırasıyla Nexus 7 (2013), iPad mini 6, iPad Air 2, iPad Air 5 ve iPad Pro 11″ (4. nesil) temsil edilir; nesiller görünür adlarda belirtilir. Nexus 7'nin 600 × 960 seçimi 1200 × 1920 paneliyle eşleşir; belirsiz “katlanabilir” etiketi artık kullanılmaz. Laptop grubundaki karma `t1024` seçimi bu eşlemeye dahil değildir.
+
+`TABLET_MODELS` üretici gövde/panel verisinin tek kaynağıdır. Kaynaklar Google Nexus teknik özellikleri (`support.google.com/nexus/answer/6102470`) ve Apple `111886/112017/111887/111842` teknik özellik sayfalarıdır. Gövde oranı ekranın fiziksel ölçülerinden hesaplanır; CSS piksel fiziksel piksel veya monitörde kalibre mm değildir. Köşe ve kamera ayrıntıları optik rekonstrüksiyondur, üretici CAD iddiası değildir.
+
+`hardwareModel` seçili/tablet karşılaştırması, serbest Canvas ve kırılım etiketleri tarafından ortak kullanılır. Bilinen modellerin ekranı içerik uzadı diye büyümez; ekran içinde kaydırılır. Air 2'nin fiziksel Home tuşu, modern iPad'lerin ekran içi gesture göstergesi ve Nexus 7'nin merkezden kayık kamerası ayrıdır. Kameralar kısa kenardaki çerçevede kalır; yatayda gövdeyle birlikte döner. Tablet kamera tokenları `--device-tablet-camera-*` ad alanındadır; telefon kamera tokenları ezilmez. `tablets.test.ts`, tablet tarayıcı geometrisi ve mevcut telefon/klasik Home regresyonları korunmalıdır.

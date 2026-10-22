@@ -1,14 +1,16 @@
 /** Published physical dimensions; optical corner/cutout paths are front-view reconstructions.
  * CSS viewports are logical screen rectangles, not physical pixels or calibrated monitor millimetres. */
-export interface PhoneModel {
+export interface HardwareModel {
   id:string; name:string; width:number; height:number;
   bodyMm:{width:number;height:number;depth:number};
   panel:{width:number;height:number;ppi?:number;diagonal?:number};
-  profile:'classic'|'android'|'notch'|'island';
+  profile:'classic'|'android'|'notch'|'island'|'tablet';
+  camera?:{x:number;diameter:number}; gesture?:boolean;
   homeDiameter?:number;
   cutout?:{width:number;height:number;inset?:number};
   corners:{body:number;screen:number}; safe:{top:number;bottom:number}; source:string;
 }
+export type PhoneModel = HardwareModel & {profile:'classic'|'android'|'notch'|'island'};
 // iPhone 4 corner and home-key dimensions are optical estimates from the supplied front reference.
 export const PHONE_MODELS:PhoneModel[]=[
   {id:'m320',name:'iPhone 4',width:320,height:480,bodyMm:{width:58.6,height:115.2,depth:9.3},panel:{width:640,height:960,ppi:326},profile:'classic',homeDiameter:68,corners:{body:56,screen:0},safe:{top:0,bottom:0},source:'https://support.apple.com/en-il/112562'},
@@ -18,9 +20,19 @@ export const PHONE_MODELS:PhoneModel[]=[
   {id:'m414',name:'iPhone 11',width:414,height:896,bodyMm:{width:75.7,height:150.9,depth:8.3},panel:{width:828,height:1792,ppi:326},profile:'notch',cutout:{width:210,height:34},corners:{body:76,screen:46},safe:{top:48,bottom:34},source:'https://support.apple.com/en-us/111865'},
   {id:'m430',name:'iPhone 15 Pro Max',width:430,height:932,bodyMm:{width:76.7,height:159.9,depth:8.25},panel:{width:1290,height:2796,ppi:460},profile:'island',cutout:{width:126,height:37,inset:11},corners:{body:72,screen:55},safe:{top:59,bottom:34},source:'https://support.apple.com/en-us/111828'},
 ];
+/** Named tablet generations preserve the existing logical viewport IDs and decision keys. */
+export const TABLET_MODELS:HardwareModel[]=[
+ {id:'t600',name:'Nexus 7 (2013)',width:600,height:960,bodyMm:{width:114,height:200,depth:8.65},panel:{width:1200,height:1920,ppi:323},profile:'tablet',corners:{body:36,screen:0},safe:{top:0,bottom:0},camera:{x:.7,diameter:10},source:'https://support.google.com/nexus/answer/6102470'},
+ {id:'t744',name:'iPad mini (6. nesil)',width:744,height:1133,bodyMm:{width:134.8,height:195.4,depth:6.3},panel:{width:1488,height:2266,ppi:326},profile:'tablet',corners:{body:52,screen:20},safe:{top:0,bottom:24},camera:{x:.5,diameter:10},gesture:true,source:'https://support.apple.com/en-us/111886'},
+ {id:'t768',name:'iPad Air 2',width:768,height:1024,bodyMm:{width:169.5,height:240,depth:6.1},panel:{width:1536,height:2048,ppi:264},profile:'classic',corners:{body:42,screen:0},homeDiameter:52,safe:{top:0,bottom:0},camera:{x:.5,diameter:9},source:'https://support.apple.com/en-us/112017'},
+ {id:'t820',name:'iPad Air (5. nesil)',width:820,height:1180,bodyMm:{width:178.5,height:247.6,depth:6.1},panel:{width:1640,height:2360,ppi:264},profile:'tablet',corners:{body:48,screen:18},safe:{top:0,bottom:24},camera:{x:.5,diameter:10},gesture:true,source:'https://support.apple.com/en-us/111887'},
+ {id:'t834',name:'iPad Pro 11″ (4. nesil)',width:834,height:1194,bodyMm:{width:178.5,height:247.6,depth:5.9},panel:{width:1668,height:2388,ppi:264},profile:'tablet',corners:{body:48,screen:20},safe:{top:0,bottom:24},camera:{x:.5,diameter:11},gesture:true,source:'https://support.apple.com/en-us/111842'},
+];
+export const tabletModel=(id:string)=>TABLET_MODELS.find(model=>model.id===id);
+export const hardwareModel=(id:string):HardwareModel|undefined=>phoneModel(id)??tabletModel(id);
 export const phoneModel=(id:string)=>PHONE_MODELS.find(model=>model.id===id);
 /** Physical body/screen ratio converted to CSS pixels; reported ppi/diagonal are rounded by vendors. */
-export function phoneGeometry(model:PhoneModel,width=model.width,height=model.height,landscape=false){
+export function phoneGeometry(model:HardwareModel,width=model.width,height=model.height,landscape=false){
   const physicalScreenWidth=model.panel.ppi?model.panel.width/model.panel.ppi*25.4:model.panel.diagonal!*25.4*model.panel.width/Math.hypot(model.panel.width,model.panel.height);
   const scale=(landscape?height:width)/physicalScreenWidth;
   const bodyWidth=(landscape?model.bodyMm.height:model.bodyMm.width)*scale;

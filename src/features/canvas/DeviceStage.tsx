@@ -1,4 +1,4 @@
-import { phoneGeometry, phoneModel } from '../../core/hardware';
+import { phoneGeometry, hardwareModel } from '../../core/hardware';
 import { useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { TIERS, tierOf, type Device } from '../../core';
 import { fmt } from '../../core/util';
@@ -29,7 +29,7 @@ interface Props {
 
 /** Cihaz çerçevesi: ekran gerçek CSS genişliğinde yerleşir (kap sorguları doğru çalışır), çerçeve sahneye ölçeklenir. */
 export function DeviceStage({ device, width, height, landscape, zoom, onScreen, children, label, theme, autoHeight }: Props) {
-  const model=phoneModel(device.id);
+  const model=hardwareModel(device.id);
   const adaptive=autoHeight && !model;
   const [contentH, setContentH] = useState(height);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -66,7 +66,7 @@ export function DeviceStage({ device, width, height, landscape, zoom, onScreen, 
   const portraitBezel = device.id.startsWith('tv') ? {...BEZEL.desktop, x:10,top:10,bottom:22,base:32} : legacy ? {...BEZEL[device.group],x:14,top:64,bottom:76} : BEZEL[device.group];
   const b = model ? phoneGeometry(model,width,height,landscape) : landscape && (device.group==='mobile' || device.group==='tablet') ? {...portraitBezel,x:(portraitBezel.top+portraitBezel.bottom)/2,top:portraitBezel.x,bottom:portraitBezel.x} : portraitBezel;
   const profile=model?.profile??(device.id.startsWith('tv')?'tv':legacy?'classic':device.group);
-  const shellStyle = { '--device-side': `${b.x}px`, '--device-top': `${b.top}px`, '--device-bottom': `${b.bottom}px`,...(model?{'--device-radius':`${model.corners.body}px`,'--device-home-size':`${model.homeDiameter??44}px`,'--screen-radius':`${model.corners.screen}px`,'--device-safe-top':`${landscape?0:model.safe.top}px`,'--device-safe-bottom':`${landscape?0:model.safe.bottom}px`,'--device-safe-left':`${landscape?model.safe.top:0}px`,'--device-safe-right':`${landscape?model.safe.bottom:0}px`,'--device-cutout-width':`${model.cutout?.width??model.width*.38}px`,'--device-cutout-height':`${model.cutout?.height??30}px`,'--device-cutout-inset':`${model.cutout?.inset??0}px`}:{}) } as CSSProperties;
+  const shellStyle = { '--device-side': `${b.x}px`, '--device-top': `${b.top}px`, '--device-bottom': `${b.bottom}px`,...(model?{'--device-radius':`${model.corners.body}px`,'--device-tablet-camera-x':`${(model.camera?.x??.5)*100}%`,'--device-tablet-camera-y':`${(1-(model.camera?.x??.5))*100}%`,'--device-tablet-camera-size':`${model.camera?.diameter??7}px`,'--device-home-size':`${model.homeDiameter??44}px`,'--screen-radius':`${model.corners.screen}px`,'--device-safe-top':`${landscape?0:model.safe.top}px`,'--device-safe-bottom':`${landscape?0:model.safe.bottom}px`,'--device-safe-left':`${landscape?model.safe.top:0}px`,'--device-safe-right':`${landscape?model.safe.bottom:0}px`,'--device-cutout-width':`${model.cutout?.width??model.width*.38}px`,'--device-cutout-height':`${model.cutout?.height??30}px`,'--device-cutout-inset':`${model.cutout?.inset??0}px`}:{}) } as CSSProperties;
   const frameW = width + 2 * b.x;
   const screenH = adaptive ? Math.max(height, contentH) : height;
   const frameH = screenH + b.top + b.bottom;
@@ -90,7 +90,7 @@ export function DeviceStage({ device, width, height, landscape, zoom, onScreen, 
           <div className={classes.frame} style={{ transform: `translateX(${extraX * k}px) scale(${k})` }}>
             <div className={classes.device} data-model={model?.id} data-landscape={landscape || undefined} data-kind={device.group} data-profile={profile} style={shellStyle}>
               <span className={classes.sideKeys} aria-hidden="true"/><span className={classes.hardware} data-device-hardware aria-hidden="true"><span className={classes.camera}/><span className={classes.speaker}/></span>
-              {model && model.profile!=='classic' && <span className={classes.homeIndicator} aria-hidden="true" style={{bottom:b.bottom+8}}/>}
+              {model && (model.gesture || (device.group==='mobile' && model.profile!=='classic')) && <span className={classes.homeIndicator} aria-hidden="true" style={{bottom:b.bottom+8}}/>}
               <span className={classes.powerKey} aria-hidden="true"/>
               {legacy && <span className={classes.home} data-device-home aria-hidden="true" style={model?{bottom:(b.bottom-(model.homeDiameter??44))/2}:undefined}/>}
               <div

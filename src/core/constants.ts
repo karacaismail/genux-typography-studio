@@ -1,4 +1,4 @@
-import { PHONE_MODELS } from './hardware';
+import { PHONE_MODELS, TABLET_MODELS } from './hardware';
 import type { BgKey, CategoryId, ContextId, ContextSettings, Device, ProductId, Theme, TierId } from './types';
 
 /** GenUX kuralı (kullanıcı kararları 2026-10-18 ve 2026-10-19): okuma metni varsayılanı 16 (en az 16);
@@ -106,11 +106,7 @@ export const tierOf = (w: number): TierId => [...TIERS].reverse().find((t) => w 
 /** Önizleme cihazları = kırılımlar (CSS px, dikey). Her grubun ilki o grubun ilk kırılımıdır. */
 export const DEVICES: Device[] = [
   ...PHONE_MODELS.map(model=>({id:model.id,group:'mobile' as const,w:model.width,h:model.height,name:model.name})),
-  { id: 't600', group: 'tablet', w: 600, h: 960, name: 'Küçük tablet 7" / katlanabilir' },
-  { id: 't744', group: 'tablet', w: 744, h: 1133, name: 'iPad mini' },
-  { id: 't768', group: 'tablet', w: 768, h: 1024, name: 'iPad 9,7"' },
-  { id: 't820', group: 'tablet', w: 820, h: 1180, name: 'iPad Air' },
-  { id: 't834', group: 'tablet', w: 834, h: 1194, name: 'iPad Pro 11"' },
+  ...TABLET_MODELS.map(model=>({id:model.id,group:'tablet' as const,w:model.width,h:model.height,name:model.name})),
   { id: 'l960', group: 'laptop', w: 960, h: 540, name: 'Full HD dizüstü (%200)' },
   { id: 't1024', group: 'laptop', w: 1024, h: 768, name: 'Netbook / iPad Pro 12,9" yatay' },
   { id: 'l1280', group: 'laptop', w: 1280, h: 800, name: 'Dizüstü 1280 × 800 (%150)' },

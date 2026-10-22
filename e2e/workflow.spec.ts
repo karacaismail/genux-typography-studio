@@ -681,6 +681,7 @@ test('iPhone 4 has reference glass corners and a centered home key in both orien
  for(const orientation of ['Dikey','Yatay']){
   await page.getByRole('radiogroup',{name:'Önizleme yönü',exact:true}).getByText(orientation,{exact:true}).click();
   const body=page.locator('[data-model=m320]').first();
+  await expect(body.locator('[data-device-hardware] > span').first()).toHaveCSS('width','12px');
   const metrics=await body.evaluate(el=>{const cs=getComputedStyle(el),rect=el.getBoundingClientRect(),home=el.querySelector('[data-device-home]')!.getBoundingClientRect(),screen=el.querySelector('[data-screen-depth]')!.getBoundingClientRect();return {radius:parseFloat(cs.borderRadius),body:rect.toJSON(),home:home.toJSON(),screen:screen.toJSON()};});
   expect(metrics.radius).toBe(56);expect(metrics.home.width).toBe(68);
   if(orientation==='Dikey'){

@@ -66,7 +66,7 @@ export function DeviceStage({ device, width, height, landscape, zoom, onScreen, 
   const portraitBezel = device.id.startsWith('tv') ? {...BEZEL.desktop, x:10,top:10,bottom:22,base:32} : legacy ? {...BEZEL[device.group],x:14,top:64,bottom:76} : BEZEL[device.group];
   const b = model ? phoneGeometry(model,width,height,landscape) : landscape && (device.group==='mobile' || device.group==='tablet') ? {...portraitBezel,x:(portraitBezel.top+portraitBezel.bottom)/2,top:portraitBezel.x,bottom:portraitBezel.x} : portraitBezel;
   const profile=model?.profile??(device.id.startsWith('tv')?'tv':legacy?'classic':device.group);
-  const shellStyle = { '--device-side': `${b.x}px`, '--device-top': `${b.top}px`, '--device-bottom': `${b.bottom}px`,...(model?{'--device-radius':`${model.corners.body}px`,'--device-tablet-camera-x':`${(model.camera?.x??.5)*100}%`,'--device-tablet-camera-y':`${(1-(model.camera?.x??.5))*100}%`,'--device-tablet-camera-size':`${model.camera?.diameter??7}px`,'--device-home-size':`${model.homeDiameter??44}px`,'--screen-radius':`${model.corners.screen}px`,'--device-safe-top':`${landscape?0:model.safe.top}px`,'--device-safe-bottom':`${landscape?0:model.safe.bottom}px`,'--device-safe-left':`${landscape?model.safe.top:0}px`,'--device-safe-right':`${landscape?model.safe.bottom:0}px`,'--device-cutout-width':`${model.cutout?.width??model.width*.38}px`,'--device-cutout-height':`${model.cutout?.height??30}px`,'--device-cutout-inset':`${model.cutout?.inset??0}px`}:{}) } as CSSProperties;
+  const shellStyle = { '--device-side': `${b.x}px`, '--device-top': `${b.top}px`, '--device-bottom': `${b.bottom}px`,...(model?{'--device-radius':`${model.corners.body}px`,'--device-laptop-camera-x':`${(model.camera?.x??.5)*100}%`,'--device-laptop-camera-size':`${model.camera?.diameter??0}px`,'--device-base-height':`${b.base}px`,'--device-tablet-camera-x':`${(model.camera?.x??.5)*100}%`,'--device-tablet-camera-y':`${(1-(model.camera?.x??.5))*100}%`,'--device-tablet-camera-size':`${model.camera?.diameter??7}px`,'--device-home-size':`${model.homeDiameter??44}px`,'--screen-radius':`${model.corners.screen}px`,'--device-safe-top':`${landscape?0:model.safe.top}px`,'--device-safe-bottom':`${landscape?0:model.safe.bottom}px`,'--device-safe-left':`${landscape?model.safe.top:0}px`,'--device-safe-right':`${landscape?model.safe.bottom:0}px`,'--device-cutout-width':`${model.cutout?.width??model.width*.38}px`,'--device-cutout-height':`${model.cutout?.height??30}px`,'--device-cutout-inset':`${model.cutout?.inset??0}px`}:{}) } as CSSProperties;
   const frameW = width + 2 * b.x;
   const screenH = adaptive ? Math.max(height, contentH) : height;
   const frameH = screenH + b.top + b.bottom;
@@ -83,13 +83,13 @@ export function DeviceStage({ device, width, height, landscape, zoom, onScreen, 
   return (
     <div ref={stageRef} className={classes.stage} data-auto-height={autoHeight || undefined}>
       <p className={classes.readout}>
-        {label ? `${label} · ` : ''}{device.name} · {width} × {height} CSS px{landscape ? ' · yatay' : ''} · {model ? `${fmt(model.bodyMm.width,1)} × ${fmt(model.bodyMm.height,1)} mm` : tier.label} · ölçek %{fmt(Math.round(k * 100), 0)}
+        {label ? `${label} · ` : ''}{device.name} · {width} × {height} CSS px{landscape ? ' · yatay' : ''} · {model ? `${fmt(model.bodyMm.width,1)} × ${fmt(model.bodyMm.height,1)} mm${model.lid?' kasa tabanı':''}` : tier.label} · ölçek %{fmt(Math.round(k * 100), 0)}
       </p>
       <div className={classes.center}>
         <div className={classes.sizer} data-device-sizer style={{ width: totalW * k, height: totalH * k }}>
           <div className={classes.frame} style={{ transform: `translateX(${extraX * k}px) scale(${k})` }}>
-            <div className={classes.device} data-model={model?.id} data-landscape={landscape || undefined} data-kind={device.group} data-profile={profile} style={shellStyle}>
-              <span className={classes.sideKeys} aria-hidden="true"/><span className={classes.hardware} data-device-hardware aria-hidden="true"><span className={classes.camera}/><span className={classes.speaker}/></span>
+            <div className={classes.device} data-model={model?.id} data-finish={model?.finish} data-camera-edge={model?.lid?.cameraEdge} data-landscape={landscape || undefined} data-kind={device.group} data-profile={profile} style={shellStyle}>
+              <span className={classes.sideKeys} aria-hidden="true"/><span className={classes.hardware} data-camera-present={!model?.lid || !!model.camera || undefined} data-device-hardware aria-hidden="true"><span className={classes.camera}/><span className={classes.speaker}/></span>
               {model && (model.gesture || (device.group==='mobile' && model.profile!=='classic')) && <span className={classes.homeIndicator} aria-hidden="true" style={{bottom:b.bottom+8}}/>}
               <span className={classes.powerKey} aria-hidden="true"/>
               {legacy && <span className={classes.home} data-device-home aria-hidden="true" style={model?{bottom:(b.bottom-(model.homeDiameter??44))/2}:undefined}/>}
@@ -103,7 +103,7 @@ export function DeviceStage({ device, width, height, landscape, zoom, onScreen, 
               </div>
               <span className={classes.screenInset} data-screen-depth aria-hidden="true" style={{left:b.x,top:b.top,width,height:screenH}}/>
             </div>
-            {b.base > 0 && <div className={classes.base} data-kind={device.group} data-profile={profile} aria-hidden="true" />}
+            {b.base > 0 && <div className={classes.base} data-device-base data-finish={model?.finish} style={model?.lid?{'--device-base-height':`${b.base}px`} as CSSProperties:undefined} data-kind={device.group} data-profile={profile} aria-hidden="true" />}
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { PHONE_MODELS, TABLET_MODELS } from './hardware';
+import { PHONE_MODELS, TABLET_MODELS, LAPTOP_MODELS } from './hardware';
 import type { BgKey, CategoryId, ContextId, ContextSettings, Device, ProductId, Theme, TierId } from './types';
 
 /** GenUX kuralı (kullanıcı kararları 2026-10-18 ve 2026-10-19): okuma metni varsayılanı 16 (en az 16);
@@ -107,13 +107,7 @@ export const tierOf = (w: number): TierId => [...TIERS].reverse().find((t) => w 
 export const DEVICES: Device[] = [
   ...PHONE_MODELS.map(model=>({id:model.id,group:'mobile' as const,w:model.width,h:model.height,name:model.name})),
   ...TABLET_MODELS.map(model=>({id:model.id,group:'tablet' as const,w:model.width,h:model.height,name:model.name})),
-  { id: 'l960', group: 'laptop', w: 960, h: 540, name: 'Full HD dizüstü (%200)' },
-  { id: 't1024', group: 'laptop', w: 1024, h: 768, name: 'Netbook / iPad Pro 12,9" yatay' },
-  { id: 'l1280', group: 'laptop', w: 1280, h: 800, name: 'Dizüstü 1280 × 800 (%150)' },
-  { id: 'l1366', group: 'laptop', w: 1366, h: 768, name: 'HD dizüstü' },
-  { id: 'l1440', group: 'laptop', w: 1440, h: 900, name: 'MacBook Air 13"' },
-  { id: 'l1536', group: 'laptop', w: 1536, h: 864, name: 'Full HD dizüstü (%125)' },
-  { id: 'l1680', group: 'laptop', w: 1680, h: 1050, name: 'Dizüstü 1680 × 1050' },
+  ...LAPTOP_MODELS.map(model=>({id:model.id,group:'laptop' as const,w:model.width,h:model.height,name:model.name})),
   { id: 'l1920', group: 'desktop', w: 1920, h: 1080, name: 'Full HD monitör (%100)' },
   { id: 'd2560', group: 'desktop', w: 2560, h: 1440, name: 'QHD monitör' },
   { id: 'd3440', group: 'desktop', w: 3440, h: 1440, name: 'Ultra geniş monitör' },

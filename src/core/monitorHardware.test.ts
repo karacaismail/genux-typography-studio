@@ -116,5 +116,5 @@ it('integrates named monitor geometry using active panel millimetres and reserve
   }
   expect(hardwareModel('monitor2048')?.camera).toBeDefined();
   for (const id of ['l1920','d2560','monitor2560','d3440','monitor3440','d3840','monitor3840']) expect(hardwareModel(id)?.camera).toBeUndefined();
-  for (const width of [1920,2560,3440,3840]) expect(hardwareModel(`tv${width}`)).toBeUndefined();
+  for (const width of [1920,2560,3440,3840]) expect(hardwareModel(`tv${width}`)?.monitor).toBeUndefined();
 });

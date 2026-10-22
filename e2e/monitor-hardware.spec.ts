@@ -110,6 +110,8 @@ test('monitor integration preserves the projecting laptop deck and independent T
   const tv=page.getByRole('region',{name:'Ekran 1 · Seçili element',exact:true});
   await expect(tv.getByRole('region',{name:'Önizleme ekranı, 1920 piksel',exact:true})).toHaveCSS('height','1080px');
   const foot=tv.locator('[data-device-base]');
-  await expect(foot).toHaveCSS('height','32px');
-  expect(await foot.evaluate(el=>getComputedStyle(el).clipPath)).not.toBe('none');
+  await expect(foot).toHaveAttribute('data-tv-stand','mini-arc');
+  await expect(foot.locator('[data-tv-foot]')).toHaveCount(2);
+  expect(await foot.evaluate(el=>el.getBoundingClientRect().height)).toBeGreaterThan(0);
+  await expect(foot).toHaveCSS('clip-path','none');
 });

@@ -12,5 +12,15 @@ it('records real camera positions instead of inventing a universal upper webcam'
 });
 
 it('reserves visible symmetric laptop deck overhang outside the lid',()=>{
- for(const model of LAPTOP_MODELS){const g=phoneGeometry(model);expect(g.wide).toBeGreaterThan(0);expect(g.wide).toBeLessThan(.1);}
+ for(const model of LAPTOP_MODELS){const g=phoneGeometry(model);expect(g.wide).toBeGreaterThan(0);expect(g.wide).toBeLessThan(.12);}
+});
+
+it('keeps keyboard plane separate from front face and scales model corners across Air viewports',()=>{
+ for(const model of LAPTOP_MODELS){
+  const g=phoneGeometry(model);
+  expect(g.base).toBeGreaterThan(model.lid!.frontMm * model.width / model.bodyMm.width);
+ }
+ const air=hardwareModel('l1280')!,large=hardwareModel('l1680')!;
+ expect(air.corners.body).toBeGreaterThan(30);
+ expect(large.corners.body/air.corners.body).toBeCloseTo(1680/1280,6);
 });

@@ -1,3 +1,4 @@
+import { TV_PROFILES, tvHardware, tvActiveArea, type TvHardware } from './tvHardware';
 import { MONITOR_PROFILES, monitorHardware, type MonitorHardware } from './monitorHardware';
 
 /** Published physical dimensions; optical corner/cutout paths are front-view reconstructions.
@@ -6,12 +7,13 @@ export interface HardwareModel {
   id:string; name:string; width:number; height:number;
   bodyMm:{width:number;height:number;depth:number};
   panel:{width:number;height:number;ppi?:number;diagonal?:number};
-  profile:'classic'|'android'|'notch'|'island'|'tablet'|'laptop'|'monitor';
+  profile:'classic'|'android'|'notch'|'island'|'tablet'|'laptop'|'monitor'|'tv';
   camera?:{x:number;diameter:number}; gesture?:boolean;
   finish?:'aluminum'|'black'|'silver';
-  lid?:{bezelMm:{top:number;bottom:number};frontMm:number;cameraEdge?:'top'|'bottom'};
+  lid?:{bezelMm:{top:number;bottom:number};frontMm:number;deckMm:number;deckRatio:number;deckCornerMm:number;frontCornerMm:number;cameraEdge?:'top'|'bottom'};
   /** Published head/panel/stand metadata; optical details are front-view estimates. */
   monitor?:{hardware:MonitorHardware;topMm:number;footWidthMm:number;footHeightMm:number;neckWidthMm:number};
+  tv?:{hardware:TvHardware;topMm:number;footWidthMm:number;footHeightMm:number;neckWidthMm:number};
   homeDiameter?:number;
   cutout?:{width:number;height:number;inset?:number};
   corners:{body:number;screen:number}; safe:{top:number;bottom:number}; source:string;
@@ -37,13 +39,13 @@ export const TABLET_MODELS:HardwareModel[]=[
 /** Closed chassis footprint is manufacturer data; lid bezels/front lip are optical front-view estimates. */
 function laptop(id:string,name:string,width:number,height:number,kind:'xps'|'powerbook'|'thinkpad'|'air'):HardwareModel{
  const specs={
-  xps:{bodyMm:{width:304.16,height:200.25,depth:15.35},panel:{width:1920,height:1080,diagonal:13.3},bezelMm:{top:5,bottom:23},frontMm:3,edge:'bottom' as const,cameraX:.15,finish:'silver' as const,source:'https://dl.dell.com/topicspdf/xps-13-9360-laptop_setup-guide_en-us.pdf'},
-  powerbook:{bodyMm:{width:277,height:219,depth:30},panel:{width:1024,height:768,diagonal:12.1},bezelMm:{top:12,bottom:18},frontMm:5,edge:undefined,cameraX:.5,finish:'aluminum' as const,source:'https://store.apple.com/Catalog/US/images/portables_comparison_chart_con.html'},
-  thinkpad:{bodyMm:{width:336.6,height:232.5,depth:19.95},panel:{width:1366,height:768,diagonal:14},bezelMm:{top:13,bottom:24},frontMm:4,edge:'top' as const,cameraX:.5,finish:'black' as const,source:'https://psref.lenovo.com/syspool/Sys/PDF/ThinkPad/ThinkPad_T480/ThinkPad_T480_Spec.PDF'},
-  air:{bodyMm:{width:304.1,height:212.4,depth:16.1},panel:{width:2560,height:1600,diagonal:13.3},bezelMm:{top:11,bottom:17.5},frontMm:3,edge:'top' as const,cameraX:.5,finish:'aluminum' as const,source:'https://support.apple.com/en-us/111883'},
+  xps:{bodyMm:{width:304.16,height:200.25,depth:15.35},panel:{width:1920,height:1080,diagonal:13.3},bezelMm:{top:5,bottom:23},frontMm:6,deckMm:200.25*Math.sin(Math.PI/40),deckRatio:1.177,deckCornerMm:4,frontCornerMm:1.5,bodyRadiusMm:3,edge:'bottom' as const,cameraX:.15,finish:'silver' as const,source:'https://dl.dell.com/topicspdf/xps-13-9360-laptop_setup-guide_en-us.pdf'},
+  powerbook:{bodyMm:{width:277,height:219,depth:30},panel:{width:1024,height:768,diagonal:12.1},bezelMm:{top:12,bottom:18},frontMm:20,deckMm:219*Math.sin(Math.PI/40),deckRatio:1.197,deckCornerMm:7,frontCornerMm:2,bodyRadiusMm:5,edge:undefined,cameraX:.5,finish:'aluminum' as const,source:'https://store.apple.com/Catalog/US/images/portables_comparison_chart_con.html'},
+  thinkpad:{bodyMm:{width:336.6,height:232.5,depth:19.95},panel:{width:1366,height:768,diagonal:14},bezelMm:{top:13,bottom:24},frontMm:12,deckMm:232.5*Math.sin(Math.PI/40),deckRatio:1.212,deckCornerMm:2.5,frontCornerMm:1,bodyRadiusMm:3.5,edge:'top' as const,cameraX:.5,finish:'black' as const,source:'https://psref.lenovo.com/syspool/Sys/PDF/ThinkPad/ThinkPad_T480/ThinkPad_T480_Spec.PDF'},
+  air:{bodyMm:{width:304.1,height:212.4,depth:16.1},panel:{width:2560,height:1600,diagonal:13.3},bezelMm:{top:11,bottom:17.5},frontMm:3,deckMm:212.4*Math.sin(Math.PI/40),deckRatio:1.190,deckCornerMm:8,frontCornerMm:1,bodyRadiusMm:9.5,edge:'top' as const,cameraX:.5,finish:'aluminum' as const,source:'https://support.apple.com/en-us/111883'},
  }[kind];
  const screenWidth=specs.panel.diagonal*25.4*specs.panel.width/Math.hypot(specs.panel.width,specs.panel.height),scale=width/screenWidth;
- return {id,name,width,height,bodyMm:specs.bodyMm,panel:specs.panel,profile:'laptop',finish:specs.finish,lid:{bezelMm:specs.bezelMm,frontMm:specs.frontMm,cameraEdge:specs.edge},camera:specs.edge?{x:specs.cameraX,diameter:1.8*scale}:undefined,corners:{body:(kind==='thinkpad'?2:3.5)*scale,screen:(kind==='powerbook'?0:.8)*scale},safe:{top:0,bottom:0},source:specs.source};
+ return {id,name,width,height,bodyMm:specs.bodyMm,panel:specs.panel,profile:'laptop',finish:specs.finish,lid:{bezelMm:specs.bezelMm,frontMm:specs.frontMm,deckMm:specs.deckMm,deckRatio:specs.deckRatio,deckCornerMm:specs.deckCornerMm,frontCornerMm:specs.frontCornerMm,cameraEdge:specs.edge},camera:specs.edge?{x:specs.cameraX,diameter:1.8*scale}:undefined,corners:{body:specs.bodyRadiusMm*scale,screen:(kind==='powerbook'?0:.8)*scale},safe:{top:0,bottom:0},source:specs.source};
 }
 export const LAPTOP_MODELS:HardwareModel[]=[
  laptop('l960','Dell XPS 13 9360 · %200',960,540,'xps'),
@@ -72,13 +74,35 @@ export const MONITOR_MODELS:HardwareModel[]=MONITOR_PROFILES.map(profile=>{
   camera:profile.model==='dell-u3224kb'?{x:.5,diameter:12*scale}:undefined,
   corners:{body:optical.radiusMm*scale,screen:.5*scale},safe:{top:0,bottom:0},source:hardware.source.url};
 });
+/** Stand spans/body sizes are sourced; top-bezel splits, leg faces, corners and neck
+ * are optical estimates. Nominal diagonal-derived active area is explicitly approximate. */
+export const TV_MODELS:HardwareModel[]=TV_PROFILES.map(profile=>{
+ const hardware=tvHardware(profile.model)!;
+ const optical={
+  'sony-kd32w800':{topMm:14,footWidthMm:40,footHeightMm:7,neckWidthMm:0,radiusMm:4},
+  'samsung-ua32t5300':{topMm:14,footWidthMm:42,footHeightMm:6,neckWidthMm:0,radiusMm:3},
+  'lg-oled55c34la':{topMm:2.2,footWidthMm:470,footHeightMm:8,neckWidthMm:110,radiusMm:1.5},
+  'sony-xr55x90l':{topMm:6,footWidthMm:55,footHeightMm:6,neckWidthMm:0,radiusMm:2},
+ }[profile.model];
+ const scale=profile.width/tvActiveArea(hardware).width;
+ return {id:profile.id,name:`${hardware.name} · ${profile.width} mantıksal`,width:profile.width,height:profile.height,
+  bodyMm:{...hardware.bodyMm},panel:{width:hardware.panel.width,height:hardware.panel.height},profile:'tv',
+  tv:{hardware,topMm:optical.topMm,footWidthMm:optical.footWidthMm,footHeightMm:optical.footHeightMm,neckWidthMm:optical.neckWidthMm},
+  corners:{body:optical.radiusMm*scale,screen:.3*scale},safe:{top:0,bottom:0},source:hardware.source.url};
+});
+export const tvModel=(id:string)=>TV_MODELS.find(model=>model.id===id);
 export const monitorModel=(id:string)=>MONITOR_MODELS.find(model=>model.id===id);
 export const laptopModel=(id:string)=>LAPTOP_MODELS.find(model=>model.id===id);
 export const tabletModel=(id:string)=>TABLET_MODELS.find(model=>model.id===id);
-export const hardwareModel=(id:string):HardwareModel|undefined=>phoneModel(id)??tabletModel(id)??laptopModel(id)??monitorModel(id);
+export const hardwareModel=(id:string):HardwareModel|undefined=>phoneModel(id)??tabletModel(id)??laptopModel(id)??monitorModel(id)??tvModel(id);
 export const phoneModel=(id:string)=>PHONE_MODELS.find(model=>model.id===id);
 /** Physical body/screen ratio converted to CSS pixels; reported ppi/diagonal are rounded by vendors. */
 export function phoneGeometry(model:HardwareModel,width=model.width,height=model.height,landscape=false){
+  if(model.tv){
+    const source=model.tv.hardware,scale=width/tvActiveArea(source).width;
+    const bodyWidth=source.bodyMm.width*scale,bodyHeight=source.bodyMm.height*scale,top=model.tv.topMm*scale;
+    return {x:(bodyWidth-width)/2,top,bottom:bodyHeight-height-top,base:(source.withStandMm.height-source.bodyMm.height)*scale,wide:0,bodyWidth,bodyHeight};
+  }
   if(model.monitor){
     const source=model.monitor.hardware,scale=width/source.panel.activeMm.width;
     const bodyWidth=source.headMm.width*scale,bodyHeight=source.headMm.height*scale;
@@ -90,7 +114,7 @@ export function phoneGeometry(model:HardwareModel,width=model.width,height=model
   const bodyWidth=(landscape?model.bodyMm.height:model.bodyMm.width)*scale;
   if(model.lid){
     const x=Math.max(0,(bodyWidth-width)/2),top=model.lid.bezelMm.top*scale,bottom=model.lid.bezelMm.bottom*scale;
-    return {x,top,bottom,base:model.lid.frontMm*scale,wide:.045,bodyWidth,bodyHeight:height+top+bottom};
+    return {x,top,bottom,base:(model.lid.deckMm+model.lid.frontMm)*scale,wide:(model.lid.deckRatio-1)/2,bodyWidth,bodyHeight:height+top+bottom};
   }
   const bodyHeight=(landscape?model.bodyMm.width:model.bodyMm.height)*scale;
   return {x:Math.max(0,(bodyWidth-width)/2),top:Math.max(0,(bodyHeight-height)/2),bottom:Math.max(0,(bodyHeight-height)/2),base:0,wide:0,bodyWidth,bodyHeight};

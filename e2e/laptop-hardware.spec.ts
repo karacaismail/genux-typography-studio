@@ -75,7 +75,12 @@ async function laptopHardware(body: Locator, model: Laptop) {
   expect(Math.abs((metrics.body.x - metrics.base.x) - (metrics.base.right - metrics.body.right))).toBeLessThan(.05);
   expect(metrics.base.y).toBeCloseTo(metrics.body.bottom, 2);
   expect(metrics.base.height).toBeGreaterThan(0);
-  expect(metrics.base.height).toBeLessThan(metrics.body.height - metrics.screen.height);
+  const deck = base.locator('[data-laptop-deck]'), front = base.locator('[data-laptop-front]');
+  await expect(deck).toBeVisible(); await expect(front).toBeVisible();
+  const surfaces=await body.evaluate(el=>{const base=el.nextElementSibling!,a=base.querySelector('[data-laptop-deck]')!.getBoundingClientRect(),b=base.querySelector('[data-laptop-front]')!.getBoundingClientRect();return{deck:a.height,front:b.height,gap:b.y-a.bottom};});
+  expect(surfaces.deck).toBeGreaterThan(0);expect(surfaces.front).toBeGreaterThan(0);
+  expect(Math.abs(surfaces.gap)).toBeLessThan(.05);
+  expect(surfaces.deck+surfaces.front).toBeCloseTo(metrics.base.height,1);
   for (const key of ['x', 'y', 'width', 'height'] as const) expect(metrics.depth[key]).toBeCloseTo(metrics.screen[key], 3);
   if (model.camera === 'none') expect(metrics.camera).toBeNull();
   else {

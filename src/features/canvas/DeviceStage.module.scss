@@ -280,3 +280,59 @@
   border-radius:var(--mantine-radius-xs); background:linear-gradient(180deg,var(--device-edge),var(--device-shell));
   box-shadow:inset 0 1px var(--device-edge),0 3px 6px var(--device-shell);
 }
+
+// Real TV front-view reconstruction. All estimates stay in the TV namespace.
+.device[data-tv-model] {
+  --device-finish:linear-gradient(110deg,var(--device-shell),var(--device-lens));
+  --device-glass:linear-gradient(130deg,var(--device-shell),var(--device-lens));
+  --device-tv-edge:inset 0 0 0 1px var(--device-edge),inset 0 -3px var(--device-shell);
+  --device-body-shadow:0 6px 12px -8px var(--device-shell),inset 0 0 0 1px var(--device-edge);
+}
+.device[data-tv-model]::after { box-shadow:var(--device-tv-edge),var(--device-edge-light); }
+.device[data-tv-model='sony-kd32w800'] { --device-tv-edge:inset 0 0 0 2px var(--device-shell),inset 0 -5px var(--device-edge); }
+.device[data-tv-model='samsung-ua32t5300'] { --device-tv-edge:inset 0 0 0 2px var(--device-shell),inset 0 -4px var(--device-edge); }
+.device[data-tv-model='lg-oled55c34la'] { --device-tv-edge:inset 0 0 0 1px var(--device-edge); }
+.device[data-tv-model='sony-xr55x90l'] { --device-tv-edge:inset 0 0 0 1px var(--device-edge),inset 0 -3px var(--device-shell); }
+.base[data-tv-stand] {
+  left:calc((100% - var(--device-tv-stand-width)) / 2); transform:none;
+  width:var(--device-tv-stand-width); height:var(--device-base-height);
+  clip-path:none; background:none; box-shadow:none; border-radius:0; pointer-events:none;
+}
+.tvFoot,.tvNeck { position:absolute; background:linear-gradient(110deg,var(--device-edge),var(--device-shell) 24%,var(--device-shell) 76%,var(--device-edge)); }
+.tvFoot[data-tv-foot='left'],.tvFoot[data-tv-foot='right'] {
+  top:0; bottom:0; width:var(--device-tv-leg-width);
+  clip-path:polygon(60% 0,80% 0,100% 100%,0 100%,0 88%);
+}
+.tvFoot[data-tv-foot='left'] { left:0; }
+.tvFoot[data-tv-foot='right'] { right:0; clip-path:polygon(40% 0,20% 0,0 100%,100% 100%,100% 88%); }
+.base[data-tv-stand='mini-arc'] .tvFoot { clip-path:polygon(68% 0,84% 0,100% 100%,0 100%,12% 80%); border-radius:0 0 35% 35%; }
+.base[data-tv-stand='mini-arc'] .tvFoot[data-tv-foot='right'] { clip-path:polygon(32% 0,16% 0,0 100%,100% 100%,88% 80%); }
+.tvNeck { top:0; bottom:var(--device-tv-foot-height); width:var(--device-tv-neck-width); left:calc(50% - var(--device-tv-neck-width) / 2); }
+.tvFoot[data-tv-foot='pedestal'] {
+  left:0; right:0; bottom:0; height:var(--device-tv-foot-height);
+  clip-path:polygon(5% 0,95% 0,100% 100%,0 100%);
+  background:linear-gradient(180deg,var(--device-edge),var(--device-shell));
+  box-shadow:inset 0 1px var(--device-edge);
+}
+
+// Laptop presentation: a projected keyboard plane and the thin front wall are separate surfaces.
+// Their dimensions/radii share the model's CSS-to-mm scale; no fixed 20px corner survives.
+.device[data-kind='laptop'][data-model] + .base { background:none; border-radius:0; box-shadow:none; }
+.device[data-kind='laptop'][data-model] + .base::before,
+.device[data-kind='laptop'][data-model] + .base::after { content:none; }
+.laptopDeck {
+  position:absolute; inset:0 0 auto; height:var(--device-deck-height);
+  border-radius:0 0 var(--device-deck-corner) var(--device-deck-corner);
+  clip-path:polygon(var(--device-base-overhang) 0,calc(100% - var(--device-base-overhang)) 0,100% 100%,0 100%);
+  background:linear-gradient(180deg,#555b61,#c3c7cb 8%,#a1a7ad 85%,#d3d6d9);
+  box-shadow:inset 0 -1px #eef1f3aa;
+}
+.laptopDeck::before { content:''; position:absolute; left:14%; right:14%; top:9%; height:44%; border-radius:2px;
+  background:repeating-linear-gradient(90deg,transparent 0 5.5%,#aeb3b8 5.5% 6%),repeating-linear-gradient(180deg,#24272b 0 18%,#aeb3b8 18% 23%); }
+.laptopDeck::after { content:''; position:absolute; width:29%; height:28%; left:35.5%; bottom:9%; border-radius:2px; background:#a0a6ac; box-shadow:inset 0 0 0 1px #767e8655; }
+.laptopFront { position:absolute; left:0; right:0; bottom:0; height:var(--device-front-height);
+  border-radius:0 0 var(--device-front-corner) var(--device-front-corner);
+  background:var(--device-laptop-metal); box-shadow:inset 0 1px #f1f3f5aa,inset 0 -1px #353a4099,0 3px 5px #0005; }
+.laptopFront::after { content:''; position:absolute; top:0; left:44%; width:12%; height:25%; border-radius:0 0 40% 40%; background:linear-gradient(180deg,#303338,#777c82); }
+.base[data-finish='black'] .laptopDeck { background:linear-gradient(180deg,#111315,#34383c 12%,#24272b); }
+.base[data-finish='black'] .laptopDeck::after { background:#272b2f; }

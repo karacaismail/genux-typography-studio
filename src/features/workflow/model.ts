@@ -1,4 +1,4 @@
-import { MONITOR_MODELS } from '../../core/hardware';
+import { MONITOR_MODELS, TV_MODELS } from '../../core/hardware';
 import { accessibilityChecks, headingRatioCheck, parsePolicies, resolvePolicy, type PolicyOverrides } from './policy';
 import { ENGINE_VERSION, dependencyToken, matchesDependency, parseEngine, type EngineState } from './engineState';
 import { CATEGORIES, DEFAULT_RATIO, CONTEXTS, DEVICES, contrastInfo, resolveAt, rolesOf, applyOverrideAt, enforceRole, PROPS, sizeAt, type ContextId, type Decisions, type Device, type RoleOverrides } from '../../core';
@@ -45,9 +45,7 @@ export const WORKFLOW_DEVICES: {
 }[] = [
     ...DEVICES.filter((d) => d.w < 2560).map((device) => ({ device, family: familyOf(device) })),
     ...MONITOR_MODELS.filter(model=>model.id.startsWith('monitor')).map(model=>({family:'desktop' as const,device:{id:model.id,name:model.name,group:'desktop' as const,w:model.width,h:model.height}})),
-    ...[1280, 1920, 2560, 3440, 3840].map((w) => ({ family: 'tv' as const, device: {
-            id: `tv${w}`, name: `TV · ${w} px mantıksal görünüm`, group: 'desktop' as const, w, h: Math.round(w * 9 / 16)
-        } })),
+    ...TV_MODELS.map(model=>({family:'tv' as const,device:{id:model.id,name:model.name,group:'desktop' as const,w:model.width,h:model.height}})),
 ];
 export function makeSteps(): FlowStep[] {
     return CONTEXTS.flatMap(({ id: ctx }) => WORKFLOW_DEVICES.flatMap(({ device, family }) => {

@@ -123,3 +123,23 @@
 .device[data-model='m375'][data-landscape] .sideKeys::before { top:0; left:-70%; width:40%; height:100%; }
 .device[data-model='m375'][data-landscape] .sideKeys::after { top:0; left:125%; width:100%; height:100%; }
 .device[data-model='m375'][data-landscape] .powerKey { right:auto; left:28%; top:-2px; width:60px; height:3px; }
+
+// iPhone 12: optical reconstruction of the broad original TrueDepth notch.
+.device[data-model='m390'] {
+  --device-twelve-notch-radius:20px;
+  --device-twelve-earpiece-width:64px;
+  --device-twelve-earpiece-height:5px;
+  --device-twelve-camera-size:10px;
+  --device-twelve-rim:inset 0 0 0 1px #87939b,inset 0 0 0 3px #343e45,inset 0 0 0 5px #11171b;
+}
+.device[data-model='m390']::after { box-shadow:var(--device-twelve-rim),var(--device-edge-light); }
+.device[data-model='m390'] .hardware { height:var(--device-cutout-height); border-radius:0 0 var(--device-twelve-notch-radius) var(--device-twelve-notch-radius); }
+.device[data-model='m390'] .speaker { left:calc(50% - var(--device-twelve-earpiece-width) / 2); width:var(--device-twelve-earpiece-width); height:var(--device-twelve-earpiece-height); }
+.device[data-model='m390'] .camera { left:auto; right:25px; width:var(--device-twelve-camera-size); height:var(--device-twelve-camera-size); }
+.device[data-model='m390'] .sideKeys { height:28px; }
+.device[data-model='m390'] .powerKey { height:60px; }
+.device[data-model='m390'][data-landscape] .hardware { left:calc(var(--device-side) + var(--device-cutout-height) / 2); height:var(--device-cutout-height); }
+.device[data-model='m390'][data-landscape] .sideKeys { left:22%; top:auto; bottom:-2px; width:28px; height:3px; }
+.device[data-model='m390'][data-landscape] .sideKeys::before { top:0; left:-70%; width:40%; height:100%; }
+.device[data-model='m390'][data-landscape] .sideKeys::after { top:0; left:125%; width:100%; height:100%; }
+.device[data-model='m390'][data-landscape] .powerKey { right:auto; left:28%; top:-2px; width:60px; height:3px; }

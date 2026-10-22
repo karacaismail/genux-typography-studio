@@ -26,3 +26,9 @@ it('gives iPhone 13 mini its own wider notch and concentric rounded glass',()=>{
  expect(mini.corners.body).toBe(70);expect(mini.corners.screen).toBe(52);
  expect(mini.safe.top).toBeGreaterThan(mini.cutout!.height);
 });
+it('keeps iPhone 12 distinct from mini with its broad original notch',()=>{
+ const phone=PHONE_MODELS.find(m=>m.id==='m390')!;
+ expect(phone.cutout).toEqual({width:210,height:32});
+ expect(phone.corners).toEqual({body:64,screen:47});
+ expect(phone.safe.top).toBeGreaterThan(phone.cutout!.height);
+});

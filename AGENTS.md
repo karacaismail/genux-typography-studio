@@ -154,3 +154,7 @@ Workflow sürümlü, deterministik ECA kuralları kullanır; keyfî eval veya ML
 ### iPhone 13 mini ön yüz geometrisi (22 Ekim 2026)
 
 `m375` Apple'ın 64,2 × 131,5 mm gövde oranını ve mevcut 375 × 812 mantıksal ekranını korur. Kullanıcının fotoğraflarından optik olarak yeniden kurulan gövde/ekran köşeleri 70/52 CSS px; çentik 178 × 38 CSS px'tir. Bunlar üretici CAD ölçüsü değildir. Ahize çentik içinde değil üst kenardadır; kamera çentik içindedir. Mini'ye özgü metal kenar ve yan tuşlar diğer telefon stillerini değiştirmez. Yatayda çentik ekran kenarına bağlı ve aynı derinlikte kalmalı; içerik güvenli alanı donanımla kesişmemelidir. İlgili hardware birim ve workflow tarayıcı regresyonlarını koru.
+
+### iPhone 12 ön yüz geometrisi (22 Ekim 2026)
+
+`m390` Apple'ın 71,5 × 146,7 × 7,4 mm gövde ölçülerini ve 390 × 844 mantıksal ekranını korur. Resmi ön görünüşten optik olarak yeniden kurulan gövde/ekran köşeleri 64/47 CSS px, geniş/sığ çentik 210 × 32 CSS px'tir; üretici CAD ölçüsü değildir. Ahize mini'den farklı olarak çentik içinde ortalanır; kamera sağdadır. Modelin metal kenarı ve yan tuşları yalnız m390'a uygulanır. Yatayda çentik aynı derinlikle ekran kenarına bağlanır ve güvenli içerik alanına girmez. `hardware.test.ts` ve iPhone 12 workflow geometri regresyonu bu sözleşmeyi korur.

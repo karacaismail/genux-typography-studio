@@ -42,3 +42,8 @@ it('models Pro Max Dynamic Island as a detached capsule within its safe area',()
  expect(phone.cutout).toEqual({width:126,height:37,inset:11});expect(phone.corners).toEqual({body:72,screen:55});
  expect(phone.cutout!.inset!+phone.cutout!.height).toBeLessThan(phone.safe.top);
 });
+it('gives Galaxy S20 a centered circular punch-hole and its own curved-glass corners',()=>{
+ const phone=PHONE_MODELS.find(m=>m.id==='m360')!;
+ expect(phone.cutout).toEqual({width:12,height:12,inset:9});expect(phone.corners).toEqual({body:40,screen:30});
+ expect(phone.cutout!.height+phone.cutout!.inset!).toBeLessThan(phone.safe.top);
+});

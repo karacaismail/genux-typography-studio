@@ -749,3 +749,15 @@ test('Pro Max Dynamic Island stays detached, pill-shaped and clear of live conte
   else{expect(m.island.width).toBeCloseTo(37);expect(m.island.height).toBeCloseTo(126);expect(m.island.left-m.screen.left).toBeCloseTo(11);expect(m.content.left).toBeGreaterThan(m.island.right);}
  }
 });
+
+test('Galaxy S20 has a centered circular punch-hole with safe content in both orientations',async({page})=>{
+ await page.goto('/?workspace=workflow&ctx=html&device=m360&role=h1');
+ const body=page.locator('[data-model=m360]').first();await expect(body).toHaveCSS('border-radius','40px');
+ for(const name of ['Dikey','Yatay']){
+  await page.getByRole('radiogroup',{name:'Önizleme yönü',exact:true}).getByText(name,{exact:true}).click();
+  const m=await body.evaluate(el=>{const h=el.querySelector('[data-device-hardware]')!,content=el.querySelector('[aria-label^="Kaydırılabilir ekran içeriği"]')!,screen=el.querySelector('[data-screen-depth]')!;return {hole:h.getBoundingClientRect().toJSON(),radius:getComputedStyle(h).borderRadius,content:content.getBoundingClientRect().toJSON(),screen:screen.getBoundingClientRect().toJSON()};});
+  expect(m.hole.width).toBeCloseTo(12);expect(m.hole.height).toBeCloseTo(12);expect(m.radius).toBe('50%');
+  if(name==='Dikey'){expect(m.hole.top-m.screen.top).toBeCloseTo(9);expect(m.hole.left+m.hole.width/2).toBeCloseTo(m.screen.left+m.screen.width/2);expect(m.content.top).toBeGreaterThan(m.hole.bottom);}
+  else{expect(m.hole.left-m.screen.left).toBeCloseTo(9);expect(m.hole.top+m.hole.height/2).toBeCloseTo(m.screen.top+m.screen.height/2);expect(m.content.left).toBeGreaterThan(m.hole.right);}
+ }
+});

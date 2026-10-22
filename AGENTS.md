@@ -166,3 +166,7 @@ Workflow sürümlü, deterministik ECA kuralları kullanır; keyfî eval veya ML
 ### iPhone 15 Pro Max ön yüz geometrisi (22 Ekim 2026)
 
 `m430` Apple'ın 76,7 × 159,9 × 8,25 mm gövde ölçülerini ve 430 × 932 mantıksal ekranını korur. Optik rekonstrüksiyonda gövde/ekran köşeleri 72/55 CSS px, Dynamic Island kapsülü 126 × 37 CSS px ve ekran kenarından boşluğu 11 CSS px'tir; üretici CAD ölçüsü değildir. Ada çentik gibi kenara bağlanmaz; yatayda da 11 px ayrım korunur. Doğal titanyum kenar ışıkları ve Action düğmesi yalnız m430'a uygulanır. Güvenli içerik alanı kapsülün dışında kalır. Yeni `cutout.inset` isteğe bağlıdır; çentikli modellerin varsayılanı sıfırdır. Hardware ve workflow geometri regresyonları korunmalıdır.
+
+### Galaxy S20 ön yüz geometrisi (22 Ekim 2026)
+
+`m360` Samsung'un 69,1 × 151,7 × 7,9 mm gövde ölçülerini ve 360 × 800 mantıksal ekranını korur. Optik rekonstrüksiyon gövde/ekran köşeleri 40/30 CSS px, ortadaki dairesel kamera deliği 12 × 12 CSS px ve ekran kenarından boşluğu 9 CSS px'tir; üretici CAD ölçüsü değildir. Kavisli cam kenar ışıkları yalnız m360'a uygulanır. Ses ve güç tuşları sağ kenardadır; iPhone tarzı sol tuşlar yoktur. Yatayda kamera kısa kenarın ortasına ve sağ tuşlar üst kenara döner; güvenli içerik kamera deliğinin dışında kalır. Hardware ve workflow geometri regresyonları korunmalıdır.

@@ -238,3 +238,45 @@
 
 .device[data-kind='laptop'][data-model] + .base::before { content:''; position:absolute; inset:1px 3% auto; height:1px; background:linear-gradient(90deg,transparent,#fff8 20%,#fff3 80%,transparent); }
 .device[data-kind='laptop'][data-model] + .base::after { height:25%; width:12%; left:44%; border-radius:0 0 40% 40%; background:linear-gradient(180deg,#303338,#777c82); }
+
+// Monitor tokens are scoped to named monitor profiles; laptop decks and TV feet stay separate.
+.device[data-profile='monitor'] {
+  --device-finish:linear-gradient(110deg,var(--device-shell),var(--device-lens));
+  --device-glass:linear-gradient(120deg,var(--device-shell),var(--device-lens));
+  --device-body-shadow:0 8px 18px -10px var(--device-shell),inset 0 0 0 1px var(--device-edge);
+  --device-monitor-rim:inset 0 0 0 1px var(--device-shell),inset 0 -3px var(--device-edge);
+}
+.device[data-profile='monitor']::after { box-shadow:var(--device-monitor-rim),var(--device-edge-light); }
+.device[data-monitor-model='dell-u2724d'] { --device-monitor-rim:inset 0 0 0 2px var(--device-shell),inset 0 -4px var(--device-edge); }
+.device[data-monitor-model='dell-u2723qe'] { --device-monitor-rim:inset 0 0 0 1px var(--device-edge),inset 0 -5px var(--device-shell); }
+.device[data-monitor-model='dell-u3425we'] {
+  --device-glass:linear-gradient(90deg,var(--device-lens),var(--device-shell) 12%,var(--device-shell) 88%,var(--device-lens));
+  --device-monitor-rim:inset 8px 0 10px -9px var(--device-edge),inset -8px 0 10px -9px var(--device-edge),inset 0 -4px var(--device-shell);
+}
+.device[data-monitor-model='dell-u3224kb'] { --device-monitor-rim:inset 0 0 0 2px var(--device-edge),inset 0 -6px var(--device-shell); }
+.device[data-profile='monitor'] .hardware { top:0; left:0; width:100%; height:var(--device-top); transform:none; }
+.device[data-profile='monitor'] .hardware:not([data-camera-present]),.device[data-profile='monitor'] .speaker { display:none; }
+.device[data-profile='monitor'] .camera {
+  left:calc(50% - var(--device-monitor-camera-size) / 2); top:50%;
+  width:var(--device-monitor-camera-size); height:var(--device-monitor-camera-size);
+}
+.device[data-monitor-model='dell-u3224kb'] .camera::before {
+  content:''; position:absolute; inset:-50%; border-radius:50%; z-index:-1;
+  background:var(--device-lens); box-shadow:inset 0 0 0 2px var(--device-edge),var(--device-home-ring);
+}
+.base[data-profile='monitor'] {
+  left:calc((100% - var(--device-monitor-foot-width)) / 2); transform:none;
+  width:var(--device-monitor-foot-width); height:var(--device-base-height);
+  clip-path:none; background:none; box-shadow:none; border-radius:0;
+}
+.base[data-profile='monitor']::before {
+  content:''; position:absolute; top:0; bottom:var(--device-monitor-foot-height);
+  left:calc(50% - var(--device-monitor-neck-width) / 2); width:var(--device-monitor-neck-width);
+  background:linear-gradient(90deg,var(--device-edge),var(--device-shell) 18%,var(--device-edge) 90%);
+  box-shadow:var(--device-edge-light);
+}
+.base[data-profile='monitor']::after {
+  content:''; position:absolute; left:0; right:0; bottom:0; height:var(--device-monitor-foot-height);
+  border-radius:var(--mantine-radius-xs); background:linear-gradient(180deg,var(--device-edge),var(--device-shell));
+  box-shadow:inset 0 1px var(--device-edge),0 3px 6px var(--device-shell);
+}

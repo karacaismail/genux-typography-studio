@@ -1,13 +1,17 @@
+import { MONITOR_PROFILES, monitorHardware, type MonitorHardware } from './monitorHardware';
+
 /** Published physical dimensions; optical corner/cutout paths are front-view reconstructions.
  * CSS viewports are logical screen rectangles, not physical pixels or calibrated monitor millimetres. */
 export interface HardwareModel {
   id:string; name:string; width:number; height:number;
   bodyMm:{width:number;height:number;depth:number};
   panel:{width:number;height:number;ppi?:number;diagonal?:number};
-  profile:'classic'|'android'|'notch'|'island'|'tablet'|'laptop';
+  profile:'classic'|'android'|'notch'|'island'|'tablet'|'laptop'|'monitor';
   camera?:{x:number;diameter:number}; gesture?:boolean;
   finish?:'aluminum'|'black'|'silver';
   lid?:{bezelMm:{top:number;bottom:number};frontMm:number;cameraEdge?:'top'|'bottom'};
+  /** Published head/panel/stand metadata; optical details are front-view estimates. */
+  monitor?:{hardware:MonitorHardware;topMm:number;footWidthMm:number;footHeightMm:number;neckWidthMm:number};
   homeDiameter?:number;
   cutout?:{width:number;height:number;inset?:number};
   corners:{body:number;screen:number}; safe:{top:number;bottom:number}; source:string;
@@ -50,12 +54,37 @@ export const LAPTOP_MODELS:HardwareModel[]=[
  laptop('l1536','Dell XPS 13 9360 · %125',1536,864,'xps'),
  laptop('l1680','MacBook Air M1 · geniş alan',1680,1050,'air'),
 ];
+/** Optical bezel splits, corner radii, neck/foot faces and webcam lens are reconstructed,
+ * not manufacturer CAD. Whole-product maximum stand height remains source data. */
+export const MONITOR_MODELS:HardwareModel[]=MONITOR_PROFILES.map(profile=>{
+ const hardware=monitorHardware(profile.model)!;
+ const optical={
+  'dell-u2424h':{topMm:5.8,footWidthMm:249.8,footHeightMm:5,neckWidthMm:38,radiusMm:2.2},
+  'dell-u2724d':{topMm:7.75,footWidthMm:272.8,footHeightMm:5,neckWidthMm:40,radiusMm:2.8},
+  'dell-u3425we':{topMm:7,footWidthMm:363,footHeightMm:6,neckWidthMm:46,radiusMm:3.5},
+  'dell-u2723qe':{topMm:7.35,footWidthMm:268,footHeightMm:5,neckWidthMm:40,radiusMm:2.5},
+  'dell-u3224kb':{topMm:71.68,footWidthMm:316,footHeightMm:6,neckWidthMm:48,radiusMm:4},
+ }[profile.model];
+ const scale=profile.width/hardware.panel.activeMm.width;
+ return {id:profile.id,name:hardware.name+(profile.mapping.kind==='illustrative-scale'?' · 2048 mantıksal':''),width:profile.width,height:profile.height,
+  bodyMm:{...hardware.headMm},panel:{width:hardware.panel.width,height:hardware.panel.height},profile:'monitor',finish:'silver',
+  monitor:{hardware,topMm:optical.topMm,footWidthMm:optical.footWidthMm,footHeightMm:optical.footHeightMm,neckWidthMm:optical.neckWidthMm},
+  camera:profile.model==='dell-u3224kb'?{x:.5,diameter:12*scale}:undefined,
+  corners:{body:optical.radiusMm*scale,screen:.5*scale},safe:{top:0,bottom:0},source:hardware.source.url};
+});
+export const monitorModel=(id:string)=>MONITOR_MODELS.find(model=>model.id===id);
 export const laptopModel=(id:string)=>LAPTOP_MODELS.find(model=>model.id===id);
 export const tabletModel=(id:string)=>TABLET_MODELS.find(model=>model.id===id);
-export const hardwareModel=(id:string):HardwareModel|undefined=>phoneModel(id)??tabletModel(id)??laptopModel(id);
+export const hardwareModel=(id:string):HardwareModel|undefined=>phoneModel(id)??tabletModel(id)??laptopModel(id)??monitorModel(id);
 export const phoneModel=(id:string)=>PHONE_MODELS.find(model=>model.id===id);
 /** Physical body/screen ratio converted to CSS pixels; reported ppi/diagonal are rounded by vendors. */
 export function phoneGeometry(model:HardwareModel,width=model.width,height=model.height,landscape=false){
+  if(model.monitor){
+    const source=model.monitor.hardware,scale=width/source.panel.activeMm.width;
+    const bodyWidth=source.headMm.width*scale,bodyHeight=source.headMm.height*scale;
+    const top=model.monitor.topMm*scale;
+    return {x:(bodyWidth-width)/2,top,bottom:bodyHeight-height-top,base:(source.withStandMm.maxHeight-source.headMm.height)*scale,wide:0,bodyWidth,bodyHeight};
+  }
   const physicalScreenWidth=model.panel.ppi?model.panel.width/model.panel.ppi*25.4:model.panel.diagonal!*25.4*model.panel.width/Math.hypot(model.panel.width,model.panel.height);
   const scale=(landscape?height:width)/physicalScreenWidth;
   const bodyWidth=(landscape?model.bodyMm.height:model.bodyMm.width)*scale;

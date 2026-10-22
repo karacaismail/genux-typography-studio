@@ -1,3 +1,4 @@
+import { MONITOR_MODELS } from '../../core/hardware';
 import { accessibilityChecks, headingRatioCheck, parsePolicies, resolvePolicy, type PolicyOverrides } from './policy';
 import { ENGINE_VERSION, dependencyToken, matchesDependency, parseEngine, type EngineState } from './engineState';
 import { CATEGORIES, DEFAULT_RATIO, CONTEXTS, DEVICES, contrastInfo, resolveAt, rolesOf, applyOverrideAt, enforceRole, PROPS, sizeAt, type ContextId, type Decisions, type Device, type RoleOverrides } from '../../core';
@@ -43,9 +44,7 @@ export const WORKFLOW_DEVICES: {
     family: Family;
 }[] = [
     ...DEVICES.filter((d) => d.w < 2560).map((device) => ({ device, family: familyOf(device) })),
-    ...[2048, 2560, 3440, 3840].map((w) => ({ family: 'desktop' as const, device: {
-            id: `monitor${w}`, name: `Monitör ${w} px`, group: 'desktop' as const, w, h: Math.round(w * 9 / 16)
-        } })),
+    ...MONITOR_MODELS.filter(model=>model.id.startsWith('monitor')).map(model=>({family:'desktop' as const,device:{id:model.id,name:model.name,group:'desktop' as const,w:model.width,h:model.height}})),
     ...[1280, 1920, 2560, 3440, 3840].map((w) => ({ family: 'tv' as const, device: {
             id: `tv${w}`, name: `TV · ${w} px mantıksal görünüm`, group: 'desktop' as const, w, h: Math.round(w * 9 / 16)
         } })),

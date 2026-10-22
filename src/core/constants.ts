@@ -1,4 +1,4 @@
-import { PHONE_MODELS, TABLET_MODELS, LAPTOP_MODELS } from './hardware';
+import { PHONE_MODELS, TABLET_MODELS, LAPTOP_MODELS, MONITOR_MODELS } from './hardware';
 import type { BgKey, CategoryId, ContextId, ContextSettings, Device, ProductId, Theme, TierId } from './types';
 
 /** GenUX kuralı (kullanıcı kararları 2026-10-18 ve 2026-10-19): okuma metni varsayılanı 16 (en az 16);
@@ -108,10 +108,7 @@ export const DEVICES: Device[] = [
   ...PHONE_MODELS.map(model=>({id:model.id,group:'mobile' as const,w:model.width,h:model.height,name:model.name})),
   ...TABLET_MODELS.map(model=>({id:model.id,group:'tablet' as const,w:model.width,h:model.height,name:model.name})),
   ...LAPTOP_MODELS.map(model=>({id:model.id,group:'laptop' as const,w:model.width,h:model.height,name:model.name})),
-  { id: 'l1920', group: 'desktop', w: 1920, h: 1080, name: 'Full HD monitör (%100)' },
-  { id: 'd2560', group: 'desktop', w: 2560, h: 1440, name: 'QHD monitör' },
-  { id: 'd3440', group: 'desktop', w: 3440, h: 1440, name: 'Ultra geniş monitör' },
-  { id: 'd3840', group: 'desktop', w: 3840, h: 2160, name: '4K monitör' },
+  ...MONITOR_MODELS.filter(model=>!model.id.startsWith('monitor')).map(model=>({id:model.id,group:'desktop' as const,w:model.width,h:model.height,name:model.name})),
 ];
 /** Grup seçilince açılan cihaz: grubun ilk kırılımı (mobil öncelik). */
 export const GROUP_FIRST: Record<TierId, string> = { mobile: 'm320', tablet: 't600', laptop: 'l960', desktop: 'l1920' };

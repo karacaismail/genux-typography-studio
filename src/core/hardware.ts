@@ -15,7 +15,7 @@ export const PHONE_MODELS:PhoneModel[]=[
   {id:'m360',name:'Galaxy S20',width:360,height:800,bodyMm:{width:69.1,height:151.7,depth:7.9},panel:{width:1440,height:3200,diagonal:6.2},profile:'android',corners:{body:32,screen:25},safe:{top:32,bottom:20},source:'https://www.samsungmobilepress.com/media-assets/galaxy_s20?tab=specs'},
   {id:'m375',name:'iPhone 13 mini',width:375,height:812,bodyMm:{width:64.2,height:131.5,depth:7.65},panel:{width:1080,height:2340,ppi:476},profile:'notch',cutout:{width:178,height:38},corners:{body:70,screen:52},safe:{top:50,bottom:34},source:'https://support.apple.com/en-us/111873'},
   {id:'m390',name:'iPhone 12',width:390,height:844,bodyMm:{width:71.5,height:146.7,depth:7.4},panel:{width:1170,height:2532,ppi:460},profile:'notch',cutout:{width:210,height:32},corners:{body:64,screen:47},safe:{top:47,bottom:34},source:'https://support.apple.com/en-us/111876'},
-  {id:'m414',name:'iPhone 11',width:414,height:896,bodyMm:{width:75.7,height:150.9,depth:8.3},panel:{width:828,height:1792,ppi:326},profile:'notch',corners:{body:65,screen:43},safe:{top:48,bottom:34},source:'https://support.apple.com/en-us/111865'},
+  {id:'m414',name:'iPhone 11',width:414,height:896,bodyMm:{width:75.7,height:150.9,depth:8.3},panel:{width:828,height:1792,ppi:326},profile:'notch',cutout:{width:210,height:34},corners:{body:76,screen:46},safe:{top:48,bottom:34},source:'https://support.apple.com/en-us/111865'},
   {id:'m430',name:'iPhone 15 Pro Max',width:430,height:932,bodyMm:{width:76.7,height:159.9,depth:8.25},panel:{width:1290,height:2796,ppi:460},profile:'island',corners:{body:66,screen:53},safe:{top:59,bottom:34},source:'https://support.apple.com/en-us/111828'},
 ];
 export const phoneModel=(id:string)=>PHONE_MODELS.find(model=>model.id===id);

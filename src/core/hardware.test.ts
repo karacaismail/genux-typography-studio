@@ -32,3 +32,8 @@ it('keeps iPhone 12 distinct from mini with its broad original notch',()=>{
  expect(phone.corners).toEqual({body:64,screen:47});
  expect(phone.safe.top).toBeGreaterThan(phone.cutout!.height);
 });
+it('gives iPhone 11 a thicker LCD surround, rounded body and broad notch',()=>{
+ const phone=PHONE_MODELS.find(m=>m.id==='m414')!,twelve=PHONE_MODELS.find(m=>m.id==='m390')!;
+ expect(phone.cutout).toEqual({width:210,height:34});expect(phone.corners).toEqual({body:76,screen:46});
+ expect(phoneGeometry(phone).x).toBeGreaterThan(phoneGeometry(twelve).x);
+});

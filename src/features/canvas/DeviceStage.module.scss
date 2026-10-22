@@ -143,3 +143,23 @@
 .device[data-model='m390'][data-landscape] .sideKeys::before { top:0; left:-70%; width:40%; height:100%; }
 .device[data-model='m390'][data-landscape] .sideKeys::after { top:0; left:125%; width:100%; height:100%; }
 .device[data-model='m390'][data-landscape] .powerKey { right:auto; left:28%; top:-2px; width:60px; height:3px; }
+
+// iPhone 11: rounded aluminum rail and thicker LCD surround, not the flat iPhone 12 edge.
+.device[data-model='m414'] {
+  --device-eleven-notch-radius:22px;
+  --device-eleven-earpiece-width:66px;
+  --device-eleven-earpiece-height:6px;
+  --device-eleven-camera-size:11px;
+  --device-eleven-rim:inset 0 0 0 1px #81858a,inset 0 0 0 3px #42474c,inset 0 0 0 6px #22262a,inset 0 0 0 9px #101214;
+}
+.device[data-model='m414']::after { box-shadow:var(--device-eleven-rim),var(--device-edge-light); }
+.device[data-model='m414'] .hardware { height:var(--device-cutout-height); border-radius:0 0 var(--device-eleven-notch-radius) var(--device-eleven-notch-radius); }
+.device[data-model='m414'] .speaker { left:calc(50% - var(--device-eleven-earpiece-width) / 2); width:var(--device-eleven-earpiece-width); height:var(--device-eleven-earpiece-height); }
+.device[data-model='m414'] .camera { left:auto; right:25px; width:var(--device-eleven-camera-size); height:var(--device-eleven-camera-size); }
+.device[data-model='m414'] .sideKeys { height:30px; }
+.device[data-model='m414'] .powerKey { height:64px; }
+.device[data-model='m414'][data-landscape] .hardware { left:calc(var(--device-side) + var(--device-cutout-height) / 2); height:var(--device-cutout-height); }
+.device[data-model='m414'][data-landscape] .sideKeys { left:22%; top:auto; bottom:-2px; width:30px; height:3px; }
+.device[data-model='m414'][data-landscape] .sideKeys::before { top:0; left:-70%; width:40%; height:100%; }
+.device[data-model='m414'][data-landscape] .sideKeys::after { top:0; left:125%; width:100%; height:100%; }
+.device[data-model='m414'][data-landscape] .powerKey { right:auto; left:28%; top:-2px; width:64px; height:3px; }

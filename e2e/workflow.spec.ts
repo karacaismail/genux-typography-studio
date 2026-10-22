@@ -724,3 +724,16 @@ test('iPhone 12 keeps its broad shallow notch, internal speaker and safe content
   else{expect(m.notch.width).toBeCloseTo(32);expect(m.notch.height).toBeCloseTo(210);expect(m.content.left).toBeGreaterThan(m.notch.right);expect(m.notch.left).toBeCloseTo(m.screen.left);}
  }
 });
+
+test('iPhone 11 keeps its broad shallow notch, internal speaker and safe content when rotated',async({page})=>{
+ await page.goto('/?workspace=workflow&ctx=html&device=m414&role=h1');
+ const body=page.locator('[data-model=m414]').first();await expect(body).toHaveCSS('border-radius','76px');
+ for(const name of ['Dikey','Yatay']){
+  await page.getByRole('radiogroup',{name:'Önizleme yönü',exact:true}).getByText(name,{exact:true}).click();
+  const m=await body.evaluate(el=>{const h=el.querySelector('[data-device-hardware]')!,speaker=h.lastElementChild!,content=el.querySelector('[aria-label^="Kaydırılabilir ekran içeriği"]')!,screen=el.querySelector('[data-screen-depth]')!;return {notch:h.getBoundingClientRect().toJSON(),speaker:speaker.getBoundingClientRect().toJSON(),content:content.getBoundingClientRect().toJSON(),screen:screen.getBoundingClientRect().toJSON()};});
+  expect(m.speaker.left).toBeGreaterThan(m.notch.left);expect(m.speaker.right).toBeLessThan(m.notch.right);
+  expect(m.speaker.top).toBeGreaterThan(m.notch.top);expect(m.speaker.bottom).toBeLessThan(m.notch.bottom);
+  if(name==='Dikey'){expect(m.notch.width).toBe(210);expect(m.notch.height).toBe(34);expect(m.content.top).toBeGreaterThan(m.notch.bottom);expect(m.notch.top).toBeCloseTo(m.screen.top);}
+  else{expect(m.notch.width).toBeCloseTo(34);expect(m.notch.height).toBeCloseTo(210);expect(m.content.left).toBeGreaterThan(m.notch.right);expect(m.notch.left).toBeCloseTo(m.screen.left);}
+ }
+});

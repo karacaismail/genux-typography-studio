@@ -158,3 +158,7 @@ Workflow sürümlü, deterministik ECA kuralları kullanır; keyfî eval veya ML
 ### iPhone 12 ön yüz geometrisi (22 Ekim 2026)
 
 `m390` Apple'ın 71,5 × 146,7 × 7,4 mm gövde ölçülerini ve 390 × 844 mantıksal ekranını korur. Resmi ön görünüşten optik olarak yeniden kurulan gövde/ekran köşeleri 64/47 CSS px, geniş/sığ çentik 210 × 32 CSS px'tir; üretici CAD ölçüsü değildir. Ahize mini'den farklı olarak çentik içinde ortalanır; kamera sağdadır. Modelin metal kenarı ve yan tuşları yalnız m390'a uygulanır. Yatayda çentik aynı derinlikle ekran kenarına bağlanır ve güvenli içerik alanına girmez. `hardware.test.ts` ve iPhone 12 workflow geometri regresyonu bu sözleşmeyi korur.
+
+### iPhone 11 ön yüz geometrisi (22 Ekim 2026)
+
+`m414` Apple'ın 75,7 × 150,9 × 8,3 mm gövde ölçülerini ve 414 × 896 mantıksal ekranını korur. LCD ekranın daha kalın çevresi fiziksel gövde/ekran oranından gelir; iPhone 12'nin düz kenarı yerine yuvarlatılmış kenar ışıkları kullanılır. Optik rekonstrüksiyon gövde/ekran köşeleri 76/46 CSS px, çentik 210 × 34 CSS px'tir; bunlar üretici CAD ölçüsü değildir. Ahize çentik içinde ortalı, kamera sağdadır. Yatayda çentik aynı derinlikle ekran kenarında kalır; güvenli içerik alanı donanımla kesişmez. Model değişikliği yalnız m414 kapsamındadır; hardware ve workflow geometri regresyonları korunmalıdır.

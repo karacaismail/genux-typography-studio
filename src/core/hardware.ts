@@ -5,10 +5,12 @@ export interface PhoneModel {
   bodyMm:{width:number;height:number;depth:number};
   panel:{width:number;height:number;ppi?:number;diagonal?:number};
   profile:'classic'|'android'|'notch'|'island';
+  homeDiameter?:number;
   corners:{body:number;screen:number}; safe:{top:number;bottom:number}; source:string;
 }
+// iPhone 4 corner and home-key dimensions are optical estimates from the supplied front reference.
 export const PHONE_MODELS:PhoneModel[]=[
-  {id:'m320',name:'iPhone 4',width:320,height:480,bodyMm:{width:58.6,height:115.2,depth:9.3},panel:{width:640,height:960,ppi:326},profile:'classic',corners:{body:22,screen:1},safe:{top:0,bottom:0},source:'https://support.apple.com/en-il/112562'},
+  {id:'m320',name:'iPhone 4',width:320,height:480,bodyMm:{width:58.6,height:115.2,depth:9.3},panel:{width:640,height:960,ppi:326},profile:'classic',homeDiameter:68,corners:{body:56,screen:0},safe:{top:0,bottom:0},source:'https://support.apple.com/en-il/112562'},
   {id:'m360',name:'Galaxy S20',width:360,height:800,bodyMm:{width:69.1,height:151.7,depth:7.9},panel:{width:1440,height:3200,diagonal:6.2},profile:'android',corners:{body:32,screen:25},safe:{top:32,bottom:20},source:'https://www.samsungmobilepress.com/media-assets/galaxy_s20?tab=specs'},
   {id:'m375',name:'iPhone 13 mini',width:375,height:812,bodyMm:{width:64.2,height:131.5,depth:7.65},panel:{width:1080,height:2340,ppi:476},profile:'notch',corners:{body:58,screen:43},safe:{top:50,bottom:34},source:'https://support.apple.com/en-us/111873'},
   {id:'m390',name:'iPhone 12',width:390,height:844,bodyMm:{width:71.5,height:146.7,depth:7.4},panel:{width:1170,height:2532,ppi:460},profile:'notch',corners:{body:55,screen:40},safe:{top:47,bottom:34},source:'https://support.apple.com/en-us/111876'},

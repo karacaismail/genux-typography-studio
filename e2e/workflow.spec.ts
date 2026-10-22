@@ -675,3 +675,21 @@ test('classic tablet home key stays below its screen and modern safe areas remai
     expect(await scroll.evaluate(el=>el.scrollTop)).toBeGreaterThan(0);
   }
 });
+
+test('iPhone 4 has reference glass corners and a centered home key in both orientations',async({page})=>{
+ await page.goto('/?workspace=workflow&ctx=html&device=m320&role=h1');
+ for(const orientation of ['Dikey','Yatay']){
+  await page.getByRole('radiogroup',{name:'Önizleme yönü',exact:true}).getByText(orientation,{exact:true}).click();
+  const body=page.locator('[data-model=m320]').first();
+  const metrics=await body.evaluate(el=>{const cs=getComputedStyle(el),rect=el.getBoundingClientRect(),home=el.querySelector('[data-device-home]')!.getBoundingClientRect(),screen=el.querySelector('[data-screen-depth]')!.getBoundingClientRect();return {radius:parseFloat(cs.borderRadius),body:rect.toJSON(),home:home.toJSON(),screen:screen.toJSON()};});
+  expect(metrics.radius).toBe(56);expect(metrics.home.width).toBe(68);
+  if(orientation==='Dikey'){
+   expect(metrics.body.height/metrics.body.width).toBeCloseTo(115.2/58.6,3);
+   expect(metrics.home.y).toBeGreaterThan(metrics.screen.bottom);
+  }else{
+   expect(metrics.body.width/metrics.body.height).toBeCloseTo(115.2/58.6,3);
+   expect(metrics.home.x).toBeGreaterThan(metrics.screen.right);
+  }
+  expect(metrics.home.right).toBeLessThan(metrics.body.right);expect(metrics.home.bottom).toBeLessThan(metrics.body.bottom);
+ }
+});

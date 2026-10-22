@@ -45,7 +45,7 @@
 .hardware { position:absolute; z-index:4; top:0; left:50%; transform:translateX(-50%); width:88px; height:var(--device-top); pointer-events:none; }
 .camera { position:absolute; width:7px; height:7px; border-radius:50%; background:var(--device-lens-finish); box-shadow:0 0 0 1px var(--device-lens); top:50%; left:2px; transform:translateY(-50%); }
 .speaker { position:absolute; width:45px; height:6px; border-radius:var(--mantine-radius-xl); background:var(--device-speaker-finish); box-shadow:inset 0 1px 2px var(--device-lens),0 1px 0 var(--device-edge); top:50%; left:28px; transform:translateY(-50%); }
-.home { bottom:18px; position:absolute; z-index:4; left:50%; transform:translateX(-50%); width:44px; height:44px; border-radius:50%; background:var(--device-home-finish); box-shadow:var(--device-home-ring); pointer-events:none; }
+.home { bottom:18px; position:absolute; z-index:4; left:50%; transform:translateX(-50%); width:var(--device-home-size,44px); height:var(--device-home-size,44px); border-radius:50%; background:var(--device-home-finish); box-shadow:var(--device-home-ring); pointer-events:none; }
 .device[data-kind='mobile'][data-profile='classic'] .home::after { content:''; position:absolute; inset:15px; border:1px solid var(--device-edge); border-radius:3px; opacity:.65; }
 .sideKeys,.powerKey { position:absolute; z-index:0; width:3px; background:var(--device-key-finish); border-radius:var(--mantine-radius-xs); pointer-events:none; }
 .sideKeys { left:-2px; top:22%; height:6%; }
@@ -75,7 +75,7 @@
 .device[data-landscape] .hardware { top:50%; left:calc(var(--device-side) / 2); height:30px; transform:translate(-50%,-50%) rotate(-90deg); }
 .device[data-landscape][data-profile='notch'] .hardware,.device[data-landscape][data-profile='island'] .hardware { left:calc(var(--device-side) + 15px); }
 .device[data-landscape][data-profile='android'] .hardware { left:calc(var(--device-side) + 15px); height:12px; }
-.device[data-landscape] .home { left:auto; right:calc(var(--device-side) / 2 - 22px); top:50%; transform:translateY(-50%); }
+.device[data-landscape] .home { left:auto; right:calc((var(--device-side) - var(--device-home-size,44px)) / 2); top:50%; transform:translateY(-50%); }
 .device[data-landscape] .homeIndicator { left:auto; right:calc(var(--device-side) + 8px); top:50%; width:5px; height:28%; transform:translateY(-50%); }
 
 .base { position:absolute; left:50%; transform:translateX(-50%); background:var(--device-finish); box-shadow:var(--device-edge-light); }
@@ -90,3 +90,15 @@
   color: var(--gx-text-2);
   font-variant-numeric: tabular-nums;
 }
+
+// iPhone 4 front-view reconstruction; geometry is independent of the live screen.
+.device[data-model='m320'] {
+  --device-earpiece-width:64px;
+  --device-earpiece-height:9px;
+  --device-camera-size:12px;
+  --device-home-symbol:22px;
+}
+.device[data-model='m320'] .hardware { width:136px; }
+.device[data-model='m320'] .speaker { width:var(--device-earpiece-width); height:var(--device-earpiece-height); left:46px; }
+.device[data-model='m320'] .camera { width:var(--device-camera-size); height:var(--device-camera-size); left:0; }
+.device[data-kind='mobile'][data-profile='classic'][data-model='m320'] .home::after { inset:auto; width:var(--device-home-symbol); height:var(--device-home-symbol); left:50%; top:50%; transform:translate(-50%,-50%); }

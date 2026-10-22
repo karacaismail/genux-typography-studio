@@ -13,3 +13,10 @@ it('uses a single real model for every mobile choice and preserves published bod
 it('rotates the physical body ratio together with the viewport',()=>{
   for(const model of PHONE_MODELS){const shape=phoneGeometry(model,model.height,model.width,true);expect(shape.bodyWidth/shape.bodyHeight).toBeCloseTo(model.bodyMm.height/model.bodyMm.width,6);}
 });
+it('reconstructs iPhone 4 glass corners and home-key scale from the front reference',()=>{
+  const model=PHONE_MODELS[0],shape=phoneGeometry(model);
+  expect(model.corners.body/shape.bodyWidth).toBeGreaterThan(.14);
+  expect(model.corners.body/shape.bodyWidth).toBeLessThan(.16);
+  expect(model.corners.screen).toBe(0);
+  expect(model.homeDiameter).toBe(68);
+});

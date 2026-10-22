@@ -163,3 +163,25 @@
 .device[data-model='m414'][data-landscape] .sideKeys::before { top:0; left:-70%; width:40%; height:100%; }
 .device[data-model='m414'][data-landscape] .sideKeys::after { top:0; left:125%; width:100%; height:100%; }
 .device[data-model='m414'][data-landscape] .powerKey { right:auto; left:28%; top:-2px; width:64px; height:3px; }
+
+// Natural titanium optical reconstruction, confined to the Pro Max shell.
+.device[data-model='m430'] {
+  --device-pro-rim:inset 0 0 0 1px #c1bbb1,inset 0 0 0 3px #79776f,inset 0 0 0 5px #a8a398,inset 0 0 0 7px #393a37;
+  --device-pro-earpiece-width:74px;
+  --device-pro-earpiece-height:2px;
+  --device-pro-camera-size:12px;
+  --device-key-finish:linear-gradient(90deg,#4c4e49,#b0ab9f 48%,#66685f);
+}
+.device[data-model='m430']::after { box-shadow:var(--device-pro-rim),var(--device-edge-light); }
+.device[data-model='m430'] .hardware { top:calc(var(--device-top) + var(--device-cutout-inset)); width:var(--device-cutout-width); height:var(--device-cutout-height); border-radius:calc(var(--device-cutout-height) / 2); }
+.device[data-model='m430'] .hardware::before { content:''; position:absolute; top:-18px; left:calc(50% - var(--device-pro-earpiece-width) / 2); width:var(--device-pro-earpiece-width); height:var(--device-pro-earpiece-height); border-radius:var(--mantine-radius-xl); background:var(--device-speaker-finish); }
+.device[data-model='m430'] .camera { left:auto; right:14px; width:var(--device-pro-camera-size); height:var(--device-pro-camera-size); }
+.device[data-model='m430'] .sideKeys { height:28px; }
+.device[data-model='m430'] .sideKeys::before { top:-38px; height:18px; }
+.device[data-model='m430'] .sideKeys::after { top:140%; }
+.device[data-model='m430'] .powerKey { height:60px; }
+.device[data-model='m430'][data-landscape] .hardware { top:50%; left:calc(var(--device-side) + var(--device-cutout-inset) + var(--device-cutout-height) / 2); height:var(--device-cutout-height); }
+.device[data-model='m430'][data-landscape] .sideKeys { left:22%; top:auto; bottom:-2px; width:28px; height:3px; }
+.device[data-model='m430'][data-landscape] .sideKeys::before { top:0; left:-38px; width:18px; height:100%; }
+.device[data-model='m430'][data-landscape] .sideKeys::after { top:0; left:140%; width:100%; height:100%; }
+.device[data-model='m430'][data-landscape] .powerKey { right:auto; left:28%; top:-2px; width:60px; height:3px; }

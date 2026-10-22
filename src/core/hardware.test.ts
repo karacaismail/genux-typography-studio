@@ -37,3 +37,8 @@ it('gives iPhone 11 a thicker LCD surround, rounded body and broad notch',()=>{
  expect(phone.cutout).toEqual({width:210,height:34});expect(phone.corners).toEqual({body:76,screen:46});
  expect(phoneGeometry(phone).x).toBeGreaterThan(phoneGeometry(twelve).x);
 });
+it('models Pro Max Dynamic Island as a detached capsule within its safe area',()=>{
+ const phone=PHONE_MODELS.find(m=>m.id==='m430')!;
+ expect(phone.cutout).toEqual({width:126,height:37,inset:11});expect(phone.corners).toEqual({body:72,screen:55});
+ expect(phone.cutout!.inset!+phone.cutout!.height).toBeLessThan(phone.safe.top);
+});

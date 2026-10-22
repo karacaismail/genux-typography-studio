@@ -162,3 +162,7 @@ Workflow sürümlü, deterministik ECA kuralları kullanır; keyfî eval veya ML
 ### iPhone 11 ön yüz geometrisi (22 Ekim 2026)
 
 `m414` Apple'ın 75,7 × 150,9 × 8,3 mm gövde ölçülerini ve 414 × 896 mantıksal ekranını korur. LCD ekranın daha kalın çevresi fiziksel gövde/ekran oranından gelir; iPhone 12'nin düz kenarı yerine yuvarlatılmış kenar ışıkları kullanılır. Optik rekonstrüksiyon gövde/ekran köşeleri 76/46 CSS px, çentik 210 × 34 CSS px'tir; bunlar üretici CAD ölçüsü değildir. Ahize çentik içinde ortalı, kamera sağdadır. Yatayda çentik aynı derinlikle ekran kenarında kalır; güvenli içerik alanı donanımla kesişmez. Model değişikliği yalnız m414 kapsamındadır; hardware ve workflow geometri regresyonları korunmalıdır.
+
+### iPhone 15 Pro Max ön yüz geometrisi (22 Ekim 2026)
+
+`m430` Apple'ın 76,7 × 159,9 × 8,25 mm gövde ölçülerini ve 430 × 932 mantıksal ekranını korur. Optik rekonstrüksiyonda gövde/ekran köşeleri 72/55 CSS px, Dynamic Island kapsülü 126 × 37 CSS px ve ekran kenarından boşluğu 11 CSS px'tir; üretici CAD ölçüsü değildir. Ada çentik gibi kenara bağlanmaz; yatayda da 11 px ayrım korunur. Doğal titanyum kenar ışıkları ve Action düğmesi yalnız m430'a uygulanır. Güvenli içerik alanı kapsülün dışında kalır. Yeni `cutout.inset` isteğe bağlıdır; çentikli modellerin varsayılanı sıfırdır. Hardware ve workflow geometri regresyonları korunmalıdır.

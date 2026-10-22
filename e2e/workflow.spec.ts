@@ -737,3 +737,15 @@ test('iPhone 11 keeps its broad shallow notch, internal speaker and safe content
   else{expect(m.notch.width).toBeCloseTo(34);expect(m.notch.height).toBeCloseTo(210);expect(m.content.left).toBeGreaterThan(m.notch.right);expect(m.notch.left).toBeCloseTo(m.screen.left);}
  }
 });
+
+test('Pro Max Dynamic Island stays detached, pill-shaped and clear of live content in both orientations',async({page})=>{
+ await page.goto('/?workspace=workflow&ctx=html&device=m430&role=h1');
+ const body=page.locator('[data-model=m430]').first();await expect(body).toHaveCSS('border-radius','72px');
+ for(const name of ['Dikey','Yatay']){
+  await page.getByRole('radiogroup',{name:'Önizleme yönü',exact:true}).getByText(name,{exact:true}).click();
+  const m=await body.evaluate(el=>{const h=el.querySelector('[data-device-hardware]')!,content=el.querySelector('[aria-label^="Kaydırılabilir ekran içeriği"]')!,screen=el.querySelector('[data-screen-depth]')!;return {island:h.getBoundingClientRect().toJSON(),radius:getComputedStyle(h).borderRadius,content:content.getBoundingClientRect().toJSON(),screen:screen.getBoundingClientRect().toJSON(),rim:getComputedStyle(el,'::after').boxShadow};});
+  expect(m.radius).toBe('18.5px');expect(m.rim).toContain('inset');
+  if(name==='Dikey'){expect(m.island.width).toBe(126);expect(m.island.height).toBe(37);expect(m.island.top-m.screen.top).toBeCloseTo(11);expect(m.content.top).toBeGreaterThan(m.island.bottom);}
+  else{expect(m.island.width).toBeCloseTo(37);expect(m.island.height).toBeCloseTo(126);expect(m.island.left-m.screen.left).toBeCloseTo(11);expect(m.content.left).toBeGreaterThan(m.island.right);}
+ }
+});

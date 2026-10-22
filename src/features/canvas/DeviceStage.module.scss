@@ -57,7 +57,19 @@
 .device[data-profile='notch'] .hardware { top:var(--device-top); width:var(--device-cutout-width); height:30px; border-radius:0 0 20px 20px; background:var(--device-shell); }
 .device[data-profile='notch'] .camera { left:18%; }
 .device[data-profile='notch'] .speaker { left:37%; width:40%; height:4px; box-shadow:none; }
-.device[data-model='m375'] .hardware { height:29px; }
+// Mini-specific optical reconstruction from the supplied front photograph.
+.device[data-model='m375'] {
+  --device-mini-earpiece-width:76px;
+  --device-mini-earpiece-height:4px;
+  --device-mini-lens-size:10px;
+  --device-mini-notch-radius:23px;
+  --device-mini-rim:inset 0 0 0 1px #92a7b4,inset 0 0 0 3px #304b5d,inset 0 0 0 5px #10191f;
+}
+.device[data-model='m375']::after { box-shadow:var(--device-mini-rim),var(--device-edge-light); }
+.device[data-model='m375'] .hardware { height:var(--device-cutout-height); border-radius:0 0 var(--device-mini-notch-radius) var(--device-mini-notch-radius); }
+.device[data-model='m375'] .speaker { top:-10px; left:calc(50% - var(--device-mini-earpiece-width) / 2); width:var(--device-mini-earpiece-width); height:var(--device-mini-earpiece-height); background:var(--device-speaker-finish); box-shadow:inset 0 1px 1px var(--device-lens); }
+.device[data-model='m375'] .camera { left:23px; top:17px; width:var(--device-mini-lens-size); height:var(--device-mini-lens-size); }
+
 .device[data-profile='island'] .hardware { top:calc(var(--device-top) + 11px); width:108px; height:30px; border-radius:var(--mantine-radius-xl); background:var(--device-lens); box-shadow:0 0 0 1px var(--device-shell); }
 .device[data-profile='island'] .speaker { display:none; }
 .device[data-profile='island'] .camera { left:84px; width:9px; height:9px; }
@@ -102,3 +114,12 @@
 .device[data-model='m320'] .speaker { width:var(--device-earpiece-width); height:var(--device-earpiece-height); left:46px; }
 .device[data-model='m320'] .camera { width:var(--device-camera-size); height:var(--device-camera-size); left:0; }
 .device[data-kind='mobile'][data-profile='classic'][data-model='m320'] .home::after { inset:auto; width:var(--device-home-symbol); height:var(--device-home-symbol); left:50%; top:50%; transform:translate(-50%,-50%); }
+
+.device[data-model='m375'][data-landscape] .hardware { left:calc(var(--device-side) + var(--device-cutout-height) / 2); }
+.device[data-model='m375'] .sideKeys { height:28px; }
+.device[data-model='m375'] .powerKey { height:60px; }
+.device[data-model='m375'][data-landscape] .hardware { height:var(--device-cutout-height); }
+.device[data-model='m375'][data-landscape] .sideKeys { left:22%; top:auto; bottom:-2px; width:28px; height:3px; }
+.device[data-model='m375'][data-landscape] .sideKeys::before { top:0; left:-70%; width:40%; height:100%; }
+.device[data-model='m375'][data-landscape] .sideKeys::after { top:0; left:125%; width:100%; height:100%; }
+.device[data-model='m375'][data-landscape] .powerKey { right:auto; left:28%; top:-2px; width:60px; height:3px; }

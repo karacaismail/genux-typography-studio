@@ -693,3 +693,21 @@ test('iPhone 4 has reference glass corners and a centered home key in both orien
   expect(metrics.home.right).toBeLessThan(metrics.body.right);expect(metrics.home.bottom).toBeLessThan(metrics.body.bottom);
  }
 });
+
+test('iPhone 13 mini separates the top earpiece from its wider notch and protects content',async({page})=>{
+ await page.goto('/?workspace=workflow&ctx=html&device=m375&role=h1');
+ const body=page.locator('[data-model=m375]').first();
+ await expect(body).toHaveCSS('border-radius','70px');
+ for(const name of ['Dikey','Yatay']){
+  await page.getByRole('radiogroup',{name:'Önizleme yönü',exact:true}).getByText(name,{exact:true}).click();
+  const m=await body.evaluate(el=>{const hardware=el.querySelector('[data-device-hardware]')!,camera=hardware.firstElementChild!,speaker=hardware.lastElementChild!,content=el.querySelector('[aria-label^="Kaydırılabilir ekran içeriği"]')!;return {notch:hardware.getBoundingClientRect().toJSON(),camera:camera.getBoundingClientRect().toJSON(),speaker:speaker.getBoundingClientRect().toJSON(),content:content.getBoundingClientRect().toJSON()};});
+  if(name==='Dikey'){
+   expect(m.notch.width).toBe(178);expect(m.notch.height).toBe(38);
+   expect(m.speaker.bottom).toBeLessThan(m.notch.top);expect(m.camera.y).toBeGreaterThan(m.notch.y);
+   expect(m.content.y).toBeGreaterThan(m.notch.bottom);
+  }else{
+   expect(m.notch.width).toBeCloseTo(38);expect(m.notch.height).toBeCloseTo(178);
+   expect(m.speaker.right).toBeLessThan(m.notch.left);expect(m.content.left).toBeGreaterThan(m.notch.right);
+  }
+ }
+});

@@ -150,3 +150,7 @@ Workflow sürümlü, deterministik ECA kuralları kullanır; keyfî eval veya ML
 ### iPhone 4 ön yüz geometrisi (22 Ekim 2026)
 
 `m320` gövdesi Apple'ın 58,6 × 115,2 mm oranını ve 320 × 480 CSS px ekranını korur. Köşe yarıçapı (56 CSS px), düz ekran köşeleri ve 68 CSS px Home tuşu kullanıcı ön yüz referansından optik rekonstrüksiyondur; üretici CAD ölçüsü diye sunulmaz. Donanım düzeltmeleri yalnız `m320` kapsamındadır; Home merkezi hem dikey hem yatay ekran dışında kalır. `hardware.test.ts` ve workflow içindeki iPhone 4 geometri regresyonu korunmalıdır.
+
+### iPhone 13 mini ön yüz geometrisi (22 Ekim 2026)
+
+`m375` Apple'ın 64,2 × 131,5 mm gövde oranını ve mevcut 375 × 812 mantıksal ekranını korur. Kullanıcının fotoğraflarından optik olarak yeniden kurulan gövde/ekran köşeleri 70/52 CSS px; çentik 178 × 38 CSS px'tir. Bunlar üretici CAD ölçüsü değildir. Ahize çentik içinde değil üst kenardadır; kamera çentik içindedir. Mini'ye özgü metal kenar ve yan tuşlar diğer telefon stillerini değiştirmez. Yatayda çentik ekran kenarına bağlı ve aynı derinlikte kalmalı; içerik güvenli alanı donanımla kesişmemelidir. İlgili hardware birim ve workflow tarayıcı regresyonlarını koru.

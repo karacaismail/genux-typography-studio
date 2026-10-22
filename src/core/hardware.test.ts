@@ -20,3 +20,9 @@ it('reconstructs iPhone 4 glass corners and home-key scale from the front refere
   expect(model.corners.screen).toBe(0);
   expect(model.homeDiameter).toBe(68);
 });
+it('gives iPhone 13 mini its own wider notch and concentric rounded glass',()=>{
+ const mini=PHONE_MODELS.find(m=>m.id==='m375')!;
+ expect(mini.cutout?.width).toBe(178);expect(mini.cutout?.height).toBe(38);
+ expect(mini.corners.body).toBe(70);expect(mini.corners.screen).toBe(52);
+ expect(mini.safe.top).toBeGreaterThan(mini.cutout!.height);
+});

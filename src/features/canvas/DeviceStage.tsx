@@ -103,7 +103,7 @@ export function DeviceStage({ device, width, height, landscape, zoom, onScreen, 
               </div>
               <span className={classes.screenInset} data-screen-depth aria-hidden="true" style={{left:b.x,top:b.top,width,height:screenH}}/>
             </div>
-            {b.base > 0 && <div className={classes.base} data-device-base data-finish={model?.finish} style={model?.lid?{'--device-base-height':`${b.base}px`} as CSSProperties:undefined} data-kind={device.group} data-profile={profile} aria-hidden="true" />}
+            {b.base > 0 && <div className={classes.base} data-device-base data-finish={model?.finish} style={model?.lid?{'--device-base-height':`${b.base}px`,'--device-base-overhang':`${extraX}px`,'--device-base-width':`${totalW}px`} as CSSProperties:undefined} data-kind={device.group} data-profile={profile} aria-hidden="true" />}
           </div>
         </div>
       </div>

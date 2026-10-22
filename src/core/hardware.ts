@@ -61,7 +61,7 @@ export function phoneGeometry(model:HardwareModel,width=model.width,height=model
   const bodyWidth=(landscape?model.bodyMm.height:model.bodyMm.width)*scale;
   if(model.lid){
     const x=Math.max(0,(bodyWidth-width)/2),top=model.lid.bezelMm.top*scale,bottom=model.lid.bezelMm.bottom*scale;
-    return {x,top,bottom,base:model.lid.frontMm*scale,wide:0,bodyWidth,bodyHeight:height+top+bottom};
+    return {x,top,bottom,base:model.lid.frontMm*scale,wide:.045,bodyWidth,bodyHeight:height+top+bottom};
   }
   const bodyHeight=(landscape?model.bodyMm.width:model.bodyMm.height)*scale;
   return {x:Math.max(0,(bodyWidth-width)/2),top:Math.max(0,(bodyHeight-height)/2),bottom:Math.max(0,(bodyHeight-height)/2),base:0,wide:0,bodyWidth,bodyHeight};

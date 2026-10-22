@@ -226,7 +226,7 @@
 .device[data-kind='laptop'][data-model][data-camera-edge='bottom'] .hardware { top:auto; bottom:0; height:var(--device-bottom); }
 .device[data-kind='laptop'][data-model] .camera { left:calc(var(--device-laptop-camera-x) - var(--device-laptop-camera-size) / 2); width:var(--device-laptop-camera-size); height:var(--device-laptop-camera-size); }
 .device[data-kind='laptop'][data-model] .hardware:not([data-camera-present]) { display:none; }
-.device[data-kind='laptop'][data-model] + .base { left:0; transform:none; --device-laptop-metal:linear-gradient(180deg,#bfc2c5,#747a80 50%,#d0d2d4); width:100%; height:var(--device-base-height); background:var(--device-laptop-metal); border-radius:0 0 var(--mantine-radius-md) var(--mantine-radius-md); }
+.device[data-kind='laptop'][data-model] + .base { left:calc(-1 * var(--device-base-overhang)); transform:none; --device-laptop-metal:linear-gradient(90deg,#777c82 0%,#e5e7e9 1.5%,#8a8f95 4%,#b9bdc1 12%,#c7cace 50%,#b1b5ba 88%,#858a90 96%,#e3e5e7 98.5%,#73787e 100%); --device-deck-radius:2px 2px 20px 20px / 2px 2px 80% 80%; width:var(--device-base-width); height:var(--device-base-height); background:var(--device-laptop-metal); border-radius:var(--device-deck-radius); box-shadow:inset 0 1px #f1f3f5aa,inset 0 -2px #353a4099,0 3px 5px #0005; }
 // The base is a sibling: pass its optical tokens explicitly rather than relying on sibling inheritance.
 
 .device[data-kind='laptop'][data-model][data-finish='black'] + .base { --device-laptop-metal:linear-gradient(180deg,#292c30,#121416); }
@@ -235,3 +235,6 @@
   --device-glass:linear-gradient(110deg,#d7dadd,#adb2b7 55%,#c5c9cd);
   --device-laptop-edge:inset 0 0 0 1px #e2e5e8,inset 0 0 0 3px #797f85;
 }
+
+.device[data-kind='laptop'][data-model] + .base::before { content:''; position:absolute; inset:1px 3% auto; height:1px; background:linear-gradient(90deg,transparent,#fff8 20%,#fff3 80%,transparent); }
+.device[data-kind='laptop'][data-model] + .base::after { height:25%; width:12%; left:44%; border-radius:0 0 40% 40%; background:linear-gradient(180deg,#303338,#777c82); }

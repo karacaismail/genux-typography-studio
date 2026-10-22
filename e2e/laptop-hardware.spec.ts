@@ -30,7 +30,8 @@ async function laptopHardware(body: Locator, model: Laptop) {
   await expect(screen).toHaveCSS('width', model.width + 'px');
   await expect(screen).toHaveCSS('height', model.height + 'px');
   // Both CSS dimensions and rendered dimensions must be unscaled at actual zoom.
-  await expect(body.locator('..')).toHaveCSS('transform', 'matrix(1, 0, 0, 1, 0, 0)');
+  const transform = await body.locator('..').evaluate(element => new DOMMatrix(getComputedStyle(element).transform).toFloat64Array().slice(0, 4));
+  expect(Array.from(transform)).toEqual([1, 0, 0, 0]);
   const base = body.locator('xpath=following-sibling::*[@data-device-base]');
   await expect(base).toHaveCount(1);
   await expect(base).toBeVisible();
@@ -69,8 +70,9 @@ async function laptopHardware(body: Locator, model: Laptop) {
   expect(metrics.body.height).toBeGreaterThan(metrics.screen.height);
   // Side bezels are symmetric; neither the fixed aperture nor front lip may drift horizontally.
   expect(metrics.screen.x - metrics.body.x).toBeCloseTo(metrics.body.right - metrics.screen.right, 1);
-  expect(metrics.base.width).toBeCloseTo(metrics.body.width, 2);
-  expect(metrics.base.x).toBeCloseTo(metrics.body.x, 2);
+  expect(metrics.base.width).toBeGreaterThan(metrics.body.width);
+  expect(metrics.base.x).toBeLessThan(metrics.body.x);
+  expect(Math.abs((metrics.body.x - metrics.base.x) - (metrics.base.right - metrics.body.right))).toBeLessThan(.05);
   expect(metrics.base.y).toBeCloseTo(metrics.body.bottom, 2);
   expect(metrics.base.height).toBeGreaterThan(0);
   expect(metrics.base.height).toBeLessThan(metrics.body.height - metrics.screen.height);

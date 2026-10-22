@@ -10,3 +10,7 @@ it('records real camera positions instead of inventing a universal upper webcam'
  expect(hardwareModel('t1024')?.camera).toBeUndefined();
  for(const id of ['l1280','l1366','l1440','l1680'])expect(hardwareModel(id)?.lid?.cameraEdge).toBe('top');
 });
+
+it('reserves visible symmetric laptop deck overhang outside the lid',()=>{
+ for(const model of LAPTOP_MODELS){const g=phoneGeometry(model);expect(g.wide).toBeGreaterThan(0);expect(g.wide).toBeLessThan(.1);}
+});
